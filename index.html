@@ -1834,6 +1834,134 @@ document.addEventListener('keydown', function(e) {
     document.execCommand('insertLineBreak');
   }
 });
+     // ════════════════════════════════════════════════════════
+//  ANIMATION ENGINE
+// ════════════════════════════════════════════════════════
+
+// 1. Page Loader
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('page-loader').classList.add('out'), 1400);
+});
+
+// 2. Scroll Progress Bar
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('scroll-progress').style.width = pct + '%';
+}, { passive: true });
+
+// 3. Custom Cursor
+(function() {
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    document.body.classList.add('cursor-ready');
+  });
+  function animRing() {
+    rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+  document.querySelectorAll('a,button,.blog-card,.exp-card,.proj-card,.pillar').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-link'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-link'));
+  });
+})();
+
+// 4. Mouse Parallax — hero orbs + right photo
+(function() {
+  const orb1 = document.getElementById('orb-1');
+  const orb2 = document.getElementById('orb-2');
+  const heroPhoto = document.querySelector('.hero-photo-wrap');
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth  - .5) * 2;
+    const y = (e.clientY / window.innerHeight - .5) * 2;
+    if (orb1) orb1.style.transform = `translate(${x * 18}px, ${y * 12}px)`;
+    if (orb2) orb2.style.transform = `translate(${x * -10}px, ${y * -8}px)`;
+    if (heroPhoto) heroPhoto.style.transform = `translate(${x * 6}px, ${y * 4}px)`;
+  }, { passive: true });
+})();
+
+// 5. 3D Card Tilt
+document.querySelectorAll('.tilt-card').forEach(card => {
+  // Add shine overlay
+  const shine = document.createElement('div');
+  shine.className = 'tilt-shine';
+  card.appendChild(shine);
+
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - .5;
+    const y = (e.clientY - r.top)  / r.height - .5;
+    card.style.transform = `perspective(600px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-4px) scale(1.02)`;
+    shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(255,255,255,.08) 0%, transparent 60%)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+// 6. KPI Counter Animation
+(function() {
+  const kpiObs = new IntersectionObserver(entries => {
+    entries.forEach(({ isIntersecting, target }) => {
+      if (!isIntersecting) return;
+      const end    = parseInt(target.dataset.count) || 0;
+      const suffix = target.dataset.suffix || '';
+      const dur    = 1400;
+      const step   = 16;
+      const steps  = dur / step;
+      let cur = 0;
+      const timer = setInterval(() => {
+        cur++;
+        const val = Math.round(end * (cur / steps));
+        target.textContent = val + suffix;
+        if (cur >= steps) { target.textContent = end + suffix; clearInterval(timer); }
+      }, step);
+      kpiObs.unobserve(target);
+    });
+  }, { threshold: 0.7 });
+  document.querySelectorAll('[data-count]').forEach(el => kpiObs.observe(el));
+})();
+
+// 7. Active Nav Section Highlight
+(function() {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sectionObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('nav-active'));
+        const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('nav-active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => sectionObs.observe(s));
+})();
+
+// 8. Button Ripple
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const r = this.getBoundingClientRect();
+    const size = Math.max(r.width, r.height);
+    const ripple = document.createElement('span');
+    ripple.className = 'btn-ripple';
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px`;
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+
+// 9. Section title word-wrap for reveal
+document.querySelectorAll('.sec-title').forEach(title => {
+  title.innerHTML = title.innerHTML.split(/(\s+|<br>)/).map(w =>
+    w.trim() && w !== '<br>' ? `<span class="word">${w}</span>` : w
+  ).join('');
+});
 
 // ── INIT ──
 loadSaved();
