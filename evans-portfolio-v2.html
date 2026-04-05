@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<!-- ══════════════════════════════════════════════════════════════
+     SUPABASE CONFIG — Fill these in before deploying
+     Get from: Supabase Dashboard → Settings → API
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+  window.SUPABASE_URL  = 'YOUR_SUPABASE_URL';       // e.g. https://xxxx.supabase.co
+  window.SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';  // public anon key (safe to expose)
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<meta name="description" content="Evans Onyango — Accounting & Financial Systems Strategist, Kenya">
+<title>Evans Onyango | Accounting & Financial Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#034694; --blue-deep:#012a5c; --blue-dark:#011833;
+  --blue-mid:#0a56b0; --blue-light:#1a6fd4; --blue-pale:#d0e4ff;
+  --gold:#d4a843; --gold-light:#f0c96a; --white:#f0f4ff;
+  --bg:#020d1f; --bg2:#040f24; --card:#071a35; --card2:#0c2244;
+  --border:rgba(3,70,148,.35); --border2:rgba(3,70,148,.6);
+  --text:#dce8ff; --text2:#7a9abe; --muted:#3d5a7a;
+  --shadow:0 8px 32px rgba(1,24,51,.6);
+  --shadow-card:0 4px 24px rgba(1,24,51,.5);
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-xl:32px; --r-full:9999px;
+  --tr:all .28s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(10,86,176,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(10,86,176,.035) 1px,transparent 1px);background-size:56px 56px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:var(--r-full)}
+
+/* ADMIN BAR */
+#admin-bar{position:fixed;top:0;left:0;right:0;z-index:10000;background:linear-gradient(90deg,var(--blue-dark),var(--blue-deep));border-bottom:2px solid var(--gold);padding:8px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;transform:translateY(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+#admin-bar.visible{transform:translateY(0)}
+.admin-badge{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#000;padding:3px 12px;border-radius:var(--r-full);font-weight:700;font-size:9px;letter-spacing:.15em;text-transform:uppercase}
+.abtn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:var(--text2);padding:5px 16px;border-radius:var(--r-full);cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;transition:var(--tr)}
+.abtn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.08)}
+.abtn.save{border-color:var(--gold);color:var(--gold)}
+.abtn.save:hover{background:var(--gold);color:#000}
+.admin-hint{margin-left:auto;color:var(--muted);font-size:10px}
+
+/* FLOATING BUTTONS */
+.fab-group{position:fixed;bottom:28px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.fab{width:52px;height:52px;border-radius:var(--r-full);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:var(--tr);box-shadow:var(--shadow)}
+.fab-admin{background:linear-gradient(135deg,var(--blue),var(--blue-mid));border:2px solid var(--gold);color:var(--gold);box-shadow:0 4px 20px rgba(3,70,148,.5)}
+.fab-admin:hover{transform:scale(1.1) rotate(20deg);box-shadow:0 6px 28px rgba(212,168,67,.4)}
+.fab-wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;box-shadow:0 4px 20px rgba(37,211,102,.4)}
+.fab-wa:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.5)}
+.fab-wrap{position:relative;display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.fab-tip{background:rgba(7,26,53,.95);border:1px solid var(--border2);color:var(--text);padding:5px 12px;border-radius:var(--r-sm);font-size:11px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;font-family:'IBM Plex Mono',monospace}
+.fab-wrap:hover .fab-tip{opacity:1}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:20000;background:rgba(2,13,31,.88);align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal{background:linear-gradient(145deg,var(--card2),var(--card));border:1px solid var(--border2);border-top:3px solid var(--gold);border-radius:var(--r-xl);padding:40px;width:clamp(300px,90vw,500px);display:flex;flex-direction:column;gap:22px;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);position:relative}
+@keyframes modalIn{from{transform:scale(.9) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-title{font-family:'Playfair Display',serif;font-size:22px}
+.modal-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.modal-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:11px 16px;outline:none;transition:var(--tr)}
+.modal-input:focus{border-color:var(--gold);background:rgba(212,168,67,.04)}
+.modal-drop{border:2px dashed var(--border2);border-radius:var(--r-md);padding:28px;text-align:center;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);transition:var(--tr)}
+.modal-drop:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.04)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.modal-x{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .2s}
+.modal-x:hover{color:var(--text)}
+
+/* ADMIN EDIT HIGHLIGHT */
+body.admin-mode [data-ed]{outline:2px dashed rgba(212,168,67,.3);border-radius:4px;cursor:text;min-height:1em;transition:var(--tr)}
+body.admin-mode [data-ed]:hover{outline-color:var(--gold);background:rgba(212,168,67,.05)}
+body.admin-mode [data-ed]:focus{outline:2px solid var(--gold);background:rgba(212,168,67,.08)}
+
+/* PHOTO PLACEHOLDERS */
+.ph{background:linear-gradient(145deg,var(--card),var(--card2));border:2px dashed var(--border2);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;position:relative;overflow:hidden;transition:var(--tr)}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:inherit}
+.ph img.loaded{display:block}
+.ph-icon{font-size:36px;opacity:.25;pointer-events:none}
+.ph-lbl{text-transform:uppercase;opacity:.4;pointer-events:none}
+.ph-btn{display:none;padding:6px 18px;border:1px solid var(--gold);color:var(--gold);border-radius:var(--r-full);font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:var(--tr);cursor:pointer;font-family:'IBM Plex Mono',monospace;background:transparent}
+.ph-btn:hover{background:var(--gold);color:#000}
+body.admin-mode .ph{cursor:pointer;border-color:rgba(212,168,67,.3)}
+body.admin-mode .ph:hover{border-color:var(--gold);background:rgba(212,168,67,.04)}
+body.admin-mode .ph .ph-btn{display:block}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(2,13,31,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);transition:top .35s ease}
+body.admin-bar-visible nav{top:41px}
+.nav-logo{font-family:'Playfair Display',serif;font-weight:700;font-size:19px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+.nav-badge{width:34px;height:34px;border-radius:var(--r-sm);background:linear-gradient(135deg,var(--blue),var(--blue-mid));border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--gold);box-shadow:0 2px 12px rgba(3,70,148,.5)}
+.nav-links{display:flex;gap:0;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:0 16px;height:68px;display:flex;align-items:center;font-family:'IBM Plex Mono',monospace;border-bottom:2px solid transparent;transition:var(--tr)}
+.nav-links a:hover{color:var(--gold);border-bottom-color:var(--gold);background:rgba(3,70,148,.1)}
+.nav-cta{background:linear-gradient(135deg,var(--blue),var(--blue-mid))!important;color:var(--white)!important;border-radius:var(--r-sm)!important;height:auto!important;padding:10px 20px!important;margin:0 8px!important;border-bottom:none!important;box-shadow:0 2px 12px rgba(3,70,148,.4)!important}
+.nav-cta:hover{background:linear-gradient(135deg,var(--blue-mid),var(--blue-light))!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{width:24px;height:2px;background:var(--text2);border-radius:2px;transition:var(--tr)}
+.mobile-nav{display:none;position:fixed;top:68px;left:0;right:0;background:rgba(4,15,36,.98);z-index:999;padding:16px 0;border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
+.mobile-nav.open{display:block}
+.mobile-nav a{display:block;padding:14px 32px;color:var(--text2);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--border);transition:var(--tr)}
+.mobile-nav a:hover{color:var(--gold);background:rgba(212,168,67,.05)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:var(--tr);border:none;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue-mid));color:#fff;box-shadow:0 4px 16px rgba(3,70,148,.4);border:1px solid rgba(26,111,212,.5)}
+.btn-primary:hover{background:linear-gradient(135deg,var(--blue-mid),var(--blue-light));transform:translateY(-2px);box-shadow:0 8px 24px rgba(3,70,148,.55)}
+.btn-secondary{background:transparent;color:var(--gold);border:1.5px solid var(--gold)}
+.btn-secondary:hover{background:var(--gold);color:#000;transform:translateY(-2px)}
+.btn-green{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;box-shadow:0 4px 16px rgba(37,211,102,.35)}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,.5)}
+.btn-email{background:linear-gradient(135deg,#ea4335,#c62828);color:#fff;box-shadow:0 4px 16px rgba(234,67,53,.35)}
+.btn-email:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(234,67,53,.5)}
+
+/* SECTIONS */
+section{padding:90px 40px;position:relative;z-index:1}
+section+section{border-top:1px solid var(--border)}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'//';opacity:.45}
+.sec-title{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(30px,4.5vw,56px);line-height:1.05;letter-spacing:-.02em;margin-bottom:48px}
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;padding:110px 40px 80px;gap:60px;align-items:center}
+#hero::after{content:'';position:absolute;top:20%;right:-5%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(3,70,148,.2) 0%,transparent 68%);pointer-events:none}
+.hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';width:28px;height:1.5px;background:var(--gold);border-radius:2px}
+.hero-name{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(50px,7vw,90px);line-height:.92;letter-spacing:-.03em;margin-bottom:18px}
+.hero-name span{color:var(--gold);display:block}
+.hero-sub{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2);margin-bottom:26px;letter-spacing:.05em;display:flex;align-items:center;gap:12px}
+.hero-sub::after{content:'';flex:1;max-width:60px;height:1px;background:var(--border2)}
+.hero-desc{font-size:15px;line-height:1.85;color:var(--text2);max-width:500px;margin-bottom:36px;font-weight:300}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--border2);box-shadow:var(--shadow-card)}
+.kpi{background:linear-gradient(145deg,var(--card),var(--card2));padding:18px 16px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.kpi:last-child{border-right:none}
+.kpi-v{font-family:'Playfair Display',serif;font-weight:900;font-size:28px;color:var(--gold);line-height:1}
+.kpi-l{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.hero-right{display:flex;flex-direction:column;align-items:center;gap:16px}
+.hero-photo-wrap{position:relative;width:100%;max-width:360px}
+.hero-photo-wrap::before{content:'';position:absolute;top:-10px;left:-10px;right:10px;bottom:10px;border:1.5px solid rgba(212,168,67,.25);border-radius:var(--r-xl);pointer-events:none;z-index:0}
+.hero-photo{width:100%;height:460px;border-radius:var(--r-xl);position:relative;z-index:1}
+.hero-cap{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-align:center}
+
+/* ABOUT */
+#about{display:grid;grid-template-columns:1fr 1.2fr;gap:70px;align-items:start}
+.about-photo-wrap{position:relative}
+.about-photo-wrap::after{content:'';position:absolute;bottom:-14px;right:-14px;width:70px;height:70px;background:var(--blue);border-radius:var(--r-md);opacity:.45;z-index:-1}
+.about-photo{width:100%;height:400px;border-radius:var(--r-xl)}
+.about-content{display:flex;flex-direction:column;gap:22px}
+.about-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--text);line-height:1.65;padding:20px 24px;border-left:3px solid var(--gold);border-radius:0 var(--r-md) var(--r-md) 0;background:rgba(212,168,67,.05)}
+.about-body{font-size:14px;line-height:1.9;color:var(--text2);font-weight:300}
+.about-table{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--border2)}
+.arow{display:grid;grid-template-columns:120px 1fr;border-bottom:1px solid var(--border)}
+.arow:last-child{border-bottom:none}
+.ak{padding:11px 16px;background:var(--card);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;border-right:1px solid var(--border)}
+.av{padding:11px 16px;font-size:13px;color:var(--text)}
+
+/* EXPERTISE */
+#expertise{background:var(--bg2)}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.exp-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-xl);padding:34px 28px;display:flex;flex-direction:column;gap:16px;transition:var(--tr);box-shadow:var(--shadow-card);position:relative;overflow:hidden}
+.exp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--blue-light));border-radius:var(--r-xl) var(--r-xl) 0 0;transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.exp-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(3,70,148,.3);border-color:rgba(3,70,148,.7)}
+.exp-card:hover::before{transform:scaleX(1)}
+.exp-n{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em}
+.exp-icon{width:50px;height:50px;border-radius:var(--r-md);background:rgba(3,70,148,.2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px}
+.exp-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;line-height:1.25}
+.exp-desc{font-size:13px;line-height:1.8;color:var(--text2);font-weight:300;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--border2);color:var(--muted);border-radius:var(--r-full)}
+
+/* SKILLS */
+#skills{background:linear-gradient(145deg,var(--card),var(--bg))}
+.skills-layout{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start}
+.skill-row{margin-bottom:22px}
+.skill-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.skill-nm{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.skill-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold)}
+.skill-track{height:5px;background:var(--border);border-radius:var(--r-full);overflow:hidden}
+.skill-fill{height:100%;border-radius:var(--r-full);background:linear-gradient(90deg,var(--blue),var(--blue-light));transform:scaleX(0);transform-origin:left;transition:transform 1.3s cubic-bezier(.4,0,.2,1)}
+.skill-fill.animate{transform:scaleX(1)}
+.skills-photo{width:100%;height:360px;border-radius:var(--r-xl)}
+
+/* PHILOSOPHY */
+#philosophy{background:linear-gradient(135deg,var(--blue-dark),var(--blue-deep));text-align:center;border-top:1px solid rgba(212,168,67,.2)!important}
+.big-stmt{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(42px,8vw,108px);line-height:.9;letter-spacing:-.03em;margin-bottom:18px;background:linear-gradient(135deg,var(--white) 30%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.big-sub{font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(200,220,255,.45);letter-spacing:.12em;text-transform:uppercase;margin-bottom:64px}
+.pillars{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.pillar{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--r-lg);padding:28px 20px;display:flex;flex-direction:column;gap:12px;transition:var(--tr)}
+.pillar:hover{background:rgba(3,70,148,.25);border-color:rgba(212,168,67,.3);transform:translateY(-4px)}
+.pillar-n{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:rgba(255,255,255,.06);line-height:1}
+.pillar-t{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.pillar-d{font-size:12px;color:rgba(200,220,255,.5);line-height:1.7;font-weight:300}
+
+/* PROJECTS */
+#projects{background:var(--bg)}
+.proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.proj-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-xl);padding:34px;display:flex;flex-direction:column;gap:14px;transition:var(--tr);text-decoration:none;color:inherit;box-shadow:var(--shadow-card);cursor:pointer}
+.proj-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(3,70,148,.3);border-color:rgba(3,70,148,.7)}
+.proj-hdr{display:flex;justify-content:space-between;align-items:flex-start}
+.proj-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.1em}
+.proj-arrow{color:var(--muted);font-size:18px;transition:var(--tr)}
+.proj-card:hover .proj-arrow{color:var(--gold);transform:translate(3px,-3px)}
+.proj-type{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue-light)}
+.proj-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;line-height:1.3}
+.proj-desc{font-size:13px;line-height:1.8;color:var(--text2);font-weight:300}
+
+/* BLOG */
+#blog{background:var(--bg2)}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.blog-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-xl);padding:30px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit;cursor:pointer;transition:var(--tr);box-shadow:var(--shadow-card)}
+.blog-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(3,70,148,.3);border-color:rgba(3,70,148,.7)}
+.blog-cat{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.blog-ttl{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;line-height:1.45}
+.blog-exc{font-size:12px;color:var(--text2);line-height:1.75;flex:1;font-weight:300}
+.blog-lnk{color:var(--blue-light);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:6px;transition:gap .2s,color .2s}
+.blog-card:hover .blog-lnk{gap:12px;color:var(--gold)}
+
+/* CONTACT */
+#contact{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.contact-left{display:flex;flex-direction:column;gap:24px}
+.contact-direct{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-xl);padding:28px;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow-card)}
+.contact-direct h3{font-family:'Playfair Display',serif;font-size:18px}
+.contact-direct p{font-size:13px;color:var(--text2);font-weight:300;line-height:1.7}
+.contact-btns{display:flex;flex-direction:column;gap:12px}
+.contact-btns .btn{justify-content:center}
+.ci{display:flex;align-items:flex-start;gap:16px;padding:18px 22px;border:1px solid var(--border2);border-radius:var(--r-lg);background:linear-gradient(145deg,var(--card),var(--card2));transition:var(--tr);box-shadow:var(--shadow-card)}
+.ci:hover{border-color:var(--gold);transform:translateX(4px)}
+.ci-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.ci-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.ci-val{font-size:14px;color:var(--text)}
+.contact-form{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-xl);padding:34px;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow-card)}
+.contact-form h3{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:4px}
+.fg{display:flex;flex-direction:column;gap:7px}
+.fg label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.fg input,.fg textarea,.fg select{background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:300;padding:11px 16px;outline:none;transition:var(--tr);resize:none;-webkit-appearance:none}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--gold);background:rgba(212,168,67,.04)}
+.fg select option{background:var(--card2);color:var(--text)}
+
+/* FOOTER */
+footer{background:linear-gradient(90deg,var(--blue-dark),var(--blue-deep));padding:40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid rgba(212,168,67,.18);position:relative;z-index:1}
+.footer-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--text)}
+.footer-logo span{color:var(--gold)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--gold)}
+.footer-copy{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em}
+
+/* TOAST */
+#toast{position:fixed;bottom:100px;right:24px;z-index:30000;background:linear-gradient(135deg,var(--card2),var(--card));border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:var(--r-md);padding:14px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text);box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateX(20px);transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:280px}
+#toast.show{opacity:1;pointer-events:auto;transform:translateX(0)}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}
+.d2{transition-delay:.2s}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  #hero{grid-template-columns:1fr;padding:100px 20px 60px}
+  .hero-right{max-width:100%}
+  section{padding:60px 20px}
+  #about{grid-template-columns:1fr;gap:40px}
+  .exp-grid{grid-template-columns:1fr 1fr}
+  .skills-layout{grid-template-columns:1fr;gap:40px}
+  .pillars{grid-template-columns:repeat(3,1fr)}
+  .proj-grid{grid-template-columns:1fr}
+  .blog-grid{grid-template-columns:1fr 1fr}
+  #contact{grid-template-columns:1fr;gap:40px}
+  footer{justify-content:center;text-align:center;flex-direction:column}
+  .footer-links{justify-content:center}
+  .kpi-strip{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .exp-grid{grid-template-columns:1fr}
+  .blog-grid{grid-template-columns:1fr}
+  .pillars{grid-template-columns:1fr 1fr}
+  .hero-btns{flex-direction:column}
+  .btn{justify-content:center}
+  .fab-group{bottom:16px;right:16px}
+  .admin-hint{display:none}
+  nav{height:60px}
+  .mobile-nav{top:60px}
+  body.admin-bar-visible nav{top:45px}
+  .post-editor-grid{grid-template-columns:1fr!important}
+  .post-meta-col{flex-direction:column!important}
+}
+
+/* ══ ADMIN LOGIN MODAL ══ */
+#admin-login-modal .modal{max-width:400px;gap:18px}
+.login-logo{text-align:center;font-family:'Playfair Display',serif;font-size:26px;font-weight:900}
+.login-logo span{color:var(--gold)}
+
+/* ══ POST EDITOR MODAL ══ */
+#post-editor-modal .modal{width:clamp(320px,96vw,900px);max-height:94vh;overflow-y:auto;gap:18px}
+.post-editor-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+.editor-toolbar{display:flex;gap:6px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);border-radius:var(--r-sm) var(--r-sm) 0 0}
+.tb-btn{background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--text2);width:32px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;transition:var(--tr)}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold)}
+.content-editor{min-height:280px;padding:16px;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--r-sm) var(--r-sm);color:var(--text);font-size:14px;line-height:1.8;outline:none;font-family:'IBM Plex Sans',sans-serif}
+.content-editor:focus{border-color:var(--gold)}
+.content-editor h1,.content-editor h2,.content-editor h3{font-family:'Playfair Display',serif;color:var(--text);margin:12px 0 6px}
+.content-editor blockquote{border-left:3px solid var(--gold);padding:8px 16px;background:rgba(212,168,67,.06);margin:10px 0;border-radius:0 var(--r-sm) var(--r-sm) 0}
+.content-editor code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.post-meta-col{display:flex;flex-direction:column;gap:12px}
+.meta-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;display:flex;flex-direction:column;gap:10px}
+.meta-card-title{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+
+/* Tags input */
+.tags-input{display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);min-height:42px;align-items:center;cursor:text}
+.tags-input input{border:none;background:transparent;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;flex:1;min-width:80px}
+.tag-chip{background:rgba(3,70,148,.35);border:1px solid rgba(3,70,148,.6);color:var(--blue-pale);padding:3px 8px;border-radius:var(--r-full);font-size:10px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:4px;cursor:pointer}
+.tag-chip:hover{border-color:#e55;color:#e99}
+.publish-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+.toggle-switch{width:44px;height:24px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:background .25s}
+.toggle-switch.on{background:var(--blue-mid)}
+.toggle-switch::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .25s}
+.toggle-switch.on::after{transform:translateX(20px)}
+
+/* Attachments */
+.attach-list{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto}
+.attach-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-sm);font-size:11px}
+.attach-icon{font-size:18px;flex-shrink:0}
+.attach-name{flex:1;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attach-size{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)}
+.attach-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;transition:color .2s}
+.attach-del:hover{color:#e55}
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--r-md);padding:20px;text-align:center;cursor:pointer;transition:var(--tr)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);background:rgba(212,168,67,.04)}
+.drop-zone p{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);pointer-events:none}
+
+/* ══ POST READER MODAL ══ */
+#post-reader-modal .modal{width:clamp(320px,92vw,780px);max-height:92vh;overflow-y:auto;gap:0;padding:0}
+.reader-hero{width:100%;height:220px;object-fit:cover;border-radius:var(--r-xl) var(--r-xl) 0 0;display:block}
+.reader-hero-placeholder{width:100%;height:160px;background:linear-gradient(135deg,var(--card),var(--card2));border-radius:var(--r-xl) var(--r-xl) 0 0;display:flex;align-items:center;justify-content:center;font-size:48px}
+.reader-body{padding:32px}
+.reader-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.reader-cat{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue-light)}
+.reader-date{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)}
+.reader-title{font-family:'Playfair Display',serif;font-size:clamp(22px,4vw,34px);font-weight:900;line-height:1.15;margin-bottom:16px}
+.reader-content{font-size:15px;line-height:1.9;color:var(--text2);font-weight:300}
+.reader-content h1,.reader-content h2,.reader-content h3{font-family:'Playfair Display',serif;color:var(--text);margin:22px 0 10px}
+.reader-content blockquote{border-left:3px solid var(--gold);padding:10px 20px;background:rgba(212,168,67,.06);margin:16px 0;border-radius:0 var(--r-sm) var(--r-sm) 0;color:var(--text)}
+.reader-content code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.reader-content a{color:var(--blue-light);text-decoration:underline}
+.reader-attachments{margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+.reader-attach-title{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.reader-attach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.reader-attach-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-md);padding:14px;text-decoration:none;color:inherit;transition:var(--tr);display:flex;align-items:center;gap:10px}
+.reader-attach-card:hover{border-color:var(--gold);background:rgba(212,168,67,.05);transform:translateY(-2px)}
+.reader-attach-card .attach-icon{font-size:22px}
+.reader-close-btn{position:sticky;bottom:0;background:linear-gradient(0deg,var(--card),transparent);padding:16px 32px;text-align:center}
+
+/* ══ MEDIA LIBRARY MODAL ══ */
+#media-library-modal .modal{width:clamp(320px,92vw,820px);max-height:90vh;overflow-y:auto;gap:16px}
+.lib-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.lib-filter{display:flex;gap:6px;flex-wrap:wrap}
+.lib-filter-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border:1px solid var(--border2);color:var(--muted);border-radius:var(--r-full);cursor:pointer;background:none;transition:var(--tr)}
+.lib-filter-btn.active,.lib-filter-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.06)}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.lib-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;transition:var(--tr);cursor:pointer}
+.lib-item:hover{border-color:var(--gold);transform:translateY(-2px)}
+.lib-thumb{width:100%;height:100px;object-fit:cover;display:block;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:32px}
+.lib-info{padding:10px}
+.lib-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:4px}
+.lib-size{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted)}
+.lib-actions{display:flex;gap:6px;margin-top:6px}
+.lib-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;border-radius:var(--r-full);border:1px solid var(--border2);color:var(--muted);background:none;cursor:pointer;transition:var(--tr);text-decoration:none;display:inline-block}
+.lib-btn:hover{border-color:var(--gold);color:var(--gold)}
+.lib-btn.del:hover{border-color:#e55;color:#e55}
+
+/* ══ BLOG SECTION (dynamic) ══ */
+.blog-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-xl);overflow:hidden;text-decoration:none;color:inherit;transition:var(--tr);display:block;cursor:pointer}
+.blog-card:hover{transform:translateY(-4px);border-color:rgba(3,70,148,.7);box-shadow:0 12px 40px rgba(3,70,148,.25)}
+.blog-card-img{width:100%;height:160px;object-fit:cover;display:block;background:linear-gradient(135deg,var(--blue-deep),var(--card))}
+.blog-card-img-placeholder{width:100%;height:160px;background:linear-gradient(135deg,var(--card),var(--card2));display:flex;align-items:center;justify-content:center;font-size:36px}
+.blog-card-body{padding:22px}
+.blog-cat{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue-light);margin-bottom:8px}
+.blog-ttl{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;line-height:1.3;margin-bottom:10px;color:var(--text)}
+.blog-exc{font-size:13px;line-height:1.75;color:var(--text2);font-weight:300;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.blog-meta{display:flex;align-items:center;justify-content:space-between}
+.blog-lnk{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--gold);text-transform:uppercase}
+.blog-date{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)}
+.blog-admin-actions{display:none;gap:6px;margin-top:10px}
+body.admin-mode .blog-admin-actions{display:flex}
+.blog-action-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 10px;border-radius:var(--r-full);border:1px solid var(--border2);color:var(--muted);background:none;cursor:pointer;transition:var(--tr)}
+.blog-action-btn:hover{border-color:var(--gold);color:var(--gold)}
+.blog-action-btn.del:hover{border-color:#e55;color:#e55}
+.blog-draft-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:var(--r-full);background:rgba(255,180,0,.15);border:1px solid rgba(255,180,0,.3);color:#ffd;margin-left:auto}
+.blog-loading{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.blog-skel{height:320px;background:linear-gradient(145deg,var(--card),var(--card2));border-radius:var(--r-xl);border:1px solid var(--border);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}
+.blog-empty{text-align:center;padding:60px 20px;grid-column:1/-1}
+.blog-empty-icon{font-size:48px;opacity:.3;margin-bottom:16px}
+.blog-empty-text{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)}
+.blog-load-more{display:flex;justify-content:center;margin-top:32px}
+
+/* ══ UPLOAD PROGRESS ══ */
+.upload-progress{background:rgba(255,255,255,.04);border-radius:var(--r-sm);overflow:hidden;height:6px;margin-top:4px}
+.upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-light));border-radius:var(--r-full);transition:width .3s;width:0%}
+.upload-status{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- ADMIN BAR -->
+<div id="admin-bar">
+  <span class="admin-badge">⚙ Admin</span>
+  <span id="admin-email-badge" style="font-size:10px;color:var(--gold);opacity:.7"></span>
+  <button class="abtn" onclick="openPostEditor(null)">✏️ New Post</button>
+  <button class="abtn" onclick="openMediaLibrary()">📂 Media Library</button>
+  <button class="abtn save" onclick="saveContent()">💾 Save Site</button>
+  <button class="abtn" onclick="resetContent()">↺ Reset</button>
+  <button class="abtn" onclick="adminLogout()" style="margin-left:auto;border-color:#e55;color:#e55">🚪 Logout</button>
+</div>
+
+<!-- FLOATING BUTTONS -->
+<div class="fab-group">
+  <div class="fab-wrap">
+    <span class="fab-tip" id="fab-admin-tip">Admin Login</span>
+    <button class="fab fab-admin" id="fab-admin" onclick="toggleAdmin()" title="Admin Mode">⚙</button>
+  </div>
+  <div class="fab-wrap">
+    <span class="fab-tip">Chat on WhatsApp</span>
+    <button class="fab fab-wa" onclick="openWhatsApp()" title="WhatsApp">💬</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══ ADMIN LOGIN MODAL ══ -->
+<div class="modal-overlay" id="admin-login-modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('admin-login-modal')">✕</button>
+    <div class="login-logo">Evans<span>.</span><br><small style="font-size:14px;font-family:'IBM Plex Mono',monospace;color:var(--muted);font-style:normal">Admin Portal</small></div>
+    <div>
+      <div class="modal-label">Email</div>
+      <input class="modal-input" type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div>
+      <div class="modal-label">Password</div>
+      <input class="modal-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <div id="login-error" style="color:#e55;font-family:'IBM Plex Mono',monospace;font-size:11px;display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doAdminLogin()" id="login-btn" style="flex:1;justify-content:center">🔐 Login</button>
+    </div>
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-align:center">
+      Create your admin account in Supabase Dashboard → Auth → Users
+    </p>
+  </div>
+</div>
+
+<!-- ══ POST EDITOR MODAL ══ -->
+<div class="modal-overlay" id="post-editor-modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('post-editor-modal')">✕</button>
+    <div class="modal-title" id="editor-modal-title">✏️ New Post</div>
+
+    <div class="post-editor-grid">
+      <!-- LEFT: Content -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div class="modal-label">Post Title *</div>
+          <input class="modal-input" type="text" id="post-title" placeholder="Enter a compelling title...">
+        </div>
+        <div>
+          <div class="modal-label">Excerpt / Summary</div>
+          <textarea class="modal-input" id="post-excerpt" rows="2" placeholder="A brief summary shown on the blog grid..." style="resize:vertical"></textarea>
+        </div>
+        <div>
+          <div class="modal-label">Content</div>
+          <div class="editor-toolbar">
+            <button class="tb-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
+            <button class="tb-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
+            <button class="tb-btn" onclick="fmt('underline')" title="Underline"><u>U</u></button>
+            <button class="tb-btn" onclick="fmtBlock('h2')" title="Heading">H2</button>
+            <button class="tb-btn" onclick="fmtBlock('h3')" title="Sub-heading">H3</button>
+            <button class="tb-btn" onclick="fmtBlock('blockquote')" title="Quote">❝</button>
+            <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="List">•</button>
+            <button class="tb-btn" onclick="fmt('insertOrderedList')" title="Numbered">1.</button>
+            <button class="tb-btn" onclick="fmtLink()" title="Link">🔗</button>
+            <button class="tb-btn" onclick="fmt('removeFormat')" title="Clear">✕</button>
+          </div>
+          <div class="content-editor" id="post-content" contenteditable="true"
+            data-placeholder="Write your post content here. Use the toolbar above for formatting..."></div>
+        </div>
+
+        <!-- File Attachments -->
+        <div>
+          <div class="modal-label" style="margin-bottom:8px">Attachments (any file type)</div>
+          <div class="drop-zone" id="attach-drop" onclick="document.getElementById('attach-file-input').click()">
+            <div style="font-size:28px;margin-bottom:6px">📎</div>
+            <p>Drop files here or click to browse</p>
+            <p style="font-size:9px;margin-top:4px">PDF, DOCX, XLSX, images, videos, ZIP — any format</p>
+          </div>
+          <input type="file" id="attach-file-input" multiple style="display:none" onchange="handleAttachFiles(event)">
+          <div id="attach-progress" style="display:none;margin-top:8px">
+            <div class="upload-progress"><div class="upload-progress-bar" id="attach-prog-bar"></div></div>
+            <div class="upload-status" id="attach-prog-text">Uploading...</div>
+          </div>
+          <div class="attach-list" id="attach-list" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Meta -->
+      <div class="post-meta-col">
+        <!-- Publish status -->
+        <div class="meta-card">
+          <div class="meta-card-title">Status</div>
+          <div class="publish-toggle">
+            <span style="font-size:13px;color:var(--text2)" id="publish-status-label">Draft</span>
+            <div class="toggle-switch" id="publish-toggle" onclick="togglePublish()"></div>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)" id="publish-hint">
+            Post is hidden from public
+          </div>
+        </div>
+
+        <!-- Cover image -->
+        <div class="meta-card">
+          <div class="meta-card-title">Cover Image</div>
+          <div class="modal-drop" id="cover-drop" onclick="document.getElementById('cover-file-input').click()" style="padding:16px">
+            <img id="cover-preview" style="display:none;width:100%;height:100px;object-fit:cover;border-radius:8px;margin-bottom:8px">
+            <div id="cover-drop-label">🖼 Click to upload cover image</div>
+            <div style="font-size:9px;color:var(--muted);margin-top:4px">JPG, PNG, WebP</div>
+          </div>
+          <input type="file" id="cover-file-input" accept="image/*" style="display:none" onchange="handleCoverUpload(event)">
+          <input class="modal-input" type="text" id="cover-url-input" placeholder="Or paste image URL..." style="margin-top:8px;font-size:11px"
+            oninput="setCoverFromUrl(this.value)">
+        </div>
+
+        <!-- Category & Tags -->
+        <div class="meta-card">
+          <div class="meta-card-title">Category</div>
+          <select class="modal-input" id="post-category" style="font-size:12px">
+            <option value="General">General</option>
+            <option value="Accounting">Accounting</option>
+            <option value="Finance">Finance</option>
+            <option value="Technology">Technology</option>
+            <option value="Business">Business</option>
+            <option value="Data Analytics">Data Analytics</option>
+            <option value="Agribusiness">Agribusiness</option>
+            <option value="Personal">Personal</option>
+          </select>
+          <div class="meta-card-title" style="margin-top:10px">Tags</div>
+          <div class="tags-input" id="tags-input" onclick="this.querySelector('input').focus()">
+            <input type="text" id="tag-input-field" placeholder="Add tag + Enter"
+              onkeydown="handleTagInput(event)" style="width:100px">
+          </div>
+        </div>
+      </div>
+    </div><!-- end grid -->
+
+    <div class="modal-actions" style="gap:10px">
+      <button class="abtn" onclick="closeModal('post-editor-modal')" style="padding:10px 20px">Cancel</button>
+      <button class="btn btn-primary" onclick="savePost(false)" style="gap:6px">💾 Save Draft</button>
+      <button class="btn btn-secondary" onclick="savePost(true)" style="gap:6px">🚀 Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ POST READER MODAL ══ -->
+<div class="modal-overlay" id="post-reader-modal">
+  <div class="modal" style="padding:0">
+    <button class="modal-x" onclick="closeModal('post-reader-modal')" style="z-index:10;background:rgba(2,13,31,.7);backdrop-filter:blur(6px);border-radius:50%;width:36px;height:36px;top:14px;right:14px;border:1px solid var(--border2)">✕</button>
+    <div id="reader-hero-wrap"></div>
+    <div class="reader-body">
+      <div class="reader-meta">
+        <span class="reader-cat" id="reader-cat"></span>
+        <span class="reader-date" id="reader-date"></span>
+        <span class="blog-draft-badge" id="reader-draft-badge" style="display:none">Draft</span>
+      </div>
+      <h1 class="reader-title" id="reader-title"></h1>
+      <div class="reader-content" id="reader-content"></div>
+      <div class="reader-attachments" id="reader-attachments" style="display:none">
+        <div class="reader-attach-title">📎 Attachments</div>
+        <div class="reader-attach-grid" id="reader-attach-grid"></div>
+      </div>
+    </div>
+    <div class="reader-close-btn">
+      <button class="abtn" onclick="closeModal('post-reader-modal')" style="padding:8px 24px">← Back to Blog</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MEDIA LIBRARY MODAL ══ -->
+<div class="modal-overlay" id="media-library-modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('media-library-modal')">✕</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div class="modal-title">📂 Media Library</div>
+      <button class="btn btn-primary" onclick="document.getElementById('lib-upload-input').click()" style="padding:9px 18px;font-size:10px">+ Upload File</button>
+      <input type="file" id="lib-upload-input" multiple style="display:none" onchange="handleLibUpload(event)">
+    </div>
+    <div id="lib-upload-progress" style="display:none">
+      <div class="upload-progress"><div class="upload-progress-bar" id="lib-prog-bar"></div></div>
+      <div class="upload-status" id="lib-prog-text">Uploading...</div>
+    </div>
+    <div class="lib-toolbar">
+      <div class="lib-filter">
+        <button class="lib-filter-btn active" onclick="filterLib(this,'all')">All</button>
+        <button class="lib-filter-btn" onclick="filterLib(this,'image')">🖼 Images</button>
+        <button class="lib-filter-btn" onclick="filterLib(this,'video')">🎥 Videos</button>
+        <button class="lib-filter-btn" onclick="filterLib(this,'pdf')">📄 PDFs</button>
+        <button class="lib-filter-btn" onclick="filterLib(this,'doc')">📝 Docs</button>
+        <button class="lib-filter-btn" onclick="filterLib(this,'other')">📦 Other</button>
+      </div>
+    </div>
+    <div id="lib-loading" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:30px">Loading files...</div>
+    <div class="lib-grid" id="lib-grid" style="display:none"></div>
+    <div id="lib-empty" style="display:none;text-align:center;padding:40px">
+      <div style="font-size:36px;opacity:.3;margin-bottom:10px">📂</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No files uploaded yet</div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="photo-modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closePhotoModal()">✕</button>
+    <div class="modal-title">📷 Update Photo</div>
+    <div>
+      <div class="modal-label">Paste Image URL</div>
+      <input class="modal-input" type="text" id="photo-url" placeholder="https://your-photo.com/image.jpg">
+    </div>
+    <div class="modal-drop" onclick="document.getElementById('photo-file').click()">
+      📁 &nbsp;Or upload from your device
+      <input type="file" id="photo-file" accept="image/*" style="display:none" onchange="handleFile(event)">
+    </div>
+    <div class="modal-actions">
+      <button class="abtn" onclick="closePhotoModal()">Cancel</button>
+      <button class="abtn save" onclick="applyPhoto()">✓ Apply Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-badge">EO</div>Evans Onyango
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#expertise">Expertise</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#blog">Insights</a></li>
+    <li><a href="#contact" class="nav-cta">Contact Me</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="#about" onclick="closeMobileNav()">About</a>
+  <a href="#expertise" onclick="closeMobileNav()">Expertise</a>
+  <a href="#projects" onclick="closeMobileNav()">Projects</a>
+  <a href="#skills" onclick="closeMobileNav()">Skills</a>
+  <a href="#blog" onclick="closeMobileNav()">Insights</a>
+  <a href="#contact" onclick="closeMobileNav()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="rv">
+      <div class="hero-eyebrow" data-ed="hero-eyebrow">Accounting &amp; Financial Systems Strategist</div>
+      <h1 class="hero-name">
+        <span data-ed="hero-fn">Evans</span>
+        <span data-ed="hero-ln">Onyango</span>
+      </h1>
+      <div class="hero-sub" data-ed="hero-sub">B.Com Accounting · Maseno University · Kenya</div>
+      <p class="hero-desc" data-ed="hero-desc">Designing structured accounting systems, scalable service platforms, and financial frameworks that create lasting value for businesses across Africa. Numbers meet strategy.</p>
+      <div class="hero-btns">
+        <a href="#expertise" class="btn btn-primary">Explore My Work →</a>
+        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+      </div>
+    </div>
+    <div class="kpi-strip rv d2">
+      <div class="kpi"><div class="kpi-v" data-ed="k1v">6+</div><div class="kpi-l" data-ed="k1l">Platforms Designed</div></div>
+      <div class="kpi"><div class="kpi-v" data-ed="k2v">14+</div><div class="kpi-l" data-ed="k2l">Financial Models</div></div>
+      <div class="kpi"><div class="kpi-v" data-ed="k3v">8+</div><div class="kpi-l" data-ed="k3l">Systems Built</div></div>
+      <div class="kpi"><div class="kpi-v" data-ed="k4v">3+</div><div class="kpi-l" data-ed="k4l">Ventures Structured</div></div>
+    </div>
+  </div>
+  <div class="hero-right rv d1">
+    <div class="hero-photo-wrap">
+      <div class="ph hero-photo" data-pid="hero" onclick="openPhotoModal('hero')">
+        <img id="img-hero" alt="Evans Onyango">
+        <span class="ph-icon">👤</span>
+        <span class="ph-lbl">Your Photo Here</span>
+        <button class="ph-btn">+ Upload Photo</button>
+      </div>
+    </div>
+    <p class="hero-cap" data-ed="hero-cap">Maseno University · Accounting &amp; Finance · Kenya</p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-photo-wrap rv">
+    <div class="ph about-photo" data-pid="about" onclick="openPhotoModal('about')">
+      <img id="img-about" alt="About Evans">
+      <span class="ph-icon">📸</span><span class="ph-lbl">About Photo</span>
+      <button class="ph-btn">+ Upload</button>
+    </div>
+  </div>
+  <div class="about-content rv d1">
+    <div class="eyebrow">About Me</div>
+    <h2 class="sec-title" data-ed="about-title">The Mind Behind<br>the Models</h2>
+    <p class="about-quote" data-ed="about-quote">I don't just study accounting — I build systems that make accounting work for real businesses.</p>
+    <p class="about-body" data-ed="about-body">As an Accounting student at Maseno University, I combine rigorous financial training with practical systems thinking to design tools that solve real problems. My focus spans SME accounting system design, digital service marketplace architecture, and strategic capital management — all grounded in disciplined economic thinking and long-term value creation across African markets.</p>
+    <div class="about-table">
+      <div class="arow"><div class="ak">Name</div><div class="av" data-ed="dt-name">Evans Onyango</div></div>
+      <div class="arow"><div class="ak">Institution</div><div class="av" data-ed="dt-school">Maseno University</div></div>
+      <div class="arow"><div class="ak">Programme</div><div class="av" data-ed="dt-prog">Bachelor of Commerce — Accounting</div></div>
+      <div class="arow"><div class="ak">Location</div><div class="av" data-ed="dt-loc">Kenya</div></div>
+      <div class="arow"><div class="ak">Email</div><div class="av" data-ed="dt-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0a656473637c6b3b3d3d4a6d676b636624696567">[email&#160;protected]</a></div></div>
+      <div class="arow"><div class="ak">Phone</div><div class="av" data-ed="dt-phone">0110696552</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERTISE -->
+<section id="expertise">
+  <div class="rv" style="margin-bottom:48px">
+    <div class="eyebrow">Core Expertise</div>
+    <h2 class="sec-title" data-ed="exp-title">Where Accounting<br>Meets Strategy</h2>
+  </div>
+  <div class="exp-grid rv">
+    <div class="exp-card"><div class="exp-n">01 / 06</div><div class="exp-icon">📊</div><div class="exp-name" data-ed="e1n">Accounting System Design</div><p class="exp-desc" data-ed="e1d">Building simplified SME accounting systems with structured ledger logic, accrual integration, digital bookkeeping workflows, and financial reporting automation tailored to emerging markets.</p><div class="tags"><span class="tag">Ledger Logic</span><span class="tag">Accrual</span><span class="tag">Automation</span></div></div>
+    <div class="exp-card"><div class="exp-n">02 / 06</div><div class="exp-icon">💰</div><div class="exp-name" data-ed="e2n">Financial Modelling</div><p class="exp-desc" data-ed="e2d">Designing cash flow tracking models, revenue recognition frameworks, internal control structures, and asset-liability analysis for businesses at different stages of growth.</p><div class="tags"><span class="tag">Cash Flow</span><span class="tag">Forecasting</span><span class="tag">Valuation</span></div></div>
+    <div class="exp-card"><div class="exp-n">03 / 06</div><div class="exp-icon">🔷</div><div class="exp-name" data-ed="e3n">Service Platform Architecture</div><p class="exp-desc" data-ed="e3d">Designing digital service marketplaces with trust verification layers, transparent pricing structures, commission-based monetisation, and mobile-first UX for African markets.</p><div class="tags"><span class="tag">Marketplace</span><span class="tag">Mobile-First</span><span class="tag">Trust Layer</span></div></div>
+    <div class="exp-card"><div class="exp-n">04 / 06</div><div class="exp-icon">🛡️</div><div class="exp-name" data-ed="e4n">Capital &amp; Risk Management</div><p class="exp-desc" data-ed="e4d">Capital preservation over speculation. Structured investment thinking grounded in risk-adjusted return analysis, long-term compounding strategy, and disciplined portfolio construction.</p><div class="tags"><span class="tag">Risk Analysis</span><span class="tag">Compounding</span><span class="tag">Portfolio</span></div></div>
+    <div class="exp-card"><div class="exp-n">05 / 06</div><div class="exp-icon">🌱</div><div class="exp-name" data-ed="e5n">Agribusiness &amp; Asset Growth</div><p class="exp-desc" data-ed="e5d">Structured agribusiness models in Siaya with low-capital entry systems, profit optimisation strategies, and long-term land and property acquisition frameworks.</p><div class="tags"><span class="tag">Siaya</span><span class="tag">Land</span><span class="tag">Low Capital</span></div></div>
+    <div class="exp-card"><div class="exp-n">06 / 06</div><div class="exp-icon">⚙️</div><div class="exp-name" data-ed="e6n">Business Process Automation</div><p class="exp-desc" data-ed="e6d">Identifying inefficiencies through process mapping and designing digital automation frameworks that reduce overhead and improve financial visibility for SMEs.</p><div class="tags"><span class="tag">Process Design</span><span class="tag">Efficiency</span><span class="tag">Digital Tools</span></div></div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="skills-layout">
+    <div class="rv">
+      <div class="eyebrow">Technical Skills</div>
+      <h2 class="sec-title" data-ed="skills-title">Skills &amp;<br>Proficiency</h2>
+      <div id="skill-bars">
+        <div class="skill-row"><div class="skill-hdr"><span class="skill-nm" data-ed="sk1">Financial Accounting</span><span class="skill-pct">92%</span></div><div class="skill-track"><div class="skill-fill" style="width:92%"></div></div></div>
+        <div class="skill-row"><div class="skill-hdr"><span class="skill-nm" data-ed="sk2">Business Finance &amp; Analysis</span><span class="skill-pct">88%</span></div><div class="skill-track"><div class="skill-fill" style="width:88%"></div></div></div>
+        <div class="skill-row"><div class="skill-hdr"><span class="skill-nm" data-ed="sk3">Systems Design &amp; Modelling</span><span class="skill-pct">84%</span></div><div class="skill-track"><div class="skill-fill" style="width:84%"></div></div></div>
+        <div class="skill-row"><div class="skill-hdr"><span class="skill-nm" data-ed="sk4">Excel &amp; Financial Tools</span><span class="skill-pct">90%</span></div><div class="skill-track"><div class="skill-fill" style="width:90%"></div></div></div>
+        <div class="skill-row"><div class="skill-hdr"><span class="skill-nm" data-ed="sk5">Strategic Business Planning</span><span class="skill-pct">80%</span></div><div class="skill-track"><div class="skill-fill" style="width:80%"></div></div></div>
+        <div class="skill-row"><div class="skill-hdr"><span class="skill-nm" data-ed="sk6">Taxation &amp; Compliance (KRA)</span><span class="skill-pct">75%</span></div><div class="skill-track"><div class="skill-fill" style="width:75%"></div></div></div>
+      </div>
+    </div>
+    <div class="rv d1">
+      <div class="ph skills-photo" data-pid="skills" onclick="openPhotoModal('skills')">
+        <img id="img-skills" alt="Skills">
+        <span class="ph-icon">📐</span><span class="ph-lbl">Work / Skills Photo</span>
+        <button class="ph-btn">+ Upload</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+  <div class="rv" style="margin-bottom:60px">
+    <div class="eyebrow" style="justify-content:center">Core Philosophy</div>
+    <div class="big-stmt" data-ed="phil-main">Execution<br>Over Excitement.</div>
+    <p class="big-sub" data-ed="phil-sub">Systems before scale · Data before decisions · Service before profit</p>
+  </div>
+  <div class="pillars rv d1">
+    <div class="pillar"><div class="pillar-n">01</div><div class="pillar-t" data-ed="p1t">Systems Thinking</div><p class="pillar-d" data-ed="p1d">Build the infrastructure first. Every process is a system that can be optimised.</p></div>
+    <div class="pillar"><div class="pillar-n">02</div><div class="pillar-t" data-ed="p2t">Discipline First</div><p class="pillar-d" data-ed="p2d">Prove the model small before committing capital at scale.</p></div>
+    <div class="pillar"><div class="pillar-n">03</div><div class="pillar-t" data-ed="p3t">Data Before Decisions</div><p class="pillar-d" data-ed="p3d">No move without metrics. Intuition validated by data, not replaced by it.</p></div>
+    <div class="pillar"><div class="pillar-n">04</div><div class="pillar-t" data-ed="p4t">Service Before Profit</div><p class="pillar-d" data-ed="p4d">Genuine value creation precedes monetisation. Solve real problems first.</p></div>
+    <div class="pillar"><div class="pillar-n">05</div><div class="pillar-t" data-ed="p5t">Long-Term Architecture</div><p class="pillar-d" data-ed="p5d">Wealth is built in decades. Structure assets for compounding, not quick returns.</p></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="rv" style="margin-bottom:48px">
+    <div class="eyebrow">Featured Work</div>
+    <h2 class="sec-title" data-ed="proj-title">Strategic<br>Projects &amp; Models</h2>
+  </div>
+  <div class="proj-grid rv">
+    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 01</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr1t">Service Platform Design</div><div class="proj-name" data-ed="pr1n">African Service Marketplace MVP</div><p class="proj-desc" data-ed="pr1d">End-to-end architecture for a digital service marketplace connecting vetted providers with clients across Kenya. Includes trust scoring, commission model, and mobile-first onboarding.</p><div class="tags"><span class="tag">Marketplace</span><span class="tag">Trust Layer</span><span class="tag">Kenya</span></div></div>
+    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 02</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr2t">Accounting System</div><div class="proj-name" data-ed="pr2n">SME Accounting Framework</div><p class="proj-desc" data-ed="pr2d">Simplified accrual-based accounting system for Kenyan SMEs. Covers ledger structure, cash flow templates, internal controls checklist, and monthly reporting workflow.</p><div class="tags"><span class="tag">SME</span><span class="tag">Accrual</span><span class="tag">Reporting</span></div></div>
+    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 03</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr3t">Financial Strategy</div><div class="proj-name" data-ed="pr3n">Capital Protection Playbook</div><p class="proj-desc" data-ed="pr3d">Structured framework for young Kenyan professionals to allocate, protect, and grow capital through disciplined risk management, diversification logic, and long-term compounding.</p><div class="tags"><span class="tag">Capital</span><span class="tag">Risk</span><span class="tag">Compounding</span></div></div>
+    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 04</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr4t">Agribusiness</div><div class="proj-name" data-ed="pr4n">Siaya Agri-Enterprise Model</div><p class="proj-desc" data-ed="pr4d">Low-capital agribusiness entry model for Siaya County. Covers crop selection, seasonal cash flow projections, cost-benefit analysis, and phased land acquisition strategy.</p><div class="tags"><span class="tag">Siaya</span><span class="tag">Agriculture</span><span class="tag">Finance</span></div></div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="rv" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:48px">
+    <div>
+      <div class="eyebrow">Thought Leadership</div>
+      <h2 class="sec-title" data-ed="blog-title" style="margin-bottom:0">Insights &amp;<br>Perspectives</h2>
+    </div>
+    <div id="blog-admin-btns" style="display:none;align-items:center;gap:10px;padding-top:8px">
+      <button class="btn btn-primary" onclick="openPostEditor(null)" style="padding:10px 20px;font-size:10px">✏️ New Post</button>
+      <label style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);cursor:pointer">
+        <input type="checkbox" id="show-drafts-toggle" onchange="loadBlogPosts()" style="accent-color:var(--gold)"> Show Drafts
+      </label>
+    </div>
+  </div>
+
+  <!-- Loading skeletons -->
+  <div class="blog-loading" id="blog-loading">
+    <div class="blog-skel"></div>
+    <div class="blog-skel"></div>
+    <div class="blog-skel"></div>
+  </div>
+
+  <!-- Live posts grid -->
+  <div class="blog-grid rv" id="blog-grid" style="display:none"></div>
+
+  <!-- Empty state -->
+  <div id="blog-empty" style="display:none" class="rv">
+    <div class="blog-empty">
+      <div class="blog-empty-icon">✍️</div>
+      <div class="blog-empty-text">No published posts yet.<br>
+        <span id="blog-empty-admin" style="display:none">Click "New Post" to write your first article.</span>
+        <span id="blog-empty-public">Check back soon for new articles.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load more -->
+  <div class="blog-load-more" id="blog-load-more" style="display:none">
+    <button class="btn btn-secondary" onclick="loadMorePosts()">Load More Posts</button>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left rv">
+    <div class="eyebrow">Get In Touch</div>
+    <h2 class="sec-title" data-ed="con-title">Let's Build<br>Something Real</h2>
+    <div class="contact-direct">
+      <h3>Reach Out Directly</h3>
+      <p data-ed="con-direct-desc">Prefer a quick conversation? Connect instantly via WhatsApp or email.</p>
+      <div class="contact-btns">
+        <a id="wa-btn" href="#" class="btn btn-green" onclick="openWhatsApp(); return false;">💬 Chat on WhatsApp</a>
+        <a id="email-btn" href="/cdn-cgi/l/email-protection#5d323324342b3c6c6a6a1d3a303c3431733e3230" class="btn btn-email">✉️ Send Direct Email</a>
+      </div>
+    </div>
+    <div class="ci"><div class="ci-icon">✉️</div><div><div class="ci-lbl">Email</div><div class="ci-val" data-ed="con-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7b141502120d1a4a4c4c3b1c161a121755181416">[email&#160;protected]</a></div></div></div>
+    <div class="ci"><div class="ci-icon">📱</div><div><div class="ci-lbl">WhatsApp / Phone</div><div class="ci-val" data-ed="con-phone">+254 110 696 552</div></div></div>
+    <div class="ci"><div class="ci-icon">📍</div><div><div class="ci-lbl">Location</div><div class="ci-val" data-ed="con-loc">Kenya</div></div></div>
+  </div>
+  <div class="contact-form rv d1">
+    <h3>Send a Message</h3>
+    <p style="font-size:13px;color:var(--text2);font-weight:300;margin-bottom:6px" data-ed="con-form-desc">Fill in the form and I'll get back to you within 24 hours.</p>
+    <div class="fg"><label>Your Name *</label><input type="text" id="cf-name" placeholder="John Doe"></div>
+    <div class="fg"><label>Email Address *</label><input type="email" id="cf-email" placeholder="john@example.com"></div>
+    <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="cf-phone" placeholder="+254 700 000 000"></div>
+    <div class="fg">
+      <label>Subject</label>
+      <select id="cf-subject">
+        <option value="">Select a topic...</option>
+        <option>Accounting System Design</option>
+        <option>Financial Modelling</option>
+        <option>Service Platform Development</option>
+        <option>Business Strategy</option>
+        <option>Agribusiness</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="fg"><label>Message *</label><textarea id="cf-msg" rows="5" placeholder="Tell me about your project or idea..."></textarea></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="submitForm()" style="flex:1;justify-content:center">Send via Email →</button>
+      <button class="btn btn-green" onclick="submitViaWhatsApp()" style="flex:1;justify-content:center">Send via WhatsApp 💬</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Evans<span>.</span></div>
+  <div class="footer-links">
+    <a href="#about">About</a><a href="#expertise">Work</a><a href="#blog">Insights</a><a href="#contact">Contact</a>
+  </div>
+  <div class="footer-copy" data-ed="footer-copy">© 2026 Evans Onyango · Kenya · All Rights Reserved</div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// EVANS ONYANGO PORTFOLIO — FULL SUPABASE-POWERED BLOG & ADMIN SYSTEM
+// ══════════════════════════════════════════════════════════════════════
+
+// CONFIG — update contact details here (or via admin inline edit)
+const CONFIG = {
+  whatsapp: '254110696552',
+  email:    'onyiva177@gmail.com'
+};
+
+// ── SUPABASE INIT ──
+let sb = null;
+try {
+  const { createClient } = window.supabase;
+  sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON);
+} catch(e) {
+  console.warn('Supabase not configured yet — fill in SUPABASE_URL and SUPABASE_ANON at the top of this file.');
+}
+
+// ── AUTH STATE ──
+let currentUser  = null;
+let isAdmin      = false;
+let editingPostId = null;
+let postTags     = [];
+let pendingFiles = [];  // files staged for upload with a post
+let coverUploadUrl = null;
+let blogPage     = 0;
+const BLOG_PAGE_SIZE = 6;
+let allBlogPosts = [];
+let libFiles     = [];
+let libFilter    = 'all';
+
+if (sb) {
+  sb.auth.onAuthStateChange((event, session) => {
+    currentUser = session ? session.user : null;
+    if (currentUser) {
+      isAdmin = true;
+      enterAdmin();
+    } else {
+      isAdmin = false;
+      exitAdmin();
+    }
+  });
+  // Re-check session on load
+  sb.auth.getSession().then(({ data }) => {
+    currentUser = data.session ? data.session.user : null;
+    if (currentUser) { isAdmin = true; enterAdmin(); }
+  });
+}
+
+// ── SCROLL REVEAL ──
+const ro = new IntersectionObserver(
+  e => e.forEach(x => { if (x.isIntersecting) x.target.classList.add('in'); }),
+  { threshold: 0.08 }
+);
+document.querySelectorAll('.rv').forEach(el => ro.observe(el));
+
+// ── SKILL BARS ──
+const so = new IntersectionObserver(
+  e => e.forEach(x => { if (x.isIntersecting) x.target.querySelectorAll('.skill-fill').forEach(b => b.classList.add('animate')); }),
+  { threshold: 0.3 }
+);
+const sbEl = document.getElementById('skill-bars');
+if (sbEl) so.observe(sbEl);
+
+
+// ════════════════════════════════════════════════════════
+//  ADMIN AUTH
+// ════════════════════════════════════════════════════════
+
+function toggleAdmin() {
+  if (isAdmin) {
+    exitAdmin();
+  } else {
+    openModal('admin-login-modal');
+    setTimeout(() => document.getElementById('login-email').focus(), 300);
+  }
+}
+
+async function doAdminLogin() {
+  if (!sb) { toast('⚠️ Configure Supabase credentials first'); return; }
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-error');
+  const btn      = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  btn.textContent = '⏳ Logging in...';
+  btn.disabled = true;
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  btn.textContent = '🔐 Login';
+  btn.disabled = false;
+  if (error) {
+    errEl.textContent = error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  closeModal('admin-login-modal');
+  document.getElementById('login-password').value = '';
+  toast('✅ Logged in as admin');
+}
+
+async function adminLogout() {
+  if (!sb) return;
+  await sb.auth.signOut();
+  toast('👁 Logged out — Public view active');
+}
+
+function enterAdmin() {
+  document.body.classList.add('admin-mode', 'admin-bar-visible');
+  document.getElementById('admin-bar').classList.add('visible');
+  document.getElementById('fab-admin').textContent = '✕';
+  document.getElementById('fab-admin-tip').textContent = 'Exit Admin';
+  const badge = document.getElementById('admin-email-badge');
+  if (badge && currentUser) badge.textContent = currentUser.email;
+  document.querySelectorAll('[data-ed]').forEach(el => {
+    el.contentEditable = 'true';
+    el.spellcheck = false;
+  });
+  const adminBtns = document.getElementById('blog-admin-btns');
+  if (adminBtns) adminBtns.style.display = 'flex';
+  const emptyAdmin = document.getElementById('blog-empty-admin');
+  if (emptyAdmin) emptyAdmin.style.display = 'inline';
+  const emptyPublic = document.getElementById('blog-empty-public');
+  if (emptyPublic) emptyPublic.style.display = 'none';
+  loadBlogPosts();
+  toast('✏️ Admin Mode — click text to edit · New Post → blog · Media Library → files');
+}
+
+function exitAdmin() {
+  document.body.classList.remove('admin-mode', 'admin-bar-visible');
+  document.getElementById('admin-bar').classList.remove('visible');
+  document.getElementById('fab-admin').textContent = '⚙';
+  document.getElementById('fab-admin-tip').textContent = 'Admin Login';
+  document.querySelectorAll('[data-ed]').forEach(el => {
+    el.contentEditable = 'false';
+  });
+  const adminBtns = document.getElementById('blog-admin-btns');
+  if (adminBtns) adminBtns.style.display = 'none';
+  loadBlogPosts();
+}
+
+
+// ════════════════════════════════════════════════════════
+//  BLOG — LOAD & RENDER
+// ════════════════════════════════════════════════════════
+
+async function loadBlogPosts() {
+  if (!sb) { renderBlogFallback(); return; }
+  const grid    = document.getElementById('blog-grid');
+  const loading = document.getElementById('blog-loading');
+  const empty   = document.getElementById('blog-empty');
+  const more    = document.getElementById('blog-load-more');
+  loading.style.display = 'grid';
+  grid.style.display    = 'none';
+  empty.style.display   = 'none';
+  more.style.display    = 'none';
+  blogPage = 0;
+
+  const showDrafts = isAdmin && document.getElementById('show-drafts-toggle') &&
+                     document.getElementById('show-drafts-toggle').checked;
+
+  let query = sb.from('blog_posts')
+    .select('*, blog_files(*)')
+    .order('created_at', { ascending: false })
+    .range(0, BLOG_PAGE_SIZE - 1);
+
+  if (!showDrafts) query = query.eq('published', true);
+
+  const { data, error } = await query;
+  loading.style.display = 'none';
+
+  if (error || !data || data.length === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  allBlogPosts = data;
+  grid.style.display = 'grid';
+  grid.innerHTML = data.map(p => renderBlogCard(p)).join('');
+  if (data.length >= BLOG_PAGE_SIZE) more.style.display = 'flex';
+}
+
+async function loadMorePosts() {
+  if (!sb) return;
+  blogPage++;
+  const from = blogPage * BLOG_PAGE_SIZE;
+  const showDrafts = isAdmin && document.getElementById('show-drafts-toggle') &&
+                     document.getElementById('show-drafts-toggle').checked;
+  let query = sb.from('blog_posts')
+    .select('*, blog_files(*)')
+    .order('created_at', { ascending: false })
+    .range(from, from + BLOG_PAGE_SIZE - 1);
+  if (!showDrafts) query = query.eq('published', true);
+  const { data } = await query;
+  if (!data || data.length === 0) {
+    document.getElementById('blog-load-more').style.display = 'none';
+    return;
+  }
+  allBlogPosts = allBlogPosts.concat(data);
+  document.getElementById('blog-grid').innerHTML += data.map(p => renderBlogCard(p)).join('');
+  if (data.length < BLOG_PAGE_SIZE)
+    document.getElementById('blog-load-more').style.display = 'none';
+}
+
+function renderBlogCard(p) {
+  const date = new Date(p.created_at).toLocaleDateString('en-KE', { year:'numeric', month:'short', day:'numeric' });
+  const coverHtml = p.cover_url
+    ? `<img class="blog-card-img" src="${escHtml(p.cover_url)}" alt="${escHtml(p.title)}" loading="lazy">`
+    : `<div class="blog-card-img-placeholder">${categoryEmoji(p.category)}</div>`;
+  const draftBadge = p.published ? '' : `<span class="blog-draft-badge">Draft</span>`;
+  const fileCount = p.blog_files ? p.blog_files.length : 0;
+  const filesNote = fileCount > 0 ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)">📎 ${fileCount} file${fileCount>1?'s':''}</span>` : '';
+  const adminActions = `
+    <div class="blog-admin-actions">
+      <button class="blog-action-btn" onclick="event.stopPropagation();openPostEditor('${p.id}')">✏️ Edit</button>
+      <button class="blog-action-btn" onclick="event.stopPropagation();togglePublishPost('${p.id}',${p.published})">${p.published ? '📥 Unpublish' : '🚀 Publish'}</button>
+      <button class="blog-action-btn del" onclick="event.stopPropagation();deletePost('${p.id}')">🗑 Delete</button>
+    </div>`;
+  return `
+    <div class="blog-card" onclick="openPostReader('${p.id}')">
+      ${coverHtml}
+      <div class="blog-card-body">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <div class="blog-cat">${escHtml(p.category || 'General')}</div>
+          ${draftBadge}
+        </div>
+        <div class="blog-ttl">${escHtml(p.title)}</div>
+        <p class="blog-exc">${escHtml(p.excerpt || '')}</p>
+        <div class="blog-meta">
+          <span class="blog-lnk">Read Article →</span>
+          <div style="display:flex;gap:8px;align-items:center">${filesNote}<span class="blog-date">${date}</span></div>
+        </div>
+        ${adminActions}
+      </div>
+    </div>`;
+}
+
+function renderBlogFallback() {
+  const loading = document.getElementById('blog-loading');
+  loading.style.display = 'none';
+  document.getElementById('blog-empty').style.display = 'block';
+}
+
+function categoryEmoji(cat) {
+  const map = { 'Accounting':'📊','Finance':'💰','Technology':'💻','Business':'🏢',
+                'Data Analytics':'📈','Agribusiness':'🌾','Personal':'✍️','General':'📝' };
+  return map[cat] || '📝';
+}
+
+
+// ════════════════════════════════════════════════════════
+//  POST READER
+// ════════════════════════════════════════════════════════
+
+async function openPostReader(postId) {
+  const post = allBlogPosts.find(p => p.id === postId);
+  if (!post) return;
+
+  // Increment view count silently
+  if (sb) sb.rpc('increment_blog_views', { post_id: postId }).catch(() => {});
+
+  const heroWrap = document.getElementById('reader-hero-wrap');
+  heroWrap.innerHTML = post.cover_url
+    ? `<img class="reader-hero" src="${escHtml(post.cover_url)}" alt="${escHtml(post.title)}">`
+    : `<div class="reader-hero-placeholder">${categoryEmoji(post.category)}</div>`;
+
+  document.getElementById('reader-cat').textContent   = post.category || 'General';
+  document.getElementById('reader-title').textContent = post.title;
+  document.getElementById('reader-date').textContent  =
+    new Date(post.created_at).toLocaleDateString('en-KE', { year:'numeric', month:'long', day:'numeric' });
+
+  const draftBadge = document.getElementById('reader-draft-badge');
+  draftBadge.style.display = post.published ? 'none' : 'inline';
+
+  document.getElementById('reader-content').innerHTML = post.content || '<p style="color:var(--muted)">No content yet.</p>';
+
+  // Attachments
+  const files = post.blog_files || [];
+  const attachWrap = document.getElementById('reader-attachments');
+  const attachGrid = document.getElementById('reader-attach-grid');
+  if (files.length > 0) {
+    attachGrid.innerHTML = files.map(f => `
+      <a class="reader-attach-card" href="${escHtml(f.file_url)}" target="_blank" download="${escHtml(f.file_name)}">
+        <span class="attach-icon">${fileEmoji(f.file_type)}</span>
+        <div>
+          <div class="attach-name" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">${escHtml(f.file_name)}</div>
+          <div class="attach-size">${formatBytes(f.file_size)}</div>
+        </div>
+      </a>`).join('');
+    attachWrap.style.display = 'block';
+  } else {
+    attachWrap.style.display = 'none';
+  }
+
+  openModal('post-reader-modal');
+}
+
+
+// ════════════════════════════════════════════════════════
+//  POST EDITOR
+// ════════════════════════════════════════════════════════
+
+async function openPostEditor(postId) {
+  if (!isAdmin) { openModal('admin-login-modal'); return; }
+  editingPostId = postId;
+  pendingFiles  = [];
+  postTags      = [];
+  coverUploadUrl = null;
+
+  document.getElementById('editor-modal-title').textContent = postId ? '✏️ Edit Post' : '✏️ New Post';
+  document.getElementById('post-title').value    = '';
+  document.getElementById('post-excerpt').value  = '';
+  document.getElementById('post-content').innerHTML = '';
+  document.getElementById('post-category').value = 'General';
+  document.getElementById('cover-url-input').value = '';
+  document.getElementById('cover-preview').style.display = 'none';
+  document.getElementById('cover-drop-label').style.display = 'block';
+  document.getElementById('attach-list').innerHTML = '';
+  document.getElementById('attach-progress').style.display = 'none';
+  renderTags();
+  setPublishUI(false);
+
+  if (postId) {
+    // Load existing post
+    const { data, error } = await sb.from('blog_posts').select('*, blog_files(*)').eq('id', postId).single();
+    if (!error && data) {
+      document.getElementById('post-title').value   = data.title   || '';
+      document.getElementById('post-excerpt').value = data.excerpt || '';
+      document.getElementById('post-content').innerHTML = data.content || '';
+      document.getElementById('post-category').value   = data.category || 'General';
+      if (data.cover_url) setCoverPreview(data.cover_url);
+      postTags = data.tags || [];
+      renderTags();
+      setPublishUI(data.published);
+      // Render existing attached files
+      if (data.blog_files && data.blog_files.length > 0) {
+        data.blog_files.forEach(f => {
+          addAttachItem({ id: f.id, name: f.file_name, type: f.file_type, size: f.file_size, url: f.file_url, saved: true });
+        });
+      }
+    }
+  }
+  openModal('post-editor-modal');
+  setTimeout(() => document.getElementById('post-title').focus(), 300);
+}
+
+async function savePost(publish) {
+  if (!sb || !isAdmin) return;
+  const title   = document.getElementById('post-title').value.trim();
+  const excerpt = document.getElementById('post-excerpt').value.trim();
+  const content = document.getElementById('post-content').innerHTML;
+  const category= document.getElementById('post-category').value;
+  const toggle  = document.getElementById('publish-toggle');
+  const published = publish || toggle.classList.contains('on');
+
+  if (!title) { toast('⚠️ Post title is required'); return; }
+
+  const payload = { title, excerpt, content, category, tags: postTags, published,
+                    cover_url: coverUploadUrl || document.getElementById('cover-url-input').value.trim() || null,
+                    updated_at: new Date().toISOString() };
+
+  let postId = editingPostId;
+  let error;
+  if (postId) {
+    ({ error } = await sb.from('blog_posts').update(payload).eq('id', postId));
+  } else {
+    const res = await sb.from('blog_posts').insert(payload).select().single();
+    error  = res.error;
+    postId = res.data ? res.data.id : null;
+  }
+  if (error) { toast('❌ Error: ' + error.message); return; }
+
+  // Upload pending files
+  if (pendingFiles.length > 0 && postId) {
+    for (let i = 0; i < pendingFiles.length; i++) {
+      const pf = pendingFiles[i];
+      if (pf.saved) continue;
+      const path = `blog/${postId}/${Date.now()}-${pf.file.name}`;
+      const { data: upData, error: upErr } = await sb.storage.from('documents').upload(path, pf.file, { upsert: true });
+      if (upErr) { toast('⚠️ File upload failed: ' + pf.file.name); continue; }
+      const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
+      await sb.from('blog_files').insert({
+        post_id: postId, file_url: publicUrl, file_name: pf.file.name,
+        file_type: getFileCategory(pf.file.type), file_size: pf.file.size
+      });
+    }
+    pendingFiles = [];
+  }
+
+  toast(published ? '🚀 Post published!' : '💾 Draft saved!');
+  closeModal('post-editor-modal');
+  loadBlogPosts();
+}
+
+async function togglePublishPost(postId, currentState) {
+  if (!sb || !isAdmin) return;
+  const { error } = await sb.from('blog_posts').update({ published: !currentState }).eq('id', postId);
+  if (!error) {
+    toast(currentState ? '📥 Post unpublished' : '🚀 Post published!');
+    loadBlogPosts();
+  }
+}
+
+async function deletePost(postId) {
+  if (!isAdmin || !confirm('Delete this post and all its files permanently?')) return;
+  // Delete storage files
+  const { data: files } = await sb.from('blog_files').select('file_url').eq('post_id', postId);
+  if (files) {
+    for (const f of files) {
+      const path = f.file_url.split('/documents/')[1];
+      if (path) await sb.storage.from('documents').remove([path]);
+    }
+  }
+  await sb.from('blog_posts').delete().eq('id', postId);
+  toast('🗑 Post deleted');
+  loadBlogPosts();
+}
+
+// ── Publish Toggle ──
+function togglePublish() {
+  const toggle = document.getElementById('publish-toggle');
+  const on = toggle.classList.toggle('on');
+  document.getElementById('publish-status-label').textContent = on ? 'Published' : 'Draft';
+  document.getElementById('publish-hint').textContent = on ? 'Visible to everyone' : 'Hidden from public';
+}
+
+function setPublishUI(published) {
+  const toggle = document.getElementById('publish-toggle');
+  toggle.classList.toggle('on', published);
+  document.getElementById('publish-status-label').textContent = published ? 'Published' : 'Draft';
+  document.getElementById('publish-hint').textContent = published ? 'Visible to everyone' : 'Hidden from public';
+}
+
+// ── Tags ──
+function handleTagInput(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = document.getElementById('tag-input-field').value.trim().replace(/,$/, '');
+    if (val && !postTags.includes(val)) { postTags.push(val); renderTags(); }
+    document.getElementById('tag-input-field').value = '';
+  } else if (e.key === 'Backspace' && !document.getElementById('tag-input-field').value && postTags.length > 0) {
+    postTags.pop(); renderTags();
+  }
+}
+
+function renderTags() {
+  const container = document.getElementById('tags-input');
+  container.querySelectorAll('.tag-chip').forEach(c => c.remove());
+  const inputEl = document.getElementById('tag-input-field');
+  postTags.forEach((t, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.textContent = t;
+    chip.title = 'Click to remove';
+    chip.onclick = () => { postTags.splice(i, 1); renderTags(); };
+    container.insertBefore(chip, inputEl);
+  });
+}
+
+// ── Rich Text Toolbar ──
+function fmt(cmd) { document.execCommand(cmd, false, null); document.getElementById('post-content').focus(); }
+function fmtBlock(tag) { document.execCommand('formatBlock', false, tag); document.getElementById('post-content').focus(); }
+function fmtLink() {
+  const url = prompt('Link URL:');
+  if (url) { document.execCommand('createLink', false, url); document.getElementById('post-content').focus(); }
+}
+
+// ── Cover Image ──
+async function handleCoverUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  if (!sb || !isAdmin) return;
+  toast('⏳ Uploading cover image...');
+  const path = `covers/${Date.now()}-${file.name}`;
+  const { error } = await sb.storage.from('documents').upload(path, file, { upsert: true });
+  if (error) { toast('❌ Cover upload failed'); return; }
+  const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
+  coverUploadUrl = publicUrl;
+  setCoverPreview(publicUrl);
+  toast('✅ Cover image uploaded');
+}
+
+function setCoverFromUrl(url) {
+  if (url.startsWith('http')) setCoverPreview(url);
+}
+
+function setCoverPreview(url) {
+  const preview = document.getElementById('cover-preview');
+  const label   = document.getElementById('cover-drop-label');
+  preview.src = url;
+  preview.style.display = 'block';
+  label.style.display   = 'none';
+}
+
+// ── File Attachments (in post editor) ──
+function handleAttachFiles(e) {
+  Array.from(e.target.files).forEach(file => {
+    const pending = { file, name: file.name, type: getFileCategory(file.type), size: file.size, saved: false, id: 'p_' + Date.now() + Math.random() };
+    pendingFiles.push(pending);
+    addAttachItem(pending);
+  });
+  e.target.value = '';
+}
+
+function addAttachItem(f) {
+  const list = document.getElementById('attach-list');
+  const div  = document.createElement('div');
+  div.className = 'attach-item';
+  div.id = 'attach-' + f.id;
+  div.innerHTML = `
+    <span class="attach-icon">${fileEmoji(f.type)}</span>
+    <span class="attach-name">${escHtml(f.name)}</span>
+    <span class="attach-size">${formatBytes(f.size)}</span>
+    <button class="attach-del" onclick="removeAttach('${f.id}','${f.saved}')" title="Remove">✕</button>`;
+  list.appendChild(div);
+}
+
+async function removeAttach(id, saved) {
+  // Remove from DOM
+  const el = document.getElementById('attach-' + id);
+  if (el) el.remove();
+  // If saved to DB, delete from DB + storage
+  if (saved === 'true' && sb && isAdmin) {
+    const { data: fileData } = await sb.from('blog_files').select('file_url').eq('id', id).single();
+    if (fileData) {
+      const path = fileData.file_url.split('/documents/')[1];
+      if (path) await sb.storage.from('documents').remove([path]);
+      await sb.from('blog_files').delete().eq('id', id);
+    }
+  } else {
+    pendingFiles = pendingFiles.filter(f => f.id !== id);
+  }
+}
+
+// Drag-and-drop on attach zone
+const dropZone = document.getElementById('attach-drop');
+if (dropZone) {
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('drag-over');
+    Array.from(e.dataTransfer.files).forEach(file => {
+      const pending = { file, name: file.name, type: getFileCategory(file.type), size: file.size, saved: false, id: 'p_' + Date.now() + Math.random() };
+      pendingFiles.push(pending);
+      addAttachItem(pending);
+    });
+  });
+}
+
+
+// ════════════════════════════════════════════════════════
+//  MEDIA LIBRARY
+// ════════════════════════════════════════════════════════
+
+async function openMediaLibrary() {
+  if (!isAdmin) return;
+  openModal('media-library-modal');
+  await loadLibFiles();
+}
+
+async function loadLibFiles() {
+  if (!sb) return;
+  const loading = document.getElementById('lib-loading');
+  const grid    = document.getElementById('lib-grid');
+  const empty   = document.getElementById('lib-empty');
+  loading.style.display = 'block';
+  grid.style.display    = 'none';
+  empty.style.display   = 'none';
+
+  const { data, error } = await sb.storage.from('documents').list('', { limit: 200, sortBy: { column: 'created_at', order: 'desc' } });
+  loading.style.display = 'none';
+
+  if (error || !data || data.length === 0) {
+    empty.style.display = 'block'; return;
+  }
+  libFiles = data;
+  grid.style.display = 'grid';
+  renderLibGrid();
+}
+
+function filterLib(btn, type) {
+  document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  libFilter = type;
+  renderLibGrid();
+}
+
+function renderLibGrid() {
+  const grid = document.getElementById('lib-grid');
+  const filtered = libFilter === 'all' ? libFiles : libFiles.filter(f => getFileCategory(f.metadata ? f.metadata.mimetype : '') === libFilter || f.name.toLowerCase().endsWith('.' + libFilter));
+  if (filtered.length === 0) {
+    grid.style.display = 'none';
+    document.getElementById('lib-empty').style.display = 'block';
+    return;
+  }
+  grid.style.display = 'grid';
+  document.getElementById('lib-empty').style.display = 'none';
+  grid.innerHTML = filtered.map(f => {
+    const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(f.name);
+    const mime    = f.metadata ? f.metadata.mimetype : '';
+    const size    = f.metadata ? f.metadata.size : 0;
+    const isImage = mime && mime.startsWith('image/');
+    const thumbHtml = isImage
+      ? `<img src="${escHtml(publicUrl)}" style="width:100%;height:100px;object-fit:cover;display:block" loading="lazy" alt="${escHtml(f.name)}">`
+      : `<div class="lib-thumb">${fileEmoji(getFileCategory(mime))}</div>`;
+    return `
+      <div class="lib-item">
+        ${thumbHtml}
+        <div class="lib-info">
+          <div class="lib-name" title="${escHtml(f.name)}">${escHtml(f.name)}</div>
+          <div class="lib-size">${formatBytes(size)}</div>
+          <div class="lib-actions">
+            <a class="lib-btn" href="${escHtml(publicUrl)}" target="_blank">↗ View</a>
+            <a class="lib-btn" href="${escHtml(publicUrl)}" download="${escHtml(f.name)}">⬇ Download</a>
+            <button class="lib-btn del" onclick="deleteLibFile('${escHtml(f.name)}',this)">🗑</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function handleLibUpload(e) {
+  if (!sb || !isAdmin) return;
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const progWrap = document.getElementById('lib-upload-progress');
+  const bar      = document.getElementById('lib-prog-bar');
+  const text     = document.getElementById('lib-prog-text');
+  progWrap.style.display = 'block';
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const pct  = Math.round(((i) / files.length) * 100);
+    bar.style.width  = pct + '%';
+    text.textContent = `Uploading ${i+1}/${files.length}: ${file.name}`;
+    const path = `library/${Date.now()}-${file.name}`;
+    await sb.storage.from('documents').upload(path, file, { upsert: true });
+  }
+  bar.style.width = '100%';
+  text.textContent = 'Done!';
+  setTimeout(() => { progWrap.style.display = 'none'; }, 1500);
+  e.target.value = '';
+  toast(`✅ ${files.length} file${files.length > 1 ? 's' : ''} uploaded`);
+  await loadLibFiles();
+}
+
+async function deleteLibFile(name, btn) {
+  if (!confirm('Delete this file permanently?')) return;
+  btn.textContent = '...';
+  const { error } = await sb.storage.from('documents').remove([name]);
+  if (!error) {
+    toast('🗑 File deleted');
+    await loadLibFiles();
+  } else {
+    toast('❌ Delete failed: ' + error.message);
+    btn.textContent = '🗑';
+  }
+}
+
+
+// ════════════════════════════════════════════════════════
+//  MODAL HELPERS
+// ════════════════════════════════════════════════════════
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) closeModal(this.id);
+  });
+});
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+  }
+});
+
+
+// ════════════════════════════════════════════════════════
+//  SAVE & EXPORT (portfolio content)
+// ════════════════════════════════════════════════════════
+
+function saveContent() {
+  var txt = {};
+  document.querySelectorAll('[data-ed]').forEach(function(el) {
+    txt[el.dataset.ed] = el.innerHTML;
+  });
+  try { localStorage.setItem('eo_txt', JSON.stringify(txt)); } catch(e) {}
+  var emailEl = document.querySelector('[data-ed="con-email"]');
+  var phoneEl = document.querySelector('[data-ed="con-phone"]');
+  if (emailEl) {
+    CONFIG.email = emailEl.textContent.trim();
+    var eb = document.getElementById('email-btn');
+    if (eb) eb.href = 'mailto:' + CONFIG.email;
+  }
+  if (phoneEl) {
+    var ph = phoneEl.textContent.replace(/\D/g, '');
+    if (ph.length > 8) CONFIG.whatsapp = ph;
+  }
+  toast('💾 Saving and preparing download...');
+  setTimeout(exportSite, 600);
+}
+
+function exportSite() {
+  var clone = document.documentElement.cloneNode(true);
+  document.querySelectorAll('[data-ed]').forEach(function(el) {
+    var t = clone.querySelector('[data-ed="' + el.dataset.ed + '"]');
+    if (t) { t.innerHTML = el.innerHTML; t.removeAttribute('contenteditable'); }
+  });
+  document.querySelectorAll('[data-pid] img').forEach(function(img) {
+    if (!img.classList.contains('loaded')) return;
+    var t = clone.getElementById(img.id);
+    if (t) {
+      t.src = img.src; t.classList.add('loaded');
+      var ph = t.closest ? t.closest('[data-pid]') : null;
+      if (!ph) ph = clone.querySelector('[data-pid="' + img.id.replace('img-','') + '"]');
+      if (ph) {
+        var icon = ph.querySelector('.ph-icon'); var lbl = ph.querySelector('.ph-lbl');
+        if (icon) icon.style.display = 'none'; if (lbl) lbl.style.display = 'none';
+      }
+    }
+  });
+  var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  var encoded = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+  var a = document.createElement('a');
+  a.href = encoded; a.download = 'index.html'; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  setTimeout(function() { document.body.removeChild(a); }, 500);
+  toast('⬇ index.html downloading — check Downloads folder!');
+}
+
+function resetContent() {
+  if (confirm('Reset ALL content and photos to defaults?')) {
+    localStorage.removeItem('eo_txt'); location.reload();
+  }
+}
+
+function loadSaved() {
+  try {
+    var txt = JSON.parse(localStorage.getItem('eo_txt') || '{}');
+    Object.keys(txt).forEach(function(k) {
+      var el = document.querySelector('[data-ed="' + k + '"]');
+      if (el) el.innerHTML = txt[k];
+    });
+  } catch(e) {}
+  document.querySelectorAll('[data-pid] img').forEach(function(img) {
+    if (img.src && img.getAttribute('src') && img.getAttribute('src').length > 10) {
+      img.classList.add('loaded');
+      var ph = img.parentElement;
+      if (ph) {
+        var icon = ph.querySelector('.ph-icon'); var lbl = ph.querySelector('.ph-lbl');
+        if (icon) icon.style.display = 'none'; if (lbl) lbl.style.display = 'none';
+      }
+    }
+  });
+  updateContactLinks();
+}
+
+
+// ════════════════════════════════════════════════════════
+//  PHOTO MODAL (existing portfolio photos)
+// ════════════════════════════════════════════════════════
+
+let curPid = null;
+
+function openPhotoModal(pid) {
+  if (!isAdmin) return;
+  curPid = pid;
+  document.getElementById('photo-url').value = '';
+  openModal('photo-modal');
+}
+
+function closePhotoModal() {
+  closeModal('photo-modal');
+  curPid = null;
+}
+
+function handleFile(e) {
+  var f = e.target.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    document.getElementById('photo-url').value = ev.target.result;
+    toast('📸 Image ready — click Apply Photo to confirm');
+  };
+  r.readAsDataURL(f);
+}
+
+function applyPhoto() {
+  var url = document.getElementById('photo-url').value.trim();
+  if (!url || !curPid) return;
+  var img = document.getElementById('img-' + curPid);
+  if (!img) return;
+  img.src = url;
+  img.onload = function() {
+    img.classList.add('loaded');
+    var ph = img.parentElement;
+    if (ph) {
+      var icon = ph.querySelector('.ph-icon'); var lbl = ph.querySelector('.ph-lbl');
+      if (icon) icon.style.display = 'none'; if (lbl) lbl.style.display = 'none';
+    }
+    toast('✅ Photo applied! Click Save & Export to keep it.');
+  };
+  img.onerror = function() { toast('❌ Could not load image. Check the URL and try again.'); };
+  closePhotoModal();
+}
+
+document.getElementById('photo-modal').addEventListener('click', function(e) {
+  if (e.target === this) closePhotoModal();
+});
+
+
+// ════════════════════════════════════════════════════════
+//  CONTACT
+// ════════════════════════════════════════════════════════
+
+function updateContactLinks() {
+  var emailEl = document.querySelector('[data-ed="con-email"]');
+  var phoneEl = document.querySelector('[data-ed="con-phone"]');
+  if (emailEl) {
+    var em = emailEl.textContent.trim();
+    if (em) {
+      CONFIG.email = em;
+      var eb = document.getElementById('email-btn');
+      if (eb) eb.href = 'mailto:' + em;
+    }
+  }
+  if (phoneEl) {
+    var ph = phoneEl.textContent.replace(/\D/g, '');
+    if (ph.length > 8) CONFIG.whatsapp = ph;
+  }
+}
+
+function openWhatsApp() {
+  var msg = encodeURIComponent('Hi Evans! I came across your portfolio and would like to connect.');
+  window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + msg, '_blank');
+}
+
+function submitForm() {
+  var name    = document.getElementById('cf-name').value.trim();
+  var email   = document.getElementById('cf-email').value.trim();
+  var subject = document.getElementById('cf-subject').value;
+  var msg     = document.getElementById('cf-msg').value.trim();
+  if (!name || !email || !msg) { toast('⚠️ Please fill in Name, Email and Message'); return; }
+  var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email +
+    '\nPhone: ' + document.getElementById('cf-phone').value +
+    '\nSubject: ' + subject + '\n\nMessage:\n' + msg);
+  var subj = encodeURIComponent((subject || 'Portfolio Enquiry') + ' from ' + name);
+  var a = document.createElement('a');
+  a.href = 'mailto:' + CONFIG.email + '?subject=' + subj + '&body=' + body;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  toast('✉️ Opening your email client...');
+}
+
+function submitViaWhatsApp() {
+  var name    = document.getElementById('cf-name').value.trim();
+  var subject = document.getElementById('cf-subject').value;
+  var msg     = document.getElementById('cf-msg').value.trim();
+  if (!name || !msg) { toast('⚠️ Please enter your name and message'); return; }
+  var text = encodeURIComponent('Hi Evans! My name is ' + name + '.' +
+    (subject ? '\nTopic: ' + subject : '') + '\n\n' + msg);
+  window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + text, '_blank');
+}
+
+
+// ════════════════════════════════════════════════════════
+//  MOBILE NAV
+// ════════════════════════════════════════════════════════
+
+function toggleMobileNav() { document.getElementById('mobile-nav').classList.toggle('open'); }
+function closeMobileNav()   { document.getElementById('mobile-nav').classList.remove('open'); }
+
+
+// ════════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════════
+
+function toast(msg, dur) {
+  dur = dur || 3200;
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, dur);
+}
+
+
+// ════════════════════════════════════════════════════════
+//  UTILITIES
+// ════════════════════════════════════════════════════════
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatBytes(bytes) {
+  if (!bytes || bytes === 0) return '—';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function getFileCategory(mimeOrExt) {
+  if (!mimeOrExt) return 'other';
+  const m = mimeOrExt.toLowerCase();
+  if (m.startsWith('image/')) return 'image';
+  if (m.startsWith('video/')) return 'video';
+  if (m === 'application/pdf' || m.endsWith('.pdf')) return 'pdf';
+  if (m.includes('word') || m.includes('document') || m.endsWith('.doc') || m.endsWith('.docx')) return 'doc';
+  if (m.includes('spreadsheet') || m.includes('excel') || m.endsWith('.xls') || m.endsWith('.xlsx')) return 'doc';
+  if (m.includes('presentation') || m.endsWith('.ppt') || m.endsWith('.pptx')) return 'doc';
+  if (m.startsWith('text/') || m.endsWith('.txt') || m.endsWith('.md') || m.endsWith('.csv')) return 'doc';
+  return 'other';
+}
+
+function fileEmoji(type) {
+  const map = { image:'🖼', video:'🎥', pdf:'📄', doc:'📝', other:'📦' };
+  return map[type] || '📎';
+}
+
+// ── Enter key in editables ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.activeElement && document.activeElement.hasAttribute('data-ed')) {
+    e.preventDefault();
+    document.execCommand('insertLineBreak');
+  }
+});
+
+// ── INIT ──
+loadSaved();
+loadBlogPosts();
+</script>
+</body>
+</html>
