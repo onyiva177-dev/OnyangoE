@@ -1738,30 +1738,5 @@ function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',oth
 // ── INIT ──
 init();
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const loader = document.getElementById("page-loader");
-
-  try {
-    // Initialize Supabase with your hard-coded values
-    const supabase = window.supabase.createClient(
-      window.SB_URL,
-      window.SB_ANON
-    );
-
-    // Example: run a simple query to confirm Supabase is alive
-    const { data, error } = await supabase.from("test_table").select("*");
-
-    // If Supabase responds, hide loader
-    if (!error && loader) {
-      loader.style.display = "none";
-    }
-  } catch (err) {
-    console.error("Supabase init failed", err);
-    // Fallback: hide loader anyway so you don’t get stuck
-    if (loader) loader.style.display = "none";
-  }
-});
-</script>
 </body>
 </html>
