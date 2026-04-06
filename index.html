@@ -3,18 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<!-- ══════════════════════════════════════════════════════════════
-     SUPABASE CONFIG — Fill these in before deploying
-     Get from: Supabase Dashboard → Settings → API
-     ══════════════════════════════════════════════════════════════ -->
-<script>
-  window.SUPABASE_URL  = 'https://npdnoqoftisnlgniukdg.supabase.co';       // e.g. https://xxxx.supabase.co
-  window.SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZG5vcW9mdGlzbmxnbml1a2RnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMTIzNzEsImV4cCI6MjA5MDY4ODM3MX0.CkD6VQI_QnKy3dh6tklGn-zKa3wh8CIqDM7Rj3wEMvw';  // public anon key (safe to expose)
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <meta name="description" content="Evans Onyango — Accounting & Financial Systems Strategist, Kenya">
 <title>Evans Onyango | Accounting & Financial Systems</title>
+
+<!-- ══ SUPABASE CONFIG ══ Fill these before deploying ══ -->
+<script>
+  window.SB_URL  = 'YOUR_SUPABASE_URL';
+  window.SB_ANON = 'YOUR_SUPABASE_ANON_KEY';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
 <style>
 :root {
   --blue:#034694; --blue-deep:#012a5c; --blue-dark:#011833;
@@ -408,27 +407,323 @@ body.admin-mode .blog-admin-actions{display:flex}
 .upload-progress{background:rgba(255,255,255,.04);border-radius:var(--r-sm);overflow:hidden;height:6px;margin-top:4px}
 .upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-light));border-radius:var(--r-full);transition:width .3s;width:0%}
 .upload-status{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px}
+
+/* ══════════════════════════════════════════════════════════════
+   PROFESSIONAL ANIMATION SYSTEM
+   All layers are additive — zero interference with existing code
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1. PAGE LOADER ── */
+#page-loader{
+  position:fixed;inset:0;z-index:99999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#page-loader.out{opacity:0;visibility:hidden;pointer-events:none}
+.loader-monogram{
+  font-family:'Playfair Display',serif;font-weight:900;font-size:56px;
+  color:transparent;
+  background:linear-gradient(135deg,var(--white) 0%,var(--gold) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  animation:loaderPop .6s cubic-bezier(.34,1.56,.64,1) forwards;
+  opacity:0;
+}
+@keyframes loaderPop{
+  from{opacity:0;transform:scale(.7) translateY(10px)}
+  to  {opacity:1;transform:scale(1)  translateY(0)}
+}
+.loader-bar-wrap{width:180px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.loader-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
+  border-radius:2px;
+  animation:loaderFill 1.2s cubic-bezier(.4,0,.2,1) .2s forwards;
+}
+@keyframes loaderFill{from{width:0%}to{width:100%}}
+.loader-text{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);
+  animation:loaderFadeIn .5s ease .3s forwards;opacity:0;
+}
+@keyframes loaderFadeIn{to{opacity:1}}
+
+/* ── 2. SCROLL PROGRESS BAR ── */
+#scroll-progress{
+  position:fixed;top:0;left:0;height:2px;width:0%;z-index:99998;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
+  transition:width .08s linear;
+  pointer-events:none;
+}
+
+/* ── 3. HERO ENTRANCE (staggered, replaces plain .rv for hero children) ── */
+.hero-animate{
+  opacity:0;transform:translateY(24px);
+  animation:heroUp .8s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes heroUp{
+  to{opacity:1;transform:translateY(0)}
+}
+.ha-d1{animation-delay:.15s}
+.ha-d2{animation-delay:.32s}
+.ha-d3{animation-delay:.48s}
+.ha-d4{animation-delay:.62s}
+.ha-d5{animation-delay:.76s}
+.ha-d6{animation-delay:.90s}
+
+/* ── 4. ENHANCED SCROLL REVEAL — stagger children inside grids ── */
+.rv-stagger > *{
+  opacity:0;transform:translateY(22px);
+  transition:opacity .65s ease, transform .65s cubic-bezier(.22,1,.36,1);
+}
+.rv-stagger.in > *:nth-child(1){opacity:1;transform:none;transition-delay:.0s}
+.rv-stagger.in > *:nth-child(2){opacity:1;transform:none;transition-delay:.12s}
+.rv-stagger.in > *:nth-child(3){opacity:1;transform:none;transition-delay:.24s}
+.rv-stagger.in > *:nth-child(4){opacity:1;transform:none;transition-delay:.36s}
+.rv-stagger.in > *:nth-child(5){opacity:1;transform:none;transition-delay:.48s}
+.rv-stagger.in > *:nth-child(6){opacity:1;transform:none;transition-delay:.60s}
+
+/* ── 5. EYEBROW LINE DRAW ── */
+.eyebrow::before{
+  content:'//';opacity:.45;
+  /* line-draw shimmer on enter */
+  display:inline-block;
+  animation:none;
+}
+.rv.in .eyebrow::before,
+.rv-stagger.in .eyebrow::before{
+  animation:eyebrowShimmer .8s ease forwards;
+}
+@keyframes eyebrowShimmer{
+  0%  {opacity:0;letter-spacing:.5em}
+  100%{opacity:.45;letter-spacing:normal}
+}
+
+/* ── 6. 3D CARD TILT ── */
+.tilt-card{
+  transform-style:preserve-3d;
+  will-change:transform;
+  transition:transform .12s ease, box-shadow .25s ease !important;
+}
+.tilt-card .tilt-shine{
+  position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.06) 0%, transparent 60%);
+  pointer-events:none;opacity:0;transition:opacity .3s;
+}
+.tilt-card:hover .tilt-shine{opacity:1}
+
+/* ── 7. KPI COUNTER ── */
+.kpi-v[data-count]{
+  transition:color .3s;
+}
+
+/* ── 8. CURSOR DOT ── */
+#cursor-dot{
+  width:8px;height:8px;
+  background:var(--gold);
+  border-radius:50%;
+  position:fixed;pointer-events:none;z-index:99997;
+  transform:translate(-50%,-50%);
+  transition:transform .08s ease, opacity .3s;
+  opacity:0;mix-blend-mode:screen;
+}
+#cursor-ring{
+  width:32px;height:32px;
+  border:1.5px solid rgba(212,168,67,.35);
+  border-radius:50%;
+  position:fixed;pointer-events:none;z-index:99996;
+  transform:translate(-50%,-50%);
+  transition:transform .22s cubic-bezier(.22,1,.36,1), width .2s, height .2s, opacity .3s, border-color .2s;
+  opacity:0;
+}
+body.cursor-ready #cursor-dot,
+body.cursor-ready #cursor-ring{opacity:1}
+body.cursor-link #cursor-ring{
+  width:48px;height:48px;
+  border-color:rgba(212,168,67,.6);
+}
+
+/* ── 9. ACTIVE NAV INDICATOR ── */
+.nav-links a{position:relative}
+.nav-links a.nav-active{color:var(--gold)!important;border-bottom-color:var(--gold)!important}
+.nav-links a.nav-active::after{
+  content:'';position:absolute;bottom:-1px;left:16px;right:16px;
+  height:2px;background:var(--gold);border-radius:2px;
+  animation:navActiveLine .3s ease forwards;
+}
+@keyframes navActiveLine{
+  from{transform:scaleX(0)}to{transform:scaleX(1)}
+}
+
+/* ── 10. SECTION TITLE WORD REVEAL ── */
+.sec-title .word{
+  display:inline-block;
+  opacity:0;transform:translateY(18px) skewY(2deg);
+  transition:opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
+}
+.rv.in .sec-title .word,
+.rv-stagger.in .sec-title .word{opacity:1;transform:none}
+.sec-title .word:nth-child(2){transition-delay:.1s}
+.sec-title .word:nth-child(3){transition-delay:.2s}
+.sec-title .word:nth-child(4){transition-delay:.3s}
+
+/* ── 11. BUTTON RIPPLE ── */
+.btn{position:relative;overflow:hidden}
+.btn-ripple{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,.25);
+  transform:scale(0);animation:rippleOut .55s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes rippleOut{
+  to{transform:scale(4);opacity:0}
+}
+
+/* ── 12. GLITCH SHIMMER ON HERO NAME (one-time) ── */
+@keyframes glitchShimmer{
+  0%  {text-shadow:none}
+  10% {text-shadow:2px 0 0 rgba(3,70,148,.6),-2px 0 0 rgba(212,168,67,.4)}
+  20% {text-shadow:-1px 0 0 rgba(3,70,148,.4), 1px 0 0 rgba(212,168,67,.3)}
+  30% {text-shadow:none}
+  100%{text-shadow:none}
+}
+.hero-name{animation:glitchShimmer 2.8s ease 1.2s 1}
+
+/* ── 13. SECTION BG PARALLAX ORBS ── */
+.orb{
+  position:absolute;border-radius:50%;pointer-events:none;
+  will-change:transform;filter:blur(60px);opacity:.18;
+  transition:transform .1s linear;
+}
+#orb-1{width:500px;height:500px;background:var(--blue-mid);top:10%;right:-8%;z-index:0}
+#orb-2{width:350px;height:350px;background:var(--gold);bottom:5%;left:-5%;z-index:0;opacity:.06}
+
+/* ── 14. PHILOSOPHY SECTION COUNT-UP ── */
+.pillar{position:relative;overflow:hidden}
+.pillar::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(3,70,148,.15),transparent);
+  opacity:0;transition:opacity .4s;border-radius:inherit;
+}
+.pillar:hover::after{opacity:1}
+.pillar-n{
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .4s;
+  display:block;
+}
+.rv.in .pillar-n{animation:pillarNumIn .6s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes pillarNumIn{
+  from{transform:translateY(20px);opacity:0}
+  to  {transform:translateY(0);opacity:1}
+}
+
+/* ── 15. FLOATING BADGE PULSE (hero photo badge) ── */
+.hero-eyebrow::before{
+  content:'';display:inline-block;
+  width:28px;height:1.5px;background:var(--gold);border-radius:2px;
+  animation:eyebrowPulse 2.5s ease-in-out infinite;
+}
+@keyframes eyebrowPulse{
+  0%,100%{opacity:1;transform:scaleX(1)}
+  50%    {opacity:.4;transform:scaleX(.6)}
+}
+
+/* ── Reduced motion respect ── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  #page-loader{display:none}
+  #cursor-dot,#cursor-ring{display:none}
+}
+</style>
+</head>
+
+/* ══ ENGAGEMENT STYLES ══ */
+.post-engagement{display:flex;align-items:center;gap:14px;padding:14px 22px;border-top:1px solid var(--border);flex-wrap:wrap}
+.eng-btn{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border2);color:var(--text2);padding:6px 14px;border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:10px;cursor:pointer;transition:var(--tr);letter-spacing:.06em}
+.eng-btn:hover{border-color:var(--gold);color:var(--gold)}
+.eng-btn.liked{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.1)}
+.eng-btn.liked .heart-icon{animation:heartPop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+.eng-count{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)}
+.share-dropdown{position:relative}
+.share-menu{position:absolute;bottom:calc(100% + 8px);left:0;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-md);padding:6px;min-width:160px;display:none;z-index:100;box-shadow:var(--shadow)}
+.share-menu.open{display:block;animation:modalIn .2s ease}
+.share-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r-sm);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);cursor:pointer;transition:background .15s;text-decoration:none}
+.share-item:hover{background:rgba(255,255,255,.06);color:var(--text)}
+
+/* ══ COMMENTS ══ */
+.comments-section{padding:20px 22px;border-top:1px solid var(--border)}
+.comments-title{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.comment-list{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.comment-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px}
+.comment-author{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);margin-bottom:4px}
+.comment-date{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-left:8px}
+.comment-body{font-size:13px;color:var(--text2);line-height:1.7}
+.comment-form{display:flex;flex-direction:column;gap:10px}
+.comment-form input,.comment-form textarea{background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;transition:border-color .2s}
+.comment-form input:focus,.comment-form textarea:focus{border-color:var(--gold)}
+.comment-form textarea{resize:vertical;min-height:80px}
+.comment-submit{background:linear-gradient(135deg,var(--blue),var(--blue-mid));color:#fff;border:none;padding:10px 20px;border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:var(--tr);align-self:flex-start}
+.comment-submit:hover{background:linear-gradient(135deg,var(--blue-mid),var(--blue-light));transform:translateY(-1px)}
+.comment-pending{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);text-align:center;padding:8px;background:rgba(212,168,67,.06);border-radius:var(--r-sm);border:1px solid rgba(212,168,67,.2)}
+
+/* ══ ADS ══ */
+.ad-block{background:linear-gradient(135deg,rgba(3,70,148,.08),rgba(212,168,67,.04));border:1px solid rgba(3,70,148,.3);border-radius:var(--r-xl);padding:20px 24px;position:relative;overflow:hidden;transition:var(--tr);cursor:pointer}
+.ad-block:hover{border-color:rgba(212,168,67,.4);transform:translateY(-2px)}
+.ad-block::before{content:'SPONSORED';position:absolute;top:10px;right:14px;font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:.2em;color:var(--muted);opacity:.6}
+.ad-block img{max-width:100%;border-radius:var(--r-md);margin-bottom:12px;display:block}
+.ad-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--text);margin-bottom:6px}
+.ad-body{font-size:12px;color:var(--text2);line-height:1.7}
+.ad-between{margin:24px 0}
+.ad-banner{margin:0 0 32px;padding:28px 32px}
+
+/* ══ POST READER UPGRADES ══ */
+.reader-body{padding:32px}
+.reader-eng-bar{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap}
+
+/* ══ TRANSITIONS ══ */
+.page-slide-in{animation:slideInUp .5s cubic-bezier(.22,1,.36,1) forwards}
+.page-slide-out{animation:slideOutDown .35s cubic-bezier(.4,0,1,1) forwards}
+@keyframes slideInUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideOutDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
+
+/* Animation speed variables — controlled by settings */
+:root{
+  --anim-speed: 1;
+  --slide-dur: calc(0.55s * var(--anim-speed));
+  --fade-dur:  calc(0.4s  * var(--anim-speed));
+  --pop-dur:   calc(0.35s * var(--anim-speed));
+}
+
+/* Reader modal slide-in override */
+#post-reader-modal .modal{animation:readerSlideIn var(--slide-dur) cubic-bezier(.22,1,.36,1)}
+@keyframes readerSlideIn{from{opacity:0;transform:translateX(60px) scale(.98)}to{opacity:1;transform:none}}
+
+/* scroll reveal respects speed */
+.rv{transition:opacity var(--fade-dur) ease,transform var(--slide-dur) ease}
+
 </style>
 </head>
 <body>
 
-<!-- ADMIN BAR -->
-<div id="admin-bar">
-  <span class="admin-badge">⚙ Admin</span>
-  <span id="admin-email-badge" style="font-size:10px;color:var(--gold);opacity:.7"></span>
-  <button class="abtn" onclick="openPostEditor(null)">✏️ New Post</button>
-  <button class="abtn" onclick="openMediaLibrary()">📂 Media Library</button>
-  <button class="abtn save" onclick="saveContent()">💾 Save Site</button>
-  <button class="abtn" onclick="resetContent()">↺ Reset</button>
-  <button class="abtn" onclick="adminLogout()" style="margin-left:auto;border-color:#e55;color:#e55">🚪 Logout</button>
+<!-- Page Loader -->
+<div id="page-loader">
+  <div class="loader-monogram">EO</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">Loading Portfolio</div>
 </div>
+<!-- Scroll Progress -->
+<div id="scroll-progress"></div>
+<!-- Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<!-- Orbs -->
+<div class="orb" id="orb-1"></div>
+<div class="orb" id="orb-2"></div>
+<!-- Top Ad Banner (settings-controlled) -->
+<div id="ad-top-banner" style="display:none"></div>
 
 <!-- FLOATING BUTTONS -->
 <div class="fab-group">
-  <div class="fab-wrap">
-    <span class="fab-tip" id="fab-admin-tip">Admin Login</span>
-    <button class="fab fab-admin" id="fab-admin" onclick="toggleAdmin()" title="Admin Mode">⚙</button>
-  </div>
   <div class="fab-wrap">
     <span class="fab-tip">Chat on WhatsApp</span>
     <button class="fab fab-wa" onclick="openWhatsApp()" title="WhatsApp">💬</button>
@@ -438,214 +733,63 @@ body.admin-mode .blog-admin-actions{display:flex}
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ══ ADMIN LOGIN MODAL ══ -->
-<div class="modal-overlay" id="admin-login-modal">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal('admin-login-modal')">✕</button>
-    <div class="login-logo">Evans<span>.</span><br><small style="font-size:14px;font-family:'IBM Plex Mono',monospace;color:var(--muted);font-style:normal">Admin Portal</small></div>
-    <div>
-      <div class="modal-label">Email</div>
-      <input class="modal-input" type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
-    </div>
-    <div>
-      <div class="modal-label">Password</div>
-      <input class="modal-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
-        onkeydown="if(event.key==='Enter')doAdminLogin()">
-    </div>
-    <div id="login-error" style="color:#e55;font-family:'IBM Plex Mono',monospace;font-size:11px;display:none"></div>
-    <div class="modal-actions">
-      <button class="btn btn-primary" onclick="doAdminLogin()" id="login-btn" style="flex:1;justify-content:center">🔐 Login</button>
-    </div>
-    <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-align:center">
-      Create your admin account in Supabase Dashboard → Auth → Users
-    </p>
-  </div>
-</div>
-
-<!-- ══ POST EDITOR MODAL ══ -->
-<div class="modal-overlay" id="post-editor-modal">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal('post-editor-modal')">✕</button>
-    <div class="modal-title" id="editor-modal-title">✏️ New Post</div>
-
-    <div class="post-editor-grid">
-      <!-- LEFT: Content -->
-      <div style="display:flex;flex-direction:column;gap:14px">
-        <div>
-          <div class="modal-label">Post Title *</div>
-          <input class="modal-input" type="text" id="post-title" placeholder="Enter a compelling title...">
-        </div>
-        <div>
-          <div class="modal-label">Excerpt / Summary</div>
-          <textarea class="modal-input" id="post-excerpt" rows="2" placeholder="A brief summary shown on the blog grid..." style="resize:vertical"></textarea>
-        </div>
-        <div>
-          <div class="modal-label">Content</div>
-          <div class="editor-toolbar">
-            <button class="tb-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
-            <button class="tb-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
-            <button class="tb-btn" onclick="fmt('underline')" title="Underline"><u>U</u></button>
-            <button class="tb-btn" onclick="fmtBlock('h2')" title="Heading">H2</button>
-            <button class="tb-btn" onclick="fmtBlock('h3')" title="Sub-heading">H3</button>
-            <button class="tb-btn" onclick="fmtBlock('blockquote')" title="Quote">❝</button>
-            <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="List">•</button>
-            <button class="tb-btn" onclick="fmt('insertOrderedList')" title="Numbered">1.</button>
-            <button class="tb-btn" onclick="fmtLink()" title="Link">🔗</button>
-            <button class="tb-btn" onclick="fmt('removeFormat')" title="Clear">✕</button>
-          </div>
-          <div class="content-editor" id="post-content" contenteditable="true"
-            data-placeholder="Write your post content here. Use the toolbar above for formatting..."></div>
-        </div>
-
-        <!-- File Attachments -->
-        <div>
-          <div class="modal-label" style="margin-bottom:8px">Attachments (any file type)</div>
-          <div class="drop-zone" id="attach-drop" onclick="document.getElementById('attach-file-input').click()">
-            <div style="font-size:28px;margin-bottom:6px">📎</div>
-            <p>Drop files here or click to browse</p>
-            <p style="font-size:9px;margin-top:4px">PDF, DOCX, XLSX, images, videos, ZIP — any format</p>
-          </div>
-          <input type="file" id="attach-file-input" multiple style="display:none" onchange="handleAttachFiles(event)">
-          <div id="attach-progress" style="display:none;margin-top:8px">
-            <div class="upload-progress"><div class="upload-progress-bar" id="attach-prog-bar"></div></div>
-            <div class="upload-status" id="attach-prog-text">Uploading...</div>
-          </div>
-          <div class="attach-list" id="attach-list" style="margin-top:10px"></div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Meta -->
-      <div class="post-meta-col">
-        <!-- Publish status -->
-        <div class="meta-card">
-          <div class="meta-card-title">Status</div>
-          <div class="publish-toggle">
-            <span style="font-size:13px;color:var(--text2)" id="publish-status-label">Draft</span>
-            <div class="toggle-switch" id="publish-toggle" onclick="togglePublish()"></div>
-          </div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)" id="publish-hint">
-            Post is hidden from public
-          </div>
-        </div>
-
-        <!-- Cover image -->
-        <div class="meta-card">
-          <div class="meta-card-title">Cover Image</div>
-          <div class="modal-drop" id="cover-drop" onclick="document.getElementById('cover-file-input').click()" style="padding:16px">
-            <img id="cover-preview" style="display:none;width:100%;height:100px;object-fit:cover;border-radius:8px;margin-bottom:8px">
-            <div id="cover-drop-label">🖼 Click to upload cover image</div>
-            <div style="font-size:9px;color:var(--muted);margin-top:4px">JPG, PNG, WebP</div>
-          </div>
-          <input type="file" id="cover-file-input" accept="image/*" style="display:none" onchange="handleCoverUpload(event)">
-          <input class="modal-input" type="text" id="cover-url-input" placeholder="Or paste image URL..." style="margin-top:8px;font-size:11px"
-            oninput="setCoverFromUrl(this.value)">
-        </div>
-
-        <!-- Category & Tags -->
-        <div class="meta-card">
-          <div class="meta-card-title">Category</div>
-          <select class="modal-input" id="post-category" style="font-size:12px">
-            <option value="General">General</option>
-            <option value="Accounting">Accounting</option>
-            <option value="Finance">Finance</option>
-            <option value="Technology">Technology</option>
-            <option value="Business">Business</option>
-            <option value="Data Analytics">Data Analytics</option>
-            <option value="Agribusiness">Agribusiness</option>
-            <option value="Personal">Personal</option>
-          </select>
-          <div class="meta-card-title" style="margin-top:10px">Tags</div>
-          <div class="tags-input" id="tags-input" onclick="this.querySelector('input').focus()">
-            <input type="text" id="tag-input-field" placeholder="Add tag + Enter"
-              onkeydown="handleTagInput(event)" style="width:100px">
-          </div>
-        </div>
-      </div>
-    </div><!-- end grid -->
-
-    <div class="modal-actions" style="gap:10px">
-      <button class="abtn" onclick="closeModal('post-editor-modal')" style="padding:10px 20px">Cancel</button>
-      <button class="btn btn-primary" onclick="savePost(false)" style="gap:6px">💾 Save Draft</button>
-      <button class="btn btn-secondary" onclick="savePost(true)" style="gap:6px">🚀 Publish</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ POST READER MODAL ══ -->
+<!-- POST READER MODAL -->
 <div class="modal-overlay" id="post-reader-modal">
-  <div class="modal" style="padding:0">
-    <button class="modal-x" onclick="closeModal('post-reader-modal')" style="z-index:10;background:rgba(2,13,31,.7);backdrop-filter:blur(6px);border-radius:50%;width:36px;height:36px;top:14px;right:14px;border:1px solid var(--border2)">✕</button>
+  <div class="modal" style="padding:0;width:clamp(320px,92vw,780px);max-height:92vh;overflow-y:auto;gap:0">
+    <button class="modal-x" onclick="closeReader()" style="z-index:10;background:rgba(2,13,31,.8);backdrop-filter:blur(6px);border-radius:50%;width:36px;height:36px;top:14px;right:14px;border:1px solid var(--border2)">✕</button>
     <div id="reader-hero-wrap"></div>
     <div class="reader-body">
       <div class="reader-meta">
         <span class="reader-cat" id="reader-cat"></span>
         <span class="reader-date" id="reader-date"></span>
-        <span class="blog-draft-badge" id="reader-draft-badge" style="display:none">Draft</span>
       </div>
       <h1 class="reader-title" id="reader-title"></h1>
+      <!-- Engagement bar (visibility controlled by settings) -->
+      <div class="reader-eng-bar" id="reader-eng-bar">
+        <span class="eng-count" id="reader-views" style="display:none">👁 <span id="reader-view-count"></span> views</span>
+        <button class="eng-btn" id="reader-like-btn" onclick="toggleLike()">
+          <span class="heart-icon">♡</span> <span id="reader-like-count">0</span>
+        </button>
+        <div class="share-dropdown">
+          <button class="eng-btn" onclick="toggleShareMenu(event)">↗ Share</button>
+          <div class="share-menu" id="share-menu">
+            <span class="share-item" onclick="shareVia('twitter')">𝕏 Twitter</span>
+            <span class="share-item" onclick="shareVia('whatsapp')">💬 WhatsApp</span>
+            <span class="share-item" onclick="shareVia('linkedin')">in LinkedIn</span>
+            <span class="share-item" onclick="shareVia('copy')">🔗 Copy Link</span>
+          </div>
+        </div>
+        <span class="eng-count" id="reader-comment-count-wrap" style="display:none">💬 <span id="reader-comment-count">0</span></span>
+      </div>
       <div class="reader-content" id="reader-content"></div>
+      <!-- Inline ad between content and comments -->
+      <div id="reader-inline-ad" style="margin:24px 0"></div>
+      <!-- Attachments -->
       <div class="reader-attachments" id="reader-attachments" style="display:none">
         <div class="reader-attach-title">📎 Attachments</div>
         <div class="reader-attach-grid" id="reader-attach-grid"></div>
       </div>
     </div>
-    <div class="reader-close-btn">
-      <button class="abtn" onclick="closeModal('post-reader-modal')" style="padding:8px 24px">← Back to Blog</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ MEDIA LIBRARY MODAL ══ -->
-<div class="modal-overlay" id="media-library-modal">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal('media-library-modal')">✕</button>
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div class="modal-title">📂 Media Library</div>
-      <button class="btn btn-primary" onclick="document.getElementById('lib-upload-input').click()" style="padding:9px 18px;font-size:10px">+ Upload File</button>
-      <input type="file" id="lib-upload-input" multiple style="display:none" onchange="handleLibUpload(event)">
-    </div>
-    <div id="lib-upload-progress" style="display:none">
-      <div class="upload-progress"><div class="upload-progress-bar" id="lib-prog-bar"></div></div>
-      <div class="upload-status" id="lib-prog-text">Uploading...</div>
-    </div>
-    <div class="lib-toolbar">
-      <div class="lib-filter">
-        <button class="lib-filter-btn active" onclick="filterLib(this,'all')">All</button>
-        <button class="lib-filter-btn" onclick="filterLib(this,'image')">🖼 Images</button>
-        <button class="lib-filter-btn" onclick="filterLib(this,'video')">🎥 Videos</button>
-        <button class="lib-filter-btn" onclick="filterLib(this,'pdf')">📄 PDFs</button>
-        <button class="lib-filter-btn" onclick="filterLib(this,'doc')">📝 Docs</button>
-        <button class="lib-filter-btn" onclick="filterLib(this,'other')">📦 Other</button>
+    <!-- Comments section -->
+    <div class="comments-section" id="reader-comments-section" style="display:none">
+      <div class="comments-title">💬 Comments <span id="comments-count-badge"></span></div>
+      <div class="comment-list" id="comment-list"></div>
+      <div class="comment-form" id="comment-form">
+        <input type="text" id="comment-author" placeholder="Your name *" maxlength="60">
+        <input type="email" id="comment-email" placeholder="Email (optional, not shown)">
+        <textarea id="comment-body" placeholder="Share your thoughts..." rows="3" maxlength="800"></textarea>
+        <button class="comment-submit" onclick="submitComment()">Post Comment</button>
+      </div>
+      <div id="comment-pending-msg" style="display:none" class="comment-pending">
+        ✅ Comment submitted — pending review before appearing.
       </div>
     </div>
-    <div id="lib-loading" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:30px">Loading files...</div>
-    <div class="lib-grid" id="lib-grid" style="display:none"></div>
-    <div id="lib-empty" style="display:none;text-align:center;padding:40px">
-      <div style="font-size:36px;opacity:.3;margin-bottom:10px">📂</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No files uploaded yet</div>
-    </div>
-  </div>
-</div>
-<div class="modal-overlay" id="photo-modal">
-  <div class="modal">
-    <button class="modal-x" onclick="closePhotoModal()">✕</button>
-    <div class="modal-title">📷 Update Photo</div>
-    <div>
-      <div class="modal-label">Paste Image URL</div>
-      <input class="modal-input" type="text" id="photo-url" placeholder="https://your-photo.com/image.jpg">
-    </div>
-    <div class="modal-drop" onclick="document.getElementById('photo-file').click()">
-      📁 &nbsp;Or upload from your device
-      <input type="file" id="photo-file" accept="image/*" style="display:none" onchange="handleFile(event)">
-    </div>
-    <div class="modal-actions">
-      <button class="abtn" onclick="closePhotoModal()">Cancel</button>
-      <button class="abtn save" onclick="applyPhoto()">✓ Apply Photo</button>
+    <div style="padding:16px 32px;text-align:center">
+      <button class="abtn" onclick="closeReader()" style="padding:8px 24px">← Back to Blog</button>
     </div>
   </div>
 </div>
 
-<!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
     <div class="nav-badge">EO</div>Evans Onyango
@@ -674,23 +818,23 @@ body.admin-mode .blog-admin-actions{display:flex}
 <section id="hero">
   <div class="hero-left">
     <div class="rv">
-      <div class="hero-eyebrow" data-ed="hero-eyebrow">Accounting &amp; Financial Systems Strategist</div>
-      <h1 class="hero-name">
+      <div class="hero-eyebrow hero-animate ha-d1" data-ed="hero-eyebrow">Accounting &amp; Financial Systems Strategist</div>
+      <h1 class="hero-name hero-animate ha-d2">
         <span data-ed="hero-fn">Evans</span>
         <span data-ed="hero-ln">Onyango</span>
       </h1>
-      <div class="hero-sub" data-ed="hero-sub">B.Com Accounting · Maseno University · Kenya</div>
-      <p class="hero-desc" data-ed="hero-desc">Designing structured accounting systems, scalable service platforms, and financial frameworks that create lasting value for businesses across Africa. Numbers meet strategy.</p>
-      <div class="hero-btns">
+      <div class="hero-sub hero-animate ha-d3" data-ed="hero-sub">B.Com Accounting · Maseno University · Kenya</div>
+      <p class="hero-desc hero-animate ha-d4" data-ed="hero-desc">Designing structured accounting systems, scalable service platforms, and financial frameworks that create lasting value for businesses across Africa. Numbers meet strategy.</p>
+      <div class="hero-btns hero-animate ha-d5">
         <a href="#expertise" class="btn btn-primary">Explore My Work →</a>
         <a href="#contact" class="btn btn-secondary">Get In Touch</a>
       </div>
     </div>
-    <div class="kpi-strip rv d2">
-      <div class="kpi"><div class="kpi-v" data-ed="k1v">6+</div><div class="kpi-l" data-ed="k1l">Platforms Designed</div></div>
-      <div class="kpi"><div class="kpi-v" data-ed="k2v">14+</div><div class="kpi-l" data-ed="k2l">Financial Models</div></div>
-      <div class="kpi"><div class="kpi-v" data-ed="k3v">8+</div><div class="kpi-l" data-ed="k3l">Systems Built</div></div>
-      <div class="kpi"><div class="kpi-v" data-ed="k4v">3+</div><div class="kpi-l" data-ed="k4l">Ventures Structured</div></div>
+    <div class="kpi-strip rv d2 hero-animate ha-d6">
+      <div class="kpi"><div class="kpi-v" data-ed="k1v" data-count="6" data-suffix="+">6+</div><div class="kpi-l" data-ed="k1l">Platforms Designed</div></div>
+      <div class="kpi"><div class="kpi-v" data-ed="k2v" data-count="14" data-suffix="+">14+</div><div class="kpi-l" data-ed="k2l">Financial Models</div></div>
+      <div class="kpi"><div class="kpi-v" data-ed="k3v" data-count="8" data-suffix="+">8+</div><div class="kpi-l" data-ed="k3l">Systems Built</div></div>
+      <div class="kpi"><div class="kpi-v" data-ed="k4v" data-count="3" data-suffix="+">3+</div><div class="kpi-l" data-ed="k4l">Ventures Structured</div></div>
     </div>
   </div>
   <div class="hero-right rv d1">
@@ -737,13 +881,13 @@ body.admin-mode .blog-admin-actions{display:flex}
     <div class="eyebrow">Core Expertise</div>
     <h2 class="sec-title" data-ed="exp-title">Where Accounting<br>Meets Strategy</h2>
   </div>
-  <div class="exp-grid rv">
-    <div class="exp-card"><div class="exp-n">01 / 06</div><div class="exp-icon">📊</div><div class="exp-name" data-ed="e1n">Accounting System Design</div><p class="exp-desc" data-ed="e1d">Building simplified SME accounting systems with structured ledger logic, accrual integration, digital bookkeeping workflows, and financial reporting automation tailored to emerging markets.</p><div class="tags"><span class="tag">Ledger Logic</span><span class="tag">Accrual</span><span class="tag">Automation</span></div></div>
-    <div class="exp-card"><div class="exp-n">02 / 06</div><div class="exp-icon">💰</div><div class="exp-name" data-ed="e2n">Financial Modelling</div><p class="exp-desc" data-ed="e2d">Designing cash flow tracking models, revenue recognition frameworks, internal control structures, and asset-liability analysis for businesses at different stages of growth.</p><div class="tags"><span class="tag">Cash Flow</span><span class="tag">Forecasting</span><span class="tag">Valuation</span></div></div>
-    <div class="exp-card"><div class="exp-n">03 / 06</div><div class="exp-icon">🔷</div><div class="exp-name" data-ed="e3n">Service Platform Architecture</div><p class="exp-desc" data-ed="e3d">Designing digital service marketplaces with trust verification layers, transparent pricing structures, commission-based monetisation, and mobile-first UX for African markets.</p><div class="tags"><span class="tag">Marketplace</span><span class="tag">Mobile-First</span><span class="tag">Trust Layer</span></div></div>
-    <div class="exp-card"><div class="exp-n">04 / 06</div><div class="exp-icon">🛡️</div><div class="exp-name" data-ed="e4n">Capital &amp; Risk Management</div><p class="exp-desc" data-ed="e4d">Capital preservation over speculation. Structured investment thinking grounded in risk-adjusted return analysis, long-term compounding strategy, and disciplined portfolio construction.</p><div class="tags"><span class="tag">Risk Analysis</span><span class="tag">Compounding</span><span class="tag">Portfolio</span></div></div>
-    <div class="exp-card"><div class="exp-n">05 / 06</div><div class="exp-icon">🌱</div><div class="exp-name" data-ed="e5n">Agribusiness &amp; Asset Growth</div><p class="exp-desc" data-ed="e5d">Structured agribusiness models in Siaya with low-capital entry systems, profit optimisation strategies, and long-term land and property acquisition frameworks.</p><div class="tags"><span class="tag">Siaya</span><span class="tag">Land</span><span class="tag">Low Capital</span></div></div>
-    <div class="exp-card"><div class="exp-n">06 / 06</div><div class="exp-icon">⚙️</div><div class="exp-name" data-ed="e6n">Business Process Automation</div><p class="exp-desc" data-ed="e6d">Identifying inefficiencies through process mapping and designing digital automation frameworks that reduce overhead and improve financial visibility for SMEs.</p><div class="tags"><span class="tag">Process Design</span><span class="tag">Efficiency</span><span class="tag">Digital Tools</span></div></div>
+  <div class="exp-grid rv rv-stagger">
+    <div class="exp-card tilt-card"><div class="exp-n">01 / 06</div><div class="exp-icon">📊</div><div class="exp-name" data-ed="e1n">Accounting System Design</div><p class="exp-desc" data-ed="e1d">Building simplified SME accounting systems with structured ledger logic, accrual integration, digital bookkeeping workflows, and financial reporting automation tailored to emerging markets.</p><div class="tags"><span class="tag">Ledger Logic</span><span class="tag">Accrual</span><span class="tag">Automation</span></div></div>
+    <div class="exp-card tilt-card"><div class="exp-n">02 / 06</div><div class="exp-icon">💰</div><div class="exp-name" data-ed="e2n">Financial Modelling</div><p class="exp-desc" data-ed="e2d">Designing cash flow tracking models, revenue recognition frameworks, internal control structures, and asset-liability analysis for businesses at different stages of growth.</p><div class="tags"><span class="tag">Cash Flow</span><span class="tag">Forecasting</span><span class="tag">Valuation</span></div></div>
+    <div class="exp-card tilt-card"><div class="exp-n">03 / 06</div><div class="exp-icon">🔷</div><div class="exp-name" data-ed="e3n">Service Platform Architecture</div><p class="exp-desc" data-ed="e3d">Designing digital service marketplaces with trust verification layers, transparent pricing structures, commission-based monetisation, and mobile-first UX for African markets.</p><div class="tags"><span class="tag">Marketplace</span><span class="tag">Mobile-First</span><span class="tag">Trust Layer</span></div></div>
+    <div class="exp-card tilt-card"><div class="exp-n">04 / 06</div><div class="exp-icon">🛡️</div><div class="exp-name" data-ed="e4n">Capital &amp; Risk Management</div><p class="exp-desc" data-ed="e4d">Capital preservation over speculation. Structured investment thinking grounded in risk-adjusted return analysis, long-term compounding strategy, and disciplined portfolio construction.</p><div class="tags"><span class="tag">Risk Analysis</span><span class="tag">Compounding</span><span class="tag">Portfolio</span></div></div>
+    <div class="exp-card tilt-card"><div class="exp-n">05 / 06</div><div class="exp-icon">🌱</div><div class="exp-name" data-ed="e5n">Agribusiness &amp; Asset Growth</div><p class="exp-desc" data-ed="e5d">Structured agribusiness models in Siaya with low-capital entry systems, profit optimisation strategies, and long-term land and property acquisition frameworks.</p><div class="tags"><span class="tag">Siaya</span><span class="tag">Land</span><span class="tag">Low Capital</span></div></div>
+    <div class="exp-card tilt-card"><div class="exp-n">06 / 06</div><div class="exp-icon">⚙️</div><div class="exp-name" data-ed="e6n">Business Process Automation</div><p class="exp-desc" data-ed="e6d">Identifying inefficiencies through process mapping and designing digital automation frameworks that reduce overhead and improve financial visibility for SMEs.</p><div class="tags"><span class="tag">Process Design</span><span class="tag">Efficiency</span><span class="tag">Digital Tools</span></div></div>
   </div>
 </section>
 
@@ -779,7 +923,7 @@ body.admin-mode .blog-admin-actions{display:flex}
     <div class="big-stmt" data-ed="phil-main">Execution<br>Over Excitement.</div>
     <p class="big-sub" data-ed="phil-sub">Systems before scale · Data before decisions · Service before profit</p>
   </div>
-  <div class="pillars rv d1">
+  <div class="pillars rv rv-stagger d1">
     <div class="pillar"><div class="pillar-n">01</div><div class="pillar-t" data-ed="p1t">Systems Thinking</div><p class="pillar-d" data-ed="p1d">Build the infrastructure first. Every process is a system that can be optimised.</p></div>
     <div class="pillar"><div class="pillar-n">02</div><div class="pillar-t" data-ed="p2t">Discipline First</div><p class="pillar-d" data-ed="p2d">Prove the model small before committing capital at scale.</p></div>
     <div class="pillar"><div class="pillar-n">03</div><div class="pillar-t" data-ed="p3t">Data Before Decisions</div><p class="pillar-d" data-ed="p3d">No move without metrics. Intuition validated by data, not replaced by it.</p></div>
@@ -794,51 +938,30 @@ body.admin-mode .blog-admin-actions{display:flex}
     <div class="eyebrow">Featured Work</div>
     <h2 class="sec-title" data-ed="proj-title">Strategic<br>Projects &amp; Models</h2>
   </div>
-  <div class="proj-grid rv">
-    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 01</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr1t">Service Platform Design</div><div class="proj-name" data-ed="pr1n">African Service Marketplace MVP</div><p class="proj-desc" data-ed="pr1d">End-to-end architecture for a digital service marketplace connecting vetted providers with clients across Kenya. Includes trust scoring, commission model, and mobile-first onboarding.</p><div class="tags"><span class="tag">Marketplace</span><span class="tag">Trust Layer</span><span class="tag">Kenya</span></div></div>
-    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 02</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr2t">Accounting System</div><div class="proj-name" data-ed="pr2n">SME Accounting Framework</div><p class="proj-desc" data-ed="pr2d">Simplified accrual-based accounting system for Kenyan SMEs. Covers ledger structure, cash flow templates, internal controls checklist, and monthly reporting workflow.</p><div class="tags"><span class="tag">SME</span><span class="tag">Accrual</span><span class="tag">Reporting</span></div></div>
-    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 03</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr3t">Financial Strategy</div><div class="proj-name" data-ed="pr3n">Capital Protection Playbook</div><p class="proj-desc" data-ed="pr3d">Structured framework for young Kenyan professionals to allocate, protect, and grow capital through disciplined risk management, diversification logic, and long-term compounding.</p><div class="tags"><span class="tag">Capital</span><span class="tag">Risk</span><span class="tag">Compounding</span></div></div>
-    <div class="proj-card"><div class="proj-hdr"><span class="proj-num">PROJECT 04</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr4t">Agribusiness</div><div class="proj-name" data-ed="pr4n">Siaya Agri-Enterprise Model</div><p class="proj-desc" data-ed="pr4d">Low-capital agribusiness entry model for Siaya County. Covers crop selection, seasonal cash flow projections, cost-benefit analysis, and phased land acquisition strategy.</p><div class="tags"><span class="tag">Siaya</span><span class="tag">Agriculture</span><span class="tag">Finance</span></div></div>
+  <div class="proj-grid rv rv-stagger">
+    <div class="proj-card tilt-card"><div class="proj-hdr"><span class="proj-num">PROJECT 01</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr1t">Service Platform Design</div><div class="proj-name" data-ed="pr1n">African Service Marketplace MVP</div><p class="proj-desc" data-ed="pr1d">End-to-end architecture for a digital service marketplace connecting vetted providers with clients across Kenya. Includes trust scoring, commission model, and mobile-first onboarding.</p><div class="tags"><span class="tag">Marketplace</span><span class="tag">Trust Layer</span><span class="tag">Kenya</span></div></div>
+    <div class="proj-card tilt-card"><div class="proj-hdr"><span class="proj-num">PROJECT 02</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr2t">Accounting System</div><div class="proj-name" data-ed="pr2n">SME Accounting Framework</div><p class="proj-desc" data-ed="pr2d">Simplified accrual-based accounting system for Kenyan SMEs. Covers ledger structure, cash flow templates, internal controls checklist, and monthly reporting workflow.</p><div class="tags"><span class="tag">SME</span><span class="tag">Accrual</span><span class="tag">Reporting</span></div></div>
+    <div class="proj-card tilt-card"><div class="proj-hdr"><span class="proj-num">PROJECT 03</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr3t">Financial Strategy</div><div class="proj-name" data-ed="pr3n">Capital Protection Playbook</div><p class="proj-desc" data-ed="pr3d">Structured framework for young Kenyan professionals to allocate, protect, and grow capital through disciplined risk management, diversification logic, and long-term compounding.</p><div class="tags"><span class="tag">Capital</span><span class="tag">Risk</span><span class="tag">Compounding</span></div></div>
+    <div class="proj-card tilt-card"><div class="proj-hdr"><span class="proj-num">PROJECT 04</span><span class="proj-arrow">↗</span></div><div class="proj-type" data-ed="pr4t">Agribusiness</div><div class="proj-name" data-ed="pr4n">Siaya Agri-Enterprise Model</div><p class="proj-desc" data-ed="pr4d">Low-capital agribusiness entry model for Siaya County. Covers crop selection, seasonal cash flow projections, cost-benefit analysis, and phased land acquisition strategy.</p><div class="tags"><span class="tag">Siaya</span><span class="tag">Agriculture</span><span class="tag">Finance</span></div></div>
   </div>
 </section>
 
 <!-- BLOG -->
 <section id="blog">
-  <div class="rv" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:48px">
-    <div>
-      <div class="eyebrow">Thought Leadership</div>
-      <h2 class="sec-title" data-ed="blog-title" style="margin-bottom:0">Insights &amp;<br>Perspectives</h2>
-    </div>
-    <div id="blog-admin-btns" style="display:none;align-items:center;gap:10px;padding-top:8px">
-      <button class="btn btn-primary" onclick="openPostEditor(null)" style="padding:10px 20px;font-size:10px">✏️ New Post</button>
-      <label style="display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);cursor:pointer">
-        <input type="checkbox" id="show-drafts-toggle" onchange="loadBlogPosts()" style="accent-color:var(--gold)"> Show Drafts
-      </label>
-    </div>
+  <div class="rv" style="margin-bottom:48px">
+    <div class="eyebrow">Thought Leadership</div>
+    <h2 class="sec-title">Insights &amp;<br>Perspectives</h2>
   </div>
-
-  <!-- Loading skeletons -->
   <div class="blog-loading" id="blog-loading">
-    <div class="blog-skel"></div>
-    <div class="blog-skel"></div>
-    <div class="blog-skel"></div>
+    <div class="blog-skel"></div><div class="blog-skel"></div><div class="blog-skel"></div>
   </div>
-
-  <!-- Live posts grid -->
-  <div class="blog-grid rv" id="blog-grid" style="display:none"></div>
-
-  <!-- Empty state -->
+  <div id="blog-grid-wrap"></div>
   <div id="blog-empty" style="display:none" class="rv">
     <div class="blog-empty">
       <div class="blog-empty-icon">✍️</div>
-      <div class="blog-empty-text">No published posts yet.<br>
-        <span id="blog-empty-admin" style="display:none">Click "New Post" to write your first article.</span>
-        <span id="blog-empty-public">Check back soon for new articles.</span>
-      </div>
+      <div class="blog-empty-text">No published posts yet — check back soon.</div>
     </div>
   </div>
-
-  <!-- Load more -->
   <div class="blog-load-more" id="blog-load-more" style="display:none">
     <button class="btn btn-secondary" onclick="loadMorePosts()">Load More Posts</button>
   </div>
@@ -896,1076 +1019,726 @@ body.admin-mode .blog-admin-actions{display:flex}
   <div class="footer-copy" data-ed="footer-copy">© 2026 Evans Onyango · Kenya · All Rights Reserved</div>
 </footer>
 
+
 <script>
-// ══════════════════════════════════════════════════════════════════════
-// EVANS ONYANGO PORTFOLIO — FULL SUPABASE-POWERED BLOG & ADMIN SYSTEM
-// ══════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+//  EVANS ONYANGO — PUBLIC PORTFOLIO + BLOG
+//  Supabase-powered: blog, engagement, ads, settings-driven features
+// ══════════════════════════════════════════════════════════════════
 
-// CONFIG — update contact details here (or via admin inline edit)
-const CONFIG = {
-  whatsapp: '254110696552',
-  email:    'onyiva177@gmail.com'
-};
+const CONFIG = { whatsapp: '254110696552', email: 'onyiva177@gmail.com' };
 
-// ── SUPABASE INIT ──
+// ── Supabase ──
 let sb = null;
 try {
-  const { createClient } = window.supabase;
-  sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON);
-} catch(e) {
-  console.warn('Supabase not configured yet — fill in SUPABASE_URL and SUPABASE_ANON at the top of this file.');
-}
+  sb = window.supabase.createClient(window.SB_URL, window.SB_ANON);
+} catch(e) { console.warn('Supabase not configured.'); }
 
-// ── AUTH STATE ──
-let currentUser  = null;
-let isAdmin      = false;
-let editingPostId = null;
-let postTags     = [];
-let pendingFiles = [];  // files staged for upload with a post
-let coverUploadUrl = null;
-let blogPage     = 0;
-const BLOG_PAGE_SIZE = 6;
-let allBlogPosts = [];
-let libFiles     = [];
-let libFilter    = 'all';
+// ── Site settings (loaded from DB, fallback to defaults) ──
+let CFG = {
+  show_views: true, show_comments: true, show_likes: true,
+  show_comment_count: true, comments_require_moderation: true,
+  ads_enabled: true, animation_speed: 'normal', animation_style: 'slide',
+  hero_animation: true, scroll_progress: true, cursor_effect: true, particle_bg: false
+};
 
-if (sb) {
-  sb.auth.onAuthStateChange((event, session) => {
-    currentUser = session ? session.user : null;
-    if (currentUser) {
-      isAdmin = true;
-      enterAdmin();
-    } else {
-      isAdmin = false;
-      exitAdmin();
-    }
-  });
-  // Re-check session on load
-  sb.auth.getSession().then(({ data }) => {
-    currentUser = data.session ? data.session.user : null;
-    if (currentUser) { isAdmin = true; enterAdmin(); }
-  });
-}
-
-// ── SCROLL REVEAL ──
-const ro = new IntersectionObserver(
-  e => e.forEach(x => { if (x.isIntersecting) x.target.classList.add('in'); }),
-  { threshold: 0.08 }
-);
-document.querySelectorAll('.rv').forEach(el => ro.observe(el));
-
-// ── SKILL BARS ──
-const so = new IntersectionObserver(
-  e => e.forEach(x => { if (x.isIntersecting) x.target.querySelectorAll('.skill-fill').forEach(b => b.classList.add('animate')); }),
-  { threshold: 0.3 }
-);
-const sbEl = document.getElementById('skill-bars');
-if (sbEl) so.observe(sbEl);
-
+// ── State ──
+let allPosts = [], allAds = [], blogPage = 0;
+const PAGE_SIZE = 6;
+let activePostId = null;
+let userLikes = JSON.parse(localStorage.getItem('eo_likes') || '{}');
+let deviceId = localStorage.getItem('eo_dev') || (() => {
+  const id = 'dev_' + Date.now() + Math.random().toString(36).slice(2);
+  localStorage.setItem('eo_dev', id); return id;
+})();
 
 // ════════════════════════════════════════════════════════
-//  ADMIN AUTH
+//  INIT
 // ════════════════════════════════════════════════════════
-
-function toggleAdmin() {
-  if (isAdmin) {
-    exitAdmin();
-  } else {
-    openModal('admin-login-modal');
-    setTimeout(() => document.getElementById('login-email').focus(), 300);
-  }
+async function init() {
+  await loadSettings();
+  applyAnimationSettings();
+  initAnimationEngine();
+  loadSaved();
+  initScrollReveal();
+  initSkillBars();
+  await loadBlogPosts();
+  if (CFG.ads_enabled) await loadAds();
 }
 
-async function doAdminLogin() {
-  if (!sb) { toast('⚠️ Configure Supabase credentials first'); return; }
-  const email    = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  const errEl    = document.getElementById('login-error');
-  const btn      = document.getElementById('login-btn');
-  errEl.style.display = 'none';
-  btn.textContent = '⏳ Logging in...';
-  btn.disabled = true;
-
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  btn.textContent = '🔐 Login';
-  btn.disabled = false;
-  if (error) {
-    errEl.textContent = error.message;
-    errEl.style.display = 'block';
-    return;
-  }
-  closeModal('admin-login-modal');
-  document.getElementById('login-password').value = '';
-  toast('✅ Logged in as admin');
-}
-
-async function adminLogout() {
+async function loadSettings() {
   if (!sb) return;
-  await sb.auth.signOut();
-  toast('👁 Logged out — Public view active');
+  try {
+    const { data } = await sb.from('site_settings').select('key,value');
+    if (data) data.forEach(r => { CFG[r.key] = r.value; });
+  } catch(e) {}
 }
 
-function enterAdmin() {
-  document.body.classList.add('admin-mode', 'admin-bar-visible');
-  document.getElementById('admin-bar').classList.add('visible');
-  document.getElementById('fab-admin').textContent = '✕';
-  document.getElementById('fab-admin-tip').textContent = 'Exit Admin';
-  const badge = document.getElementById('admin-email-badge');
-  if (badge && currentUser) badge.textContent = currentUser.email;
-  document.querySelectorAll('[data-ed]').forEach(el => {
-    el.contentEditable = 'true';
-    el.spellcheck = false;
+function applyAnimationSettings() {
+  const speeds = { slow: 1.6, normal: 1, fast: 0.55 };
+  const speed = speeds[CFG.animation_speed] ?? 1;
+  document.documentElement.style.setProperty('--anim-speed', speed);
+
+  if (!CFG.scroll_progress) {
+    const el = document.getElementById('scroll-progress');
+    if (el) el.style.display = 'none';
+  }
+  if (!CFG.cursor_effect) {
+    document.getElementById('cursor-dot').style.display = 'none';
+    document.getElementById('cursor-ring').style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  ANIMATION ENGINE
+// ════════════════════════════════════════════════════════
+function initAnimationEngine() {
+  // 1 — Page loader
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const loader = document.getElementById('page-loader');
+      if (loader) loader.classList.add('out');
+    }, 1300);
   });
-  const adminBtns = document.getElementById('blog-admin-btns');
-  if (adminBtns) adminBtns.style.display = 'flex';
-  const emptyAdmin = document.getElementById('blog-empty-admin');
-  if (emptyAdmin) emptyAdmin.style.display = 'inline';
-  const emptyPublic = document.getElementById('blog-empty-public');
-  if (emptyPublic) emptyPublic.style.display = 'none';
-  loadBlogPosts();
-  toast('✏️ Admin Mode — click text to edit · New Post → blog · Media Library → files');
-}
 
-function exitAdmin() {
-  document.body.classList.remove('admin-mode', 'admin-bar-visible');
-  document.getElementById('admin-bar').classList.remove('visible');
-  document.getElementById('fab-admin').textContent = '⚙';
-  document.getElementById('fab-admin-tip').textContent = 'Admin Login';
-  document.querySelectorAll('[data-ed]').forEach(el => {
-    el.contentEditable = 'false';
+  // 2 — Scroll progress bar
+  if (CFG.scroll_progress) {
+    const bar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+      if (bar) bar.style.width = Math.min(pct, 100) + '%';
+    }, { passive: true });
+  }
+
+  // 3 — Custom cursor (desktop only)
+  if (CFG.cursor_effect && window.matchMedia('(pointer:fine)').matches) {
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+      document.body.classList.add('cursor-ready');
+    });
+    function animRing() {
+      rx += (mx - rx) * 0.13; ry += (my - ry) * 0.13;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    }
+    animRing();
+    document.querySelectorAll('a,button,.blog-card,.exp-card,.proj-card,.pillar').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-link'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-link'));
+    });
+  } else {
+    document.getElementById('cursor-dot').style.display = 'none';
+    document.getElementById('cursor-ring').style.display = 'none';
+  }
+
+  // 4 — Hero animation (sequential entrance)
+  if (CFG.hero_animation) {
+    document.querySelectorAll('.hero-animate').forEach((el, i) => {
+      el.style.animationDelay = (0.12 + i * 0.16) + 's';
+    });
+  }
+
+  // 5 — Parallax orbs on mouse move
+  const orb1 = document.getElementById('orb-1');
+  const orb2 = document.getElementById('orb-2');
+  if (orb1 && orb2) {
+    document.addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth - .5) * 2;
+      const y = (e.clientY / window.innerHeight - .5) * 2;
+      orb1.style.transform = `translate(${x * 20}px,${y * 14}px)`;
+      orb2.style.transform = `translate(${x * -12}px,${y * -9}px)`;
+      const hw = document.querySelector('.hero-photo-wrap');
+      if (hw) hw.style.transform = `translate(${x * 7}px,${y * 5}px)`;
+    }, { passive: true });
+  }
+
+  // 6 — 3D card tilt
+  document.querySelectorAll('.tilt-card').forEach(card => {
+    const shine = document.createElement('div');
+    shine.className = 'tilt-shine';
+    card.style.position = 'relative';
+    card.appendChild(shine);
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - .5;
+      const y = (e.clientY - r.top)  / r.height - .5;
+      card.style.transform = `perspective(700px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-5px) scale(1.02)`;
+      shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%,rgba(255,255,255,.08) 0%,transparent 60%)`;
+      shine.style.opacity = '1';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      shine.style.opacity = '0';
+    });
   });
-  const adminBtns = document.getElementById('blog-admin-btns');
-  if (adminBtns) adminBtns.style.display = 'none';
-  loadBlogPosts();
+
+  // 7 — KPI counter
+  const kpiObs = new IntersectionObserver(entries => {
+    entries.forEach(({ isIntersecting, target }) => {
+      if (!isIntersecting) return;
+      const end = parseInt(target.dataset.count) || 0;
+      const suffix = target.dataset.suffix || '';
+      let cur = 0, steps = 60, s = 0;
+      const iv = setInterval(() => {
+        s++;
+        cur = Math.round(end * easeOut(s / steps));
+        target.textContent = cur + suffix;
+        if (s >= steps) { target.textContent = end + suffix; clearInterval(iv); }
+      }, 1200 / steps);
+      kpiObs.unobserve(target);
+    });
+  }, { threshold: 0.7 });
+  document.querySelectorAll('[data-count]').forEach(el => kpiObs.observe(el));
+
+  // 8 — Active nav section spy
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      navLinks.forEach(a => a.classList.remove('nav-active'));
+      const a = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('nav-active');
+    });
+  }, { rootMargin: '-35% 0px -55% 0px' });
+  sections.forEach(s => navObs.observe(s));
+
+  // 9 — Button ripple
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.style.overflow = 'hidden';
+    btn.addEventListener('click', e => {
+      const r = btn.getBoundingClientRect();
+      const size = Math.max(r.width, r.height);
+      const rip = document.createElement('span');
+      rip.className = 'btn-ripple';
+      rip.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,.22);width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px;transform:scale(0);animation:rippleOut .55s ease-out forwards;pointer-events:none`;
+      btn.appendChild(rip);
+      setTimeout(() => rip.remove(), 600);
+    });
+  });
+
+  // 10 — Stagger children in grids when revealed
+  document.querySelectorAll('.rv-stagger').forEach(grid => {
+    Array.from(grid.children).forEach((child, i) => {
+      child.style.opacity = '0';
+      child.style.transform = 'translateY(22px)';
+      child.style.transition = `opacity .55s ease ${i * 0.1}s, transform .55s cubic-bezier(.22,1,.36,1) ${i * 0.1}s`;
+    });
+  });
 }
 
+function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+// ════════════════════════════════════════════════════════
+//  SCROLL REVEAL
+// ════════════════════════════════════════════════════════
+function initScrollReveal() {
+  const ro = new IntersectionObserver(entries => {
+    entries.forEach(({ isIntersecting, target }) => {
+      if (!isIntersecting) return;
+      target.classList.add('in');
+      // Stagger children if rv-stagger
+      if (target.classList.contains('rv-stagger')) {
+        Array.from(target.children).forEach(child => {
+          child.style.opacity = '1';
+          child.style.transform = 'none';
+        });
+      }
+    });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.rv').forEach(el => ro.observe(el));
+}
+
+function initSkillBars() {
+  const so = new IntersectionObserver(entries => {
+    entries.forEach(({ isIntersecting, target }) => {
+      if (isIntersecting) target.querySelectorAll('.skill-fill').forEach(b => b.classList.add('animate'));
+    });
+  }, { threshold: 0.3 });
+  const sb2 = document.getElementById('skill-bars');
+  if (sb2) so.observe(sb2);
+}
+
+// ════════════════════════════════════════════════════════
+//  ADS
+// ════════════════════════════════════════════════════════
+async function loadAds() {
+  if (!sb || !CFG.ads_enabled) return;
+  try {
+    const { data } = await sb.from('blog_ads')
+      .select('*').eq('active', true).order('position');
+    if (data) allAds = data;
+
+    // Top banner
+    const banner = allAds.filter(a => a.placement === 'top_banner')[0];
+    if (banner) renderTopBanner(banner);
+  } catch(e) {}
+}
+
+function renderTopBanner(ad) {
+  const wrap = document.getElementById('ad-top-banner');
+  if (!wrap) return;
+  wrap.style.display = 'block';
+  wrap.style.cssText = 'display:block;padding:0 40px;margin-top:68px';
+  wrap.innerHTML = `<div class="ad-block ad-banner" onclick="adClick('${ad.id}','${esc(ad.link_url)}')">
+    ${ad.image_url ? `<img src="${esc(ad.image_url)}" alt="">` : ''}
+    <div class="ad-title">${esc(ad.title)}</div>
+    <div class="ad-body">${ad.body_html}</div>
+  </div>`;
+  trackAdImpression(ad.id);
+}
+
+function getBetweenAds() {
+  return allAds.filter(a => a.placement === 'between_posts');
+}
+
+async function trackAdImpression(adId) {
+  if (!sb) return;
+  try { await sb.rpc('increment_ad_impression', { ad_id: adId }); } catch(e) {}
+}
+
+async function adClick(adId, url) {
+  if (sb) { try { await sb.rpc('increment_ad_click', { ad_id: adId }); } catch(e) {} }
+  if (url && url !== 'null') window.open(url, '_blank');
+}
 
 // ════════════════════════════════════════════════════════
 //  BLOG — LOAD & RENDER
 // ════════════════════════════════════════════════════════
-
 async function loadBlogPosts() {
-  if (!sb) { renderBlogFallback(); return; }
-  const grid    = document.getElementById('blog-grid');
-  const loading = document.getElementById('blog-loading');
-  const empty   = document.getElementById('blog-empty');
-  const more    = document.getElementById('blog-load-more');
-  loading.style.display = 'grid';
-  grid.style.display    = 'none';
-  empty.style.display   = 'none';
-  more.style.display    = 'none';
+  if (!sb) { showBlogEmpty(); return; }
   blogPage = 0;
+  allPosts = [];
+  const loading = document.getElementById('blog-loading');
+  const wrap = document.getElementById('blog-grid-wrap');
+  const empty = document.getElementById('blog-empty');
+  const more = document.getElementById('blog-load-more');
+  loading.style.display = 'grid';
+  wrap.innerHTML = '';
+  empty.style.display = 'none';
+  more.style.display = 'none';
 
-  const showDrafts = isAdmin && document.getElementById('show-drafts-toggle') &&
-                     document.getElementById('show-drafts-toggle').checked;
-
-  let query = sb.from('blog_posts')
+  const { data, error } = await sb.from('blog_posts')
     .select('*, blog_files(*)')
+    .eq('published', true)
     .order('created_at', { ascending: false })
-    .range(0, BLOG_PAGE_SIZE - 1);
+    .range(0, PAGE_SIZE - 1);
 
-  if (!showDrafts) query = query.eq('published', true);
-
-  const { data, error } = await query;
   loading.style.display = 'none';
 
-  if (error || !data || data.length === 0) {
-    empty.style.display = 'block';
-    return;
-  }
+  if (error || !data || data.length === 0) { showBlogEmpty(); return; }
 
-  allBlogPosts = data;
-  grid.style.display = 'grid';
-  grid.innerHTML = data.map(p => renderBlogCard(p)).join('');
-  if (data.length >= BLOG_PAGE_SIZE) more.style.display = 'flex';
+  allPosts = data;
+  renderBlogGrid(data, true);
+  if (data.length >= PAGE_SIZE) more.style.display = 'flex';
+
+  // Re-observe new cards
+  setTimeout(() => {
+    document.querySelectorAll('.blog-card-wrap.rv').forEach(el => {
+      new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) e.target.classList.add('in');
+      }, { threshold: 0.07 }).observe(el);
+    });
+  }, 50);
 }
 
 async function loadMorePosts() {
   if (!sb) return;
   blogPage++;
-  const from = blogPage * BLOG_PAGE_SIZE;
-  const showDrafts = isAdmin && document.getElementById('show-drafts-toggle') &&
-                     document.getElementById('show-drafts-toggle').checked;
-  let query = sb.from('blog_posts')
+  const from = blogPage * PAGE_SIZE;
+  const { data } = await sb.from('blog_posts')
     .select('*, blog_files(*)')
+    .eq('published', true)
     .order('created_at', { ascending: false })
-    .range(from, from + BLOG_PAGE_SIZE - 1);
-  if (!showDrafts) query = query.eq('published', true);
-  const { data } = await query;
+    .range(from, from + PAGE_SIZE - 1);
+
   if (!data || data.length === 0) {
     document.getElementById('blog-load-more').style.display = 'none';
     return;
   }
-  allBlogPosts = allBlogPosts.concat(data);
-  document.getElementById('blog-grid').innerHTML += data.map(p => renderBlogCard(p)).join('');
-  if (data.length < BLOG_PAGE_SIZE)
+  allPosts = allPosts.concat(data);
+  renderBlogGrid(data, false);
+  if (data.length < PAGE_SIZE)
     document.getElementById('blog-load-more').style.display = 'none';
+}
+
+function renderBlogGrid(posts, fresh) {
+  const wrap = document.getElementById('blog-grid-wrap');
+  const betweenAds = getBetweenAds();
+  let adIdx = 0;
+
+  // Build a 3-col grid with ads injected every N posts
+  const cards = posts.map((p, i) => {
+    const cardHtml = renderBlogCard(p);
+    let adHtml = '';
+    // Insert a between-post ad after every 3rd card
+    if ((i + 1) % 3 === 0 && betweenAds[adIdx]) {
+      const ad = betweenAds[adIdx++];
+      adHtml = `<div class="ad-between" style="grid-column:1/-1">
+        <div class="ad-block" onclick="adClick('${ad.id}','${esc(ad.link_url)}')">
+          ${ad.image_url ? `<img src="${esc(ad.image_url)}" alt="" style="max-height:160px;width:100%;object-fit:cover">` : ''}
+          <div class="ad-title">${esc(ad.title)}</div>
+          <div class="ad-body">${ad.body_html}</div>
+        </div>
+      </div>`;
+      trackAdImpression(ad.id);
+    }
+    return cardHtml + adHtml;
+  }).join('');
+
+  if (fresh) {
+    wrap.innerHTML = `<div class="blog-grid rv rv-stagger" id="blog-grid">${cards}</div>`;
+  } else {
+    const grid = document.getElementById('blog-grid');
+    if (grid) grid.insertAdjacentHTML('beforeend', cards);
+  }
 }
 
 function renderBlogCard(p) {
   const date = new Date(p.created_at).toLocaleDateString('en-KE', { year:'numeric', month:'short', day:'numeric' });
-  const coverHtml = p.cover_url
-    ? `<img class="blog-card-img" src="${escHtml(p.cover_url)}" alt="${escHtml(p.title)}" loading="lazy">`
-    : `<div class="blog-card-img-placeholder">${categoryEmoji(p.category)}</div>`;
-  const draftBadge = p.published ? '' : `<span class="blog-draft-badge">Draft</span>`;
-  const fileCount = p.blog_files ? p.blog_files.length : 0;
-  const filesNote = fileCount > 0 ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)">📎 ${fileCount} file${fileCount>1?'s':''}</span>` : '';
-  const adminActions = `
-    <div class="blog-admin-actions">
-      <button class="blog-action-btn" onclick="event.stopPropagation();openPostEditor('${p.id}')">✏️ Edit</button>
-      <button class="blog-action-btn" onclick="event.stopPropagation();togglePublishPost('${p.id}',${p.published})">${p.published ? '📥 Unpublish' : '🚀 Publish'}</button>
-      <button class="blog-action-btn del" onclick="event.stopPropagation();deletePost('${p.id}')">🗑 Delete</button>
-    </div>`;
-  return `
-    <div class="blog-card" onclick="openPostReader('${p.id}')">
-      ${coverHtml}
+  const cover = p.cover_url
+    ? `<img class="blog-card-img" src="${esc(p.cover_url)}" alt="${esc(p.title)}" loading="lazy">`
+    : `<div class="blog-card-img-placeholder">${catEmoji(p.category)}</div>`;
+  const files = p.blog_files || [];
+  const fileNote = files.length > 0
+    ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)">📎 ${files.length}</span>` : '';
+  const viewNote = CFG.show_views && p.views > 0
+    ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)">👁 ${p.views}</span>` : '';
+  const likeNote = CFG.show_likes && p.likes > 0
+    ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)">♡ ${p.likes}</span>` : '';
+
+  return `<div class="blog-card-wrap rv" style="display:contents">
+    <div class="blog-card tilt-card" onclick="openPost('${p.id}')">
+      ${cover}
       <div class="blog-card-body">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <div class="blog-cat">${escHtml(p.category || 'General')}</div>
-          ${draftBadge}
-        </div>
-        <div class="blog-ttl">${escHtml(p.title)}</div>
-        <p class="blog-exc">${escHtml(p.excerpt || '')}</p>
+        <div class="blog-cat">${esc(p.category || 'General')}</div>
+        <div class="blog-ttl">${esc(p.title)}</div>
+        <p class="blog-exc">${esc(p.excerpt || '')}</p>
         <div class="blog-meta">
           <span class="blog-lnk">Read Article →</span>
-          <div style="display:flex;gap:8px;align-items:center">${filesNote}<span class="blog-date">${date}</span></div>
+          <div style="display:flex;gap:8px;align-items:center">${fileNote}${viewNote}${likeNote}<span class="blog-date">${date}</span></div>
         </div>
-        ${adminActions}
       </div>
-    </div>`;
+    </div>
+  </div>`;
 }
 
-function renderBlogFallback() {
-  const loading = document.getElementById('blog-loading');
-  loading.style.display = 'none';
+function showBlogEmpty() {
+  document.getElementById('blog-loading').style.display = 'none';
   document.getElementById('blog-empty').style.display = 'block';
 }
-
-function categoryEmoji(cat) {
-  const map = { 'Accounting':'📊','Finance':'💰','Technology':'💻','Business':'🏢',
-                'Data Analytics':'📈','Agribusiness':'🌾','Personal':'✍️','General':'📝' };
-  return map[cat] || '📝';
-}
-
 
 // ════════════════════════════════════════════════════════
 //  POST READER
 // ════════════════════════════════════════════════════════
-
-async function openPostReader(postId) {
-  const post = allBlogPosts.find(p => p.id === postId);
+async function openPost(postId) {
+  const post = allPosts.find(p => p.id === postId);
   if (!post) return;
+  activePostId = postId;
 
-  // Increment view count silently
-  if (sb) sb.rpc('increment_blog_views', { post_id: postId }).catch(() => {});
+  // Update URL hash without reloading
+  history.pushState({ postId }, '', `#post-${postId}`);
 
-  const heroWrap = document.getElementById('reader-hero-wrap');
-  heroWrap.innerHTML = post.cover_url
-    ? `<img class="reader-hero" src="${escHtml(post.cover_url)}" alt="${escHtml(post.title)}">`
-    : `<div class="reader-hero-placeholder">${categoryEmoji(post.category)}</div>`;
+  // Hero
+  document.getElementById('reader-hero-wrap').innerHTML = post.cover_url
+    ? `<img style="width:100%;height:220px;object-fit:cover;border-radius:var(--r-xl) var(--r-xl) 0 0;display:block" src="${esc(post.cover_url)}" alt="${esc(post.title)}">`
+    : `<div style="width:100%;height:100px;background:linear-gradient(135deg,var(--card),var(--card2));border-radius:var(--r-xl) var(--r-xl) 0 0;display:flex;align-items:center;justify-content:center;font-size:48px">${catEmoji(post.category)}</div>`;
 
-  document.getElementById('reader-cat').textContent   = post.category || 'General';
+  document.getElementById('reader-cat').textContent = post.category || 'General';
+  document.getElementById('reader-date').textContent = new Date(post.created_at)
+    .toLocaleDateString('en-KE', { year:'numeric', month:'long', day:'numeric' });
   document.getElementById('reader-title').textContent = post.title;
-  document.getElementById('reader-date').textContent  =
-    new Date(post.created_at).toLocaleDateString('en-KE', { year:'numeric', month:'long', day:'numeric' });
-
-  const draftBadge = document.getElementById('reader-draft-badge');
-  draftBadge.style.display = post.published ? 'none' : 'inline';
-
   document.getElementById('reader-content').innerHTML = post.content || '<p style="color:var(--muted)">No content yet.</p>';
+
+  // Engagement bar visibility from settings
+  const engBar = document.getElementById('reader-eng-bar');
+  const viewsEl = document.getElementById('reader-views');
+  const viewCount = document.getElementById('reader-view-count');
+  const commentCountWrap = document.getElementById('reader-comment-count-wrap');
+
+  if (CFG.show_views) {
+    viewsEl.style.display = 'flex';
+    viewCount.textContent = post.views + 1;
+  }
+
+  // Likes
+  const likeBtn = document.getElementById('reader-like-btn');
+  const likeCount = document.getElementById('reader-like-count');
+  likeCount.textContent = post.likes || 0;
+  if (userLikes[postId]) likeBtn.classList.add('liked');
+  else likeBtn.classList.remove('liked');
+
+  if (!CFG.show_likes) likeBtn.style.display = 'none';
+
+  // Inline ad
+  const inlineAdEl = document.getElementById('reader-inline-ad');
+  const inlineAds = allAds.filter(a => a.placement === 'between_posts');
+  if (CFG.ads_enabled && inlineAds[0]) {
+    const ad = inlineAds[0];
+    inlineAdEl.innerHTML = `<div class="ad-block" onclick="adClick('${ad.id}','${esc(ad.link_url)}')">
+      ${ad.image_url ? `<img src="${esc(ad.image_url)}" alt="" style="max-height:120px;width:100%;object-fit:cover;border-radius:var(--r-md);margin-bottom:10px">` : ''}
+      <div class="ad-title">${esc(ad.title)}</div>
+      <div class="ad-body">${ad.body_html}</div>
+    </div>`;
+    trackAdImpression(ad.id);
+  } else {
+    inlineAdEl.innerHTML = '';
+  }
 
   // Attachments
   const files = post.blog_files || [];
-  const attachWrap = document.getElementById('reader-attachments');
-  const attachGrid = document.getElementById('reader-attach-grid');
   if (files.length > 0) {
-    attachGrid.innerHTML = files.map(f => `
-      <a class="reader-attach-card" href="${escHtml(f.file_url)}" target="_blank" download="${escHtml(f.file_name)}">
+    document.getElementById('reader-attachments').style.display = 'block';
+    document.getElementById('reader-attach-grid').innerHTML = files.map(f => `
+      <a class="reader-attach-card" href="${esc(f.file_url)}" target="_blank">
         <span class="attach-icon">${fileEmoji(f.file_type)}</span>
-        <div>
-          <div class="attach-name" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">${escHtml(f.file_name)}</div>
-          <div class="attach-size">${formatBytes(f.file_size)}</div>
-        </div>
+        <div><div class="attach-name">${esc(f.file_name)}</div><div class="attach-size">${fmtBytes(f.file_size)}</div></div>
       </a>`).join('');
-    attachWrap.style.display = 'block';
   } else {
-    attachWrap.style.display = 'none';
+    document.getElementById('reader-attachments').style.display = 'none';
   }
 
+  // Comments
+  const commentsSection = document.getElementById('reader-comments-section');
+  if (CFG.show_comments) {
+    commentsSection.style.display = 'block';
+    document.getElementById('reader-comment-count-wrap').style.display =
+      CFG.show_comment_count ? 'flex' : 'none';
+    loadComments(postId);
+  } else {
+    commentsSection.style.display = 'none';
+  }
+
+  // Open modal with animation style
   openModal('post-reader-modal');
-}
 
-
-// ════════════════════════════════════════════════════════
-//  POST EDITOR
-// ════════════════════════════════════════════════════════
-
-async function openPostEditor(postId) {
-  if (!isAdmin) { openModal('admin-login-modal'); return; }
-  editingPostId = postId;
-  pendingFiles  = [];
-  postTags      = [];
-  coverUploadUrl = null;
-
-  document.getElementById('editor-modal-title').textContent = postId ? '✏️ Edit Post' : '✏️ New Post';
-  document.getElementById('post-title').value    = '';
-  document.getElementById('post-excerpt').value  = '';
-  document.getElementById('post-content').innerHTML = '';
-  document.getElementById('post-category').value = 'General';
-  document.getElementById('cover-url-input').value = '';
-  document.getElementById('cover-preview').style.display = 'none';
-  document.getElementById('cover-drop-label').style.display = 'block';
-  document.getElementById('attach-list').innerHTML = '';
-  document.getElementById('attach-progress').style.display = 'none';
-  renderTags();
-  setPublishUI(false);
-
-  if (postId) {
-    // Load existing post
-    const { data, error } = await sb.from('blog_posts').select('*, blog_files(*)').eq('id', postId).single();
-    if (!error && data) {
-      document.getElementById('post-title').value   = data.title   || '';
-      document.getElementById('post-excerpt').value = data.excerpt || '';
-      document.getElementById('post-content').innerHTML = data.content || '';
-      document.getElementById('post-category').value   = data.category || 'General';
-      if (data.cover_url) setCoverPreview(data.cover_url);
-      postTags = data.tags || [];
-      renderTags();
-      setPublishUI(data.published);
-      // Render existing attached files
-      if (data.blog_files && data.blog_files.length > 0) {
-        data.blog_files.forEach(f => {
-          addAttachItem({ id: f.id, name: f.file_name, type: f.file_type, size: f.file_size, url: f.file_url, saved: true });
-        });
-      }
-    }
+  // Increment views (fire and forget)
+  if (sb) {
+    sb.rpc('increment_blog_views', { post_id: postId }).catch(() => {});
   }
-  openModal('post-editor-modal');
-  setTimeout(() => document.getElementById('post-title').focus(), 300);
 }
 
-async function savePost(publish) {
-  if (!sb || !isAdmin) return;
-  const title   = document.getElementById('post-title').value.trim();
-  const excerpt = document.getElementById('post-excerpt').value.trim();
-  const content = document.getElementById('post-content').innerHTML;
-  const category= document.getElementById('post-category').value;
-  const toggle  = document.getElementById('publish-toggle');
-  const published = publish || toggle.classList.contains('on');
+function closeReader() {
+  closeModal('post-reader-modal');
+  history.pushState({}, '', window.location.pathname);
+  activePostId = null;
+}
 
-  if (!title) { toast('⚠️ Post title is required'); return; }
+// ── Share ──
+function toggleShareMenu(e) {
+  e.stopPropagation();
+  const m = document.getElementById('share-menu');
+  m.classList.toggle('open');
+}
 
-  const payload = { title, excerpt, content, category, tags: postTags, published,
-                    cover_url: coverUploadUrl || document.getElementById('cover-url-input').value.trim() || null,
-                    updated_at: new Date().toISOString() };
-
-  let postId = editingPostId;
-  let error;
-  if (postId) {
-    ({ error } = await sb.from('blog_posts').update(payload).eq('id', postId));
+function shareVia(platform) {
+  const post = allPosts.find(p => p.id === activePostId);
+  if (!post) return;
+  const url = encodeURIComponent(window.location.href.split('#')[0] + '#post-' + activePostId);
+  const text = encodeURIComponent(post.title + ' — by Evans Onyango');
+  const urls = {
+    twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+    whatsapp: `https://wa.me/?text=${text}%20${url}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+    copy: null
+  };
+  if (platform === 'copy') {
+    navigator.clipboard.writeText(decodeURIComponent(url)).then(() => toast('🔗 Link copied!'));
   } else {
-    const res = await sb.from('blog_posts').insert(payload).select().single();
-    error  = res.error;
-    postId = res.data ? res.data.id : null;
+    window.open(urls[platform], '_blank');
   }
-  if (error) { toast('❌ Error: ' + error.message); return; }
-
-  // Upload pending files
-  if (pendingFiles.length > 0 && postId) {
-    for (let i = 0; i < pendingFiles.length; i++) {
-      const pf = pendingFiles[i];
-      if (pf.saved) continue;
-      const path = `blog/${postId}/${Date.now()}-${pf.file.name}`;
-      const { data: upData, error: upErr } = await sb.storage.from('documents').upload(path, pf.file, { upsert: true });
-      if (upErr) { toast('⚠️ File upload failed: ' + pf.file.name); continue; }
-      const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
-      await sb.from('blog_files').insert({
-        post_id: postId, file_url: publicUrl, file_name: pf.file.name,
-        file_type: getFileCategory(pf.file.type), file_size: pf.file.size
-      });
-    }
-    pendingFiles = [];
-  }
-
-  toast(published ? '🚀 Post published!' : '💾 Draft saved!');
-  closeModal('post-editor-modal');
-  loadBlogPosts();
+  document.getElementById('share-menu').classList.remove('open');
 }
 
-async function togglePublishPost(postId, currentState) {
-  if (!sb || !isAdmin) return;
-  const { error } = await sb.from('blog_posts').update({ published: !currentState }).eq('id', postId);
-  if (!error) {
-    toast(currentState ? '📥 Post unpublished' : '🚀 Post published!');
-    loadBlogPosts();
-  }
-}
+// Close share menu on outside click
+document.addEventListener('click', () => {
+  document.getElementById('share-menu')?.classList.remove('open');
+});
 
-async function deletePost(postId) {
-  if (!isAdmin || !confirm('Delete this post and all its files permanently?')) return;
-  // Delete storage files
-  const { data: files } = await sb.from('blog_files').select('file_url').eq('post_id', postId);
-  if (files) {
-    for (const f of files) {
-      const path = f.file_url.split('/documents/')[1];
-      if (path) await sb.storage.from('documents').remove([path]);
-    }
-  }
-  await sb.from('blog_posts').delete().eq('id', postId);
-  toast('🗑 Post deleted');
-  loadBlogPosts();
-}
+// ── Likes ──
+async function toggleLike() {
+  if (!sb || !activePostId) return;
+  const btn = document.getElementById('reader-like-btn');
+  const countEl = document.getElementById('reader-like-count');
+  const alreadyLiked = userLikes[activePostId];
 
-// ── Publish Toggle ──
-function togglePublish() {
-  const toggle = document.getElementById('publish-toggle');
-  const on = toggle.classList.toggle('on');
-  document.getElementById('publish-status-label').textContent = on ? 'Published' : 'Draft';
-  document.getElementById('publish-hint').textContent = on ? 'Visible to everyone' : 'Hidden from public';
-}
-
-function setPublishUI(published) {
-  const toggle = document.getElementById('publish-toggle');
-  toggle.classList.toggle('on', published);
-  document.getElementById('publish-status-label').textContent = published ? 'Published' : 'Draft';
-  document.getElementById('publish-hint').textContent = published ? 'Visible to everyone' : 'Hidden from public';
-}
-
-// ── Tags ──
-function handleTagInput(e) {
-  if (e.key === 'Enter' || e.key === ',') {
-    e.preventDefault();
-    const val = document.getElementById('tag-input-field').value.trim().replace(/,$/, '');
-    if (val && !postTags.includes(val)) { postTags.push(val); renderTags(); }
-    document.getElementById('tag-input-field').value = '';
-  } else if (e.key === 'Backspace' && !document.getElementById('tag-input-field').value && postTags.length > 0) {
-    postTags.pop(); renderTags();
-  }
-}
-
-function renderTags() {
-  const container = document.getElementById('tags-input');
-  container.querySelectorAll('.tag-chip').forEach(c => c.remove());
-  const inputEl = document.getElementById('tag-input-field');
-  postTags.forEach((t, i) => {
-    const chip = document.createElement('span');
-    chip.className = 'tag-chip';
-    chip.textContent = t;
-    chip.title = 'Click to remove';
-    chip.onclick = () => { postTags.splice(i, 1); renderTags(); };
-    container.insertBefore(chip, inputEl);
-  });
-}
-
-// ── Rich Text Toolbar ──
-function fmt(cmd) { document.execCommand(cmd, false, null); document.getElementById('post-content').focus(); }
-function fmtBlock(tag) { document.execCommand('formatBlock', false, tag); document.getElementById('post-content').focus(); }
-function fmtLink() {
-  const url = prompt('Link URL:');
-  if (url) { document.execCommand('createLink', false, url); document.getElementById('post-content').focus(); }
-}
-
-// ── Cover Image ──
-async function handleCoverUpload(e) {
-  const file = e.target.files[0]; if (!file) return;
-  if (!sb || !isAdmin) return;
-  toast('⏳ Uploading cover image...');
-  const path = `covers/${Date.now()}-${file.name}`;
-  const { error } = await sb.storage.from('documents').upload(path, file, { upsert: true });
-  if (error) { toast('❌ Cover upload failed'); return; }
-  const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
-  coverUploadUrl = publicUrl;
-  setCoverPreview(publicUrl);
-  toast('✅ Cover image uploaded');
-}
-
-function setCoverFromUrl(url) {
-  if (url.startsWith('http')) setCoverPreview(url);
-}
-
-function setCoverPreview(url) {
-  const preview = document.getElementById('cover-preview');
-  const label   = document.getElementById('cover-drop-label');
-  preview.src = url;
-  preview.style.display = 'block';
-  label.style.display   = 'none';
-}
-
-// ── File Attachments (in post editor) ──
-function handleAttachFiles(e) {
-  Array.from(e.target.files).forEach(file => {
-    const pending = { file, name: file.name, type: getFileCategory(file.type), size: file.size, saved: false, id: 'p_' + Date.now() + Math.random() };
-    pendingFiles.push(pending);
-    addAttachItem(pending);
-  });
-  e.target.value = '';
-}
-
-function addAttachItem(f) {
-  const list = document.getElementById('attach-list');
-  const div  = document.createElement('div');
-  div.className = 'attach-item';
-  div.id = 'attach-' + f.id;
-  div.innerHTML = `
-    <span class="attach-icon">${fileEmoji(f.type)}</span>
-    <span class="attach-name">${escHtml(f.name)}</span>
-    <span class="attach-size">${formatBytes(f.size)}</span>
-    <button class="attach-del" onclick="removeAttach('${f.id}','${f.saved}')" title="Remove">✕</button>`;
-  list.appendChild(div);
-}
-
-async function removeAttach(id, saved) {
-  // Remove from DOM
-  const el = document.getElementById('attach-' + id);
-  if (el) el.remove();
-  // If saved to DB, delete from DB + storage
-  if (saved === 'true' && sb && isAdmin) {
-    const { data: fileData } = await sb.from('blog_files').select('file_url').eq('id', id).single();
-    if (fileData) {
-      const path = fileData.file_url.split('/documents/')[1];
-      if (path) await sb.storage.from('documents').remove([path]);
-      await sb.from('blog_files').delete().eq('id', id);
-    }
+  if (alreadyLiked) {
+    // Unlike
+    await sb.from('blog_likes').delete()
+      .eq('post_id', activePostId).eq('identifier', deviceId);
+    await sb.from('blog_posts')
+      .update({ likes: Math.max(0, (parseInt(countEl.textContent)||0) - 1) })
+      .eq('id', activePostId);
+    delete userLikes[activePostId];
+    btn.classList.remove('liked');
+    countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
   } else {
-    pendingFiles = pendingFiles.filter(f => f.id !== id);
+    // Like
+    const { error } = await sb.from('blog_likes')
+      .insert({ post_id: activePostId, identifier: deviceId });
+    if (!error) {
+      await sb.from('blog_posts')
+        .update({ likes: (parseInt(countEl.textContent)||0) + 1 })
+        .eq('id', activePostId);
+      userLikes[activePostId] = true;
+      btn.classList.add('liked');
+      countEl.textContent = parseInt(countEl.textContent) + 1;
+    }
   }
+  localStorage.setItem('eo_likes', JSON.stringify(userLikes));
 }
 
-// Drag-and-drop on attach zone
-const dropZone = document.getElementById('attach-drop');
-if (dropZone) {
-  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault(); dropZone.classList.remove('drag-over');
-    Array.from(e.dataTransfer.files).forEach(file => {
-      const pending = { file, name: file.name, type: getFileCategory(file.type), size: file.size, saved: false, id: 'p_' + Date.now() + Math.random() };
-      pendingFiles.push(pending);
-      addAttachItem(pending);
-    });
-  });
-}
-
-
-// ════════════════════════════════════════════════════════
-//  MEDIA LIBRARY
-// ════════════════════════════════════════════════════════
-
-async function openMediaLibrary() {
-  if (!isAdmin) return;
-  openModal('media-library-modal');
-  await loadLibFiles();
-}
-
-async function loadLibFiles() {
+// ── Comments ──
+async function loadComments(postId) {
   if (!sb) return;
-  const loading = document.getElementById('lib-loading');
-  const grid    = document.getElementById('lib-grid');
-  const empty   = document.getElementById('lib-empty');
-  loading.style.display = 'block';
-  grid.style.display    = 'none';
-  empty.style.display   = 'none';
+  const list = document.getElementById('comment-list');
+  const countEl = document.getElementById('reader-comment-count');
+  list.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--muted);padding:8px 0">Loading...</div>';
+  document.getElementById('comment-pending-msg').style.display = 'none';
 
-  const { data, error } = await sb.storage.from('documents').list('', { limit: 200, sortBy: { column: 'created_at', order: 'desc' } });
-  loading.style.display = 'none';
+  const { data } = await sb.from('blog_comments')
+    .select('*').eq('post_id', postId).eq('status', 'approved')
+    .order('created_at', { ascending: false });
 
-  if (error || !data || data.length === 0) {
-    empty.style.display = 'block'; return;
-  }
-  libFiles = data;
-  grid.style.display = 'grid';
-  renderLibGrid();
-}
-
-function filterLib(btn, type) {
-  document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  libFilter = type;
-  renderLibGrid();
-}
-
-function renderLibGrid() {
-  const grid = document.getElementById('lib-grid');
-  const filtered = libFilter === 'all' ? libFiles : libFiles.filter(f => getFileCategory(f.metadata ? f.metadata.mimetype : '') === libFilter || f.name.toLowerCase().endsWith('.' + libFilter));
-  if (filtered.length === 0) {
-    grid.style.display = 'none';
-    document.getElementById('lib-empty').style.display = 'block';
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--muted);padding:8px 0">No comments yet — be the first.</div>';
+    if (countEl) countEl.textContent = '0';
     return;
   }
-  grid.style.display = 'grid';
-  document.getElementById('lib-empty').style.display = 'none';
-  grid.innerHTML = filtered.map(f => {
-    const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(f.name);
-    const mime    = f.metadata ? f.metadata.mimetype : '';
-    const size    = f.metadata ? f.metadata.size : 0;
-    const isImage = mime && mime.startsWith('image/');
-    const thumbHtml = isImage
-      ? `<img src="${escHtml(publicUrl)}" style="width:100%;height:100px;object-fit:cover;display:block" loading="lazy" alt="${escHtml(f.name)}">`
-      : `<div class="lib-thumb">${fileEmoji(getFileCategory(mime))}</div>`;
-    return `
-      <div class="lib-item">
-        ${thumbHtml}
-        <div class="lib-info">
-          <div class="lib-name" title="${escHtml(f.name)}">${escHtml(f.name)}</div>
-          <div class="lib-size">${formatBytes(size)}</div>
-          <div class="lib-actions">
-            <a class="lib-btn" href="${escHtml(publicUrl)}" target="_blank">↗ View</a>
-            <a class="lib-btn" href="${escHtml(publicUrl)}" download="${escHtml(f.name)}">⬇ Download</a>
-            <button class="lib-btn del" onclick="deleteLibFile('${escHtml(f.name)}',this)">🗑</button>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
+
+  if (countEl) countEl.textContent = data.length;
+  list.innerHTML = data.map(c => `
+    <div class="comment-item">
+      <div class="comment-author">${esc(c.author_name)}<span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'numeric'})}</span></div>
+      <div class="comment-body">${esc(c.content)}</div>
+    </div>`).join('');
 }
 
-async function handleLibUpload(e) {
-  if (!sb || !isAdmin) return;
-  const files = Array.from(e.target.files);
-  if (!files.length) return;
-  const progWrap = document.getElementById('lib-upload-progress');
-  const bar      = document.getElementById('lib-prog-bar');
-  const text     = document.getElementById('lib-prog-text');
-  progWrap.style.display = 'block';
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const pct  = Math.round(((i) / files.length) * 100);
-    bar.style.width  = pct + '%';
-    text.textContent = `Uploading ${i+1}/${files.length}: ${file.name}`;
-    const path = `library/${Date.now()}-${file.name}`;
-    await sb.storage.from('documents').upload(path, file, { upsert: true });
-  }
-  bar.style.width = '100%';
-  text.textContent = 'Done!';
-  setTimeout(() => { progWrap.style.display = 'none'; }, 1500);
-  e.target.value = '';
-  toast(`✅ ${files.length} file${files.length > 1 ? 's' : ''} uploaded`);
-  await loadLibFiles();
-}
+async function submitComment() {
+  if (!sb || !activePostId) return;
+  const name = document.getElementById('comment-author').value.trim();
+  const email = document.getElementById('comment-email').value.trim();
+  const body = document.getElementById('comment-body').value.trim();
+  if (!name || !body) { toast('⚠️ Name and comment are required'); return; }
 
-async function deleteLibFile(name, btn) {
-  if (!confirm('Delete this file permanently?')) return;
-  btn.textContent = '...';
-  const { error } = await sb.storage.from('documents').remove([name]);
-  if (!error) {
-    toast('🗑 File deleted');
-    await loadLibFiles();
+  const status = CFG.comments_require_moderation ? 'pending' : 'approved';
+  const { error } = await sb.from('blog_comments').insert({
+    post_id: activePostId, author_name: name, author_email: email || null,
+    content: body, status
+  });
+  if (error) { toast('❌ Could not submit comment'); return; }
+
+  document.getElementById('comment-author').value = '';
+  document.getElementById('comment-email').value = '';
+  document.getElementById('comment-body').value = '';
+
+  if (status === 'pending') {
+    document.getElementById('comment-pending-msg').style.display = 'block';
   } else {
-    toast('❌ Delete failed: ' + error.message);
-    btn.textContent = '🗑';
+    loadComments(activePostId);
   }
 }
-
 
 // ════════════════════════════════════════════════════════
 //  MODAL HELPERS
 // ════════════════════════════════════════════════════════
-
 function openModal(id) {
   document.getElementById(id).classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
   document.body.style.overflow = '';
 }
-
-// Close on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', function(e) {
-    if (e.target === this) closeModal(this.id);
-  });
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
 });
-
-// Close on Escape
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
-  }
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
 });
 
+// Handle browser back button
+window.addEventListener('popstate', () => {
+  if (activePostId) closeReader();
+});
 
 // ════════════════════════════════════════════════════════
-//  SAVE & EXPORT (portfolio content)
+//  CONTACT
 // ════════════════════════════════════════════════════════
-
-function saveContent() {
-  var txt = {};
-  document.querySelectorAll('[data-ed]').forEach(function(el) {
-    txt[el.dataset.ed] = el.innerHTML;
-  });
-  try { localStorage.setItem('eo_txt', JSON.stringify(txt)); } catch(e) {}
-  var emailEl = document.querySelector('[data-ed="con-email"]');
-  var phoneEl = document.querySelector('[data-ed="con-phone"]');
-  if (emailEl) {
-    CONFIG.email = emailEl.textContent.trim();
-    var eb = document.getElementById('email-btn');
-    if (eb) eb.href = 'mailto:' + CONFIG.email;
-  }
-  if (phoneEl) {
-    var ph = phoneEl.textContent.replace(/\D/g, '');
-    if (ph.length > 8) CONFIG.whatsapp = ph;
-  }
-  toast('💾 Saving and preparing download...');
-  setTimeout(exportSite, 600);
+function updateContactLinks() {
+  const emailEl = document.querySelector('[data-ed="con-email"]');
+  const phoneEl = document.querySelector('[data-ed="con-phone"]');
+  if (emailEl) { const e = emailEl.textContent.trim(); if(e){ CONFIG.email=e; const b=document.getElementById('email-btn'); if(b) b.href='mailto:'+e; } }
+  if (phoneEl) { const p = phoneEl.textContent.replace(/\D/g,''); if(p.length>8) CONFIG.whatsapp=p; }
+}
+function openWhatsApp() {
+  window.open('https://wa.me/'+CONFIG.whatsapp+'?text='+encodeURIComponent('Hi Evans! I came across your portfolio and would like to connect.'),'_blank');
+}
+function submitForm() {
+  const name=document.getElementById('cf-name').value.trim(),
+        email=document.getElementById('cf-email').value.trim(),
+        subj=document.getElementById('cf-subject').value,
+        msg=document.getElementById('cf-msg').value.trim();
+  if(!name||!email||!msg){toast('⚠️ Fill in Name, Email and Message');return;}
+  const body=encodeURIComponent('Name: '+name+'\nEmail: '+email+'\nPhone: '+document.getElementById('cf-phone').value+'\nSubject: '+subj+'\n\nMessage:\n'+msg);
+  const a=document.createElement('a'); a.href='mailto:'+CONFIG.email+'?subject='+encodeURIComponent((subj||'Portfolio Enquiry')+' from '+name)+'&body='+body;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); toast('✉️ Opening email client...');
+}
+function submitViaWhatsApp() {
+  const name=document.getElementById('cf-name').value.trim(),
+        subj=document.getElementById('cf-subject').value,
+        msg=document.getElementById('cf-msg').value.trim();
+  if(!name||!msg){toast('⚠️ Enter your name and message');return;}
+  window.open('https://wa.me/'+CONFIG.whatsapp+'?text='+encodeURIComponent('Hi Evans! My name is '+name+'.'+(subj?'\nTopic: '+subj:'')+'\n\n'+msg),'_blank');
 }
 
-function exportSite() {
-  var clone = document.documentElement.cloneNode(true);
-  document.querySelectorAll('[data-ed]').forEach(function(el) {
-    var t = clone.querySelector('[data-ed="' + el.dataset.ed + '"]');
-    if (t) { t.innerHTML = el.innerHTML; t.removeAttribute('contenteditable'); }
-  });
-  document.querySelectorAll('[data-pid] img').forEach(function(img) {
-    if (!img.classList.contains('loaded')) return;
-    var t = clone.getElementById(img.id);
-    if (t) {
-      t.src = img.src; t.classList.add('loaded');
-      var ph = t.closest ? t.closest('[data-pid]') : null;
-      if (!ph) ph = clone.querySelector('[data-pid="' + img.id.replace('img-','') + '"]');
-      if (ph) {
-        var icon = ph.querySelector('.ph-icon'); var lbl = ph.querySelector('.ph-lbl');
-        if (icon) icon.style.display = 'none'; if (lbl) lbl.style.display = 'none';
-      }
-    }
-  });
-  var html = '<!DOCTYPE html>\n' + clone.outerHTML;
-  var encoded = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-  var a = document.createElement('a');
-  a.href = encoded; a.download = 'index.html'; a.style.display = 'none';
-  document.body.appendChild(a); a.click();
-  setTimeout(function() { document.body.removeChild(a); }, 500);
-  toast('⬇ index.html downloading — check Downloads folder!');
+// ════════════════════════════════════════════════════════
+//  NAV / MOBILE
+// ════════════════════════════════════════════════════════
+function toggleMobileNav() { document.getElementById('mobile-nav').classList.toggle('open'); }
+function closeMobileNav()   { document.getElementById('mobile-nav').classList.remove('open'); }
+
+// ════════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════════
+function toast(msg,dur=3200) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),dur);
 }
 
-function resetContent() {
-  if (confirm('Reset ALL content and photos to defaults?')) {
-    localStorage.removeItem('eo_txt'); location.reload();
-  }
-}
-
+// ════════════════════════════════════════════════════════
+//  PORTFOLIO CONTENT (localStorage persistence)
+// ════════════════════════════════════════════════════════
 function loadSaved() {
   try {
-    var txt = JSON.parse(localStorage.getItem('eo_txt') || '{}');
-    Object.keys(txt).forEach(function(k) {
-      var el = document.querySelector('[data-ed="' + k + '"]');
-      if (el) el.innerHTML = txt[k];
-    });
-  } catch(e) {}
-  document.querySelectorAll('[data-pid] img').forEach(function(img) {
-    if (img.src && img.getAttribute('src') && img.getAttribute('src').length > 10) {
+    const txt=JSON.parse(localStorage.getItem('eo_txt')||'{}');
+    Object.keys(txt).forEach(k=>{const el=document.querySelector('[data-ed="'+k+'"]');if(el)el.innerHTML=txt[k];});
+  } catch(e){}
+  document.querySelectorAll('[data-pid] img').forEach(img=>{
+    if(img.src&&img.getAttribute('src')&&img.getAttribute('src').length>10){
       img.classList.add('loaded');
-      var ph = img.parentElement;
-      if (ph) {
-        var icon = ph.querySelector('.ph-icon'); var lbl = ph.querySelector('.ph-lbl');
-        if (icon) icon.style.display = 'none'; if (lbl) lbl.style.display = 'none';
-      }
+      const ph=img.parentElement;
+      if(ph){const ic=ph.querySelector('.ph-icon'),lb=ph.querySelector('.ph-lbl');if(ic)ic.style.display='none';if(lb)lb.style.display='none';}
     }
   });
   updateContactLinks();
 }
 
-
-// ════════════════════════════════════════════════════════
-//  PHOTO MODAL (existing portfolio photos)
-// ════════════════════════════════════════════════════════
-
-let curPid = null;
-
-function openPhotoModal(pid) {
-  if (!isAdmin) return;
-  curPid = pid;
-  document.getElementById('photo-url').value = '';
-  openModal('photo-modal');
-}
-
-function closePhotoModal() {
-  closeModal('photo-modal');
-  curPid = null;
-}
-
-function handleFile(e) {
-  var f = e.target.files[0]; if (!f) return;
-  var r = new FileReader();
-  r.onload = function(ev) {
-    document.getElementById('photo-url').value = ev.target.result;
-    toast('📸 Image ready — click Apply Photo to confirm');
-  };
-  r.readAsDataURL(f);
-}
-
-function applyPhoto() {
-  var url = document.getElementById('photo-url').value.trim();
-  if (!url || !curPid) return;
-  var img = document.getElementById('img-' + curPid);
-  if (!img) return;
-  img.src = url;
-  img.onload = function() {
-    img.classList.add('loaded');
-    var ph = img.parentElement;
-    if (ph) {
-      var icon = ph.querySelector('.ph-icon'); var lbl = ph.querySelector('.ph-lbl');
-      if (icon) icon.style.display = 'none'; if (lbl) lbl.style.display = 'none';
-    }
-    toast('✅ Photo applied! Click Save & Export to keep it.');
-  };
-  img.onerror = function() { toast('❌ Could not load image. Check the URL and try again.'); };
-  closePhotoModal();
-}
-
-document.getElementById('photo-modal').addEventListener('click', function(e) {
-  if (e.target === this) closePhotoModal();
-});
-
-
-// ════════════════════════════════════════════════════════
-//  CONTACT
-// ════════════════════════════════════════════════════════
-
-function updateContactLinks() {
-  var emailEl = document.querySelector('[data-ed="con-email"]');
-  var phoneEl = document.querySelector('[data-ed="con-phone"]');
-  if (emailEl) {
-    var em = emailEl.textContent.trim();
-    if (em) {
-      CONFIG.email = em;
-      var eb = document.getElementById('email-btn');
-      if (eb) eb.href = 'mailto:' + em;
-    }
-  }
-  if (phoneEl) {
-    var ph = phoneEl.textContent.replace(/\D/g, '');
-    if (ph.length > 8) CONFIG.whatsapp = ph;
-  }
-}
-
-function openWhatsApp() {
-  var msg = encodeURIComponent('Hi Evans! I came across your portfolio and would like to connect.');
-  window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + msg, '_blank');
-}
-
-function submitForm() {
-  var name    = document.getElementById('cf-name').value.trim();
-  var email   = document.getElementById('cf-email').value.trim();
-  var subject = document.getElementById('cf-subject').value;
-  var msg     = document.getElementById('cf-msg').value.trim();
-  if (!name || !email || !msg) { toast('⚠️ Please fill in Name, Email and Message'); return; }
-  var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email +
-    '\nPhone: ' + document.getElementById('cf-phone').value +
-    '\nSubject: ' + subject + '\n\nMessage:\n' + msg);
-  var subj = encodeURIComponent((subject || 'Portfolio Enquiry') + ' from ' + name);
-  var a = document.createElement('a');
-  a.href = 'mailto:' + CONFIG.email + '?subject=' + subj + '&body=' + body;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  toast('✉️ Opening your email client...');
-}
-
-function submitViaWhatsApp() {
-  var name    = document.getElementById('cf-name').value.trim();
-  var subject = document.getElementById('cf-subject').value;
-  var msg     = document.getElementById('cf-msg').value.trim();
-  if (!name || !msg) { toast('⚠️ Please enter your name and message'); return; }
-  var text = encodeURIComponent('Hi Evans! My name is ' + name + '.' +
-    (subject ? '\nTopic: ' + subject : '') + '\n\n' + msg);
-  window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + text, '_blank');
-}
-
-
-// ════════════════════════════════════════════════════════
-//  MOBILE NAV
-// ════════════════════════════════════════════════════════
-
-function toggleMobileNav() { document.getElementById('mobile-nav').classList.toggle('open'); }
-function closeMobileNav()   { document.getElementById('mobile-nav').classList.remove('open'); }
-
-
-// ════════════════════════════════════════════════════════
-//  TOAST
-// ════════════════════════════════════════════════════════
-
-function toast(msg, dur) {
-  dur = dur || 3200;
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.classList.remove('show'); }, dur);
-}
-
-
 // ════════════════════════════════════════════════════════
 //  UTILITIES
 // ════════════════════════════════════════════════════════
-
-function escHtml(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function formatBytes(bytes) {
-  if (!bytes || bytes === 0) return '—';
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
-
-function getFileCategory(mimeOrExt) {
-  if (!mimeOrExt) return 'other';
-  const m = mimeOrExt.toLowerCase();
-  if (m.startsWith('image/')) return 'image';
-  if (m.startsWith('video/')) return 'video';
-  if (m === 'application/pdf' || m.endsWith('.pdf')) return 'pdf';
-  if (m.includes('word') || m.includes('document') || m.endsWith('.doc') || m.endsWith('.docx')) return 'doc';
-  if (m.includes('spreadsheet') || m.includes('excel') || m.endsWith('.xls') || m.endsWith('.xlsx')) return 'doc';
-  if (m.includes('presentation') || m.endsWith('.ppt') || m.endsWith('.pptx')) return 'doc';
-  if (m.startsWith('text/') || m.endsWith('.txt') || m.endsWith('.md') || m.endsWith('.csv')) return 'doc';
-  return 'other';
-}
-
-function fileEmoji(type) {
-  const map = { image:'🖼', video:'🎥', pdf:'📄', doc:'📝', other:'📦' };
-  return map[type] || '📎';
-}
-
-// ── Enter key in editables ──
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.activeElement && document.activeElement.hasAttribute('data-ed')) {
-    e.preventDefault();
-    document.execCommand('insertLineBreak');
-  }
-});
-     // ════════════════════════════════════════════════════════
-//  ANIMATION ENGINE
-// ════════════════════════════════════════════════════════
-
-// 1. Page Loader
-window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('page-loader').classList.add('out'), 1400);
-});
-
-// 2. Scroll Progress Bar
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-  document.getElementById('scroll-progress').style.width = pct + '%';
-}, { passive: true });
-
-// 3. Custom Cursor
-(function() {
-  const dot = document.getElementById('cursor-dot');
-  const ring = document.getElementById('cursor-ring');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
-    document.body.classList.add('cursor-ready');
-  });
-  function animRing() {
-    rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-    requestAnimationFrame(animRing);
-  }
-  animRing();
-  document.querySelectorAll('a,button,.blog-card,.exp-card,.proj-card,.pillar').forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-link'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-link'));
-  });
-})();
-
-// 4. Mouse Parallax — hero orbs + right photo
-(function() {
-  const orb1 = document.getElementById('orb-1');
-  const orb2 = document.getElementById('orb-2');
-  const heroPhoto = document.querySelector('.hero-photo-wrap');
-  document.addEventListener('mousemove', e => {
-    const x = (e.clientX / window.innerWidth  - .5) * 2;
-    const y = (e.clientY / window.innerHeight - .5) * 2;
-    if (orb1) orb1.style.transform = `translate(${x * 18}px, ${y * 12}px)`;
-    if (orb2) orb2.style.transform = `translate(${x * -10}px, ${y * -8}px)`;
-    if (heroPhoto) heroPhoto.style.transform = `translate(${x * 6}px, ${y * 4}px)`;
-  }, { passive: true });
-})();
-
-// 5. 3D Card Tilt
-document.querySelectorAll('.tilt-card').forEach(card => {
-  // Add shine overlay
-  const shine = document.createElement('div');
-  shine.className = 'tilt-shine';
-  card.appendChild(shine);
-
-  card.addEventListener('mousemove', e => {
-    const r = card.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width  - .5;
-    const y = (e.clientY - r.top)  / r.height - .5;
-    card.style.transform = `perspective(600px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-4px) scale(1.02)`;
-    shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%, rgba(255,255,255,.08) 0%, transparent 60%)`;
-  });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
-  });
-});
-
-// 6. KPI Counter Animation
-(function() {
-  const kpiObs = new IntersectionObserver(entries => {
-    entries.forEach(({ isIntersecting, target }) => {
-      if (!isIntersecting) return;
-      const end    = parseInt(target.dataset.count) || 0;
-      const suffix = target.dataset.suffix || '';
-      const dur    = 1400;
-      const step   = 16;
-      const steps  = dur / step;
-      let cur = 0;
-      const timer = setInterval(() => {
-        cur++;
-        const val = Math.round(end * (cur / steps));
-        target.textContent = val + suffix;
-        if (cur >= steps) { target.textContent = end + suffix; clearInterval(timer); }
-      }, step);
-      kpiObs.unobserve(target);
-    });
-  }, { threshold: 0.7 });
-  document.querySelectorAll('[data-count]').forEach(el => kpiObs.observe(el));
-})();
-
-// 7. Active Nav Section Highlight
-(function() {
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
-  const sectionObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        navLinks.forEach(a => a.classList.remove('nav-active'));
-        const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
-        if (active) active.classList.add('nav-active');
-      }
-    });
-  }, { rootMargin: '-40% 0px -50% 0px' });
-  sections.forEach(s => sectionObs.observe(s));
-})();
-
-// 8. Button Ripple
-document.querySelectorAll('.btn').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    const r = this.getBoundingClientRect();
-    const size = Math.max(r.width, r.height);
-    const ripple = document.createElement('span');
-    ripple.className = 'btn-ripple';
-    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px`;
-    this.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-  });
-});
-
-// 9. Section title word-wrap for reveal
-document.querySelectorAll('.sec-title').forEach(title => {
-  title.innerHTML = title.innerHTML.split(/(\s+|<br>)/).map(w =>
-    w.trim() && w !== '<br>' ? `<span class="word">${w}</span>` : w
-  ).join('');
-});
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtBytes(b){if(!b||b===0)return'—';if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+function catEmoji(c){return{Accounting:'📊',Finance:'💰',Technology:'💻',Business:'🏢','Data Analytics':'📈',Agribusiness:'🌾',Personal:'✍️',General:'📝'}[c]||'📝';}
+function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',other:'📦'}[t]||'📎';}
 
 // ── INIT ──
-loadSaved();
-loadBlogPosts();
+init();
 </script>
 </body>
 </html>
