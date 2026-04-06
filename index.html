@@ -255,8 +255,7 @@ footer{background:linear-gradient(90deg,var(--blue-dark),var(--blue-deep));paddi
 #toast.show{opacity:1;pointer-events:auto;transform:translateX(0)}
 
 /* REVEAL */
-.rv{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
-.rv.in{opacity:1;transform:translateY(0)}
+/* .rv base styles defined in animation block */
 .d1{transition-delay:.1s}
 .d2{transition-delay:.2s}
 
@@ -409,196 +408,249 @@ body.admin-mode .blog-admin-actions{display:flex}
 .upload-status{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px}
 
 /* ══════════════════════════════════════════════════════════════
-   CINEMATIC ANIMATION SYSTEM — Bold, 3D, Movie-Trailer Grade
+   CINEMATIC ANIMATION SYSTEM — Hardcoded, No Admin Control
    ══════════════════════════════════════════════════════════════ */
 
 /* ── PAGE LOADER ── */
-#page-loader{
-  position:fixed;inset:0;z-index:99999;
-  background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
-  transition:opacity .7s ease, visibility .7s ease;
-}
+#page-loader{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .7s ease,visibility .7s ease}
 #page-loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.loader-monogram{
-  font-family:'Playfair Display',serif;font-weight:900;font-size:64px;
-  color:transparent;
-  background:linear-gradient(135deg,var(--white) 0%,var(--gold) 100%);
-  -webkit-background-clip:text;background-clip:text;
-  opacity:0;
-  animation:loaderDrop .7s cubic-bezier(.34,1.56,.64,1) .1s forwards;
-}
-@keyframes loaderDrop{
-  from{opacity:0;transform:scale(1.4) translateY(-20px);filter:blur(8px)}
-  to  {opacity:1;transform:scale(1) translateY(0);filter:blur(0)}
-}
+.loader-monogram{font-family:'Playfair Display',serif;font-weight:900;font-size:64px;color:transparent;background:linear-gradient(135deg,var(--white) 0%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;opacity:0;animation:loaderDrop .7s cubic-bezier(.34,1.56,.64,1) .1s forwards}
+@keyframes loaderDrop{from{opacity:0;transform:scale(1.5) translateY(-30px);filter:blur(10px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
 .loader-bar-wrap{width:200px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-.loader-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:2px;animation:loaderFill 1.1s cubic-bezier(.4,0,.2,1) .3s forwards;}
+.loader-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:2px;animation:loaderFill 1.1s cubic-bezier(.4,0,.2,1) .3s forwards}
 @keyframes loaderFill{to{width:100%}}
-.loader-text{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);opacity:0;animation:loaderFadeIn .4s ease .4s forwards;}
+.loader-text{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);opacity:0;animation:loaderFadeIn .4s ease .4s forwards}
 @keyframes loaderFadeIn{to{opacity:1}}
 
 /* ── SCROLL PROGRESS ── */
-#scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;z-index:99998;background:linear-gradient(90deg,var(--blue),var(--gold));pointer-events:none;transition:width .06s linear}
+#scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;z-index:99998;background:linear-gradient(90deg,var(--blue),var(--gold));pointer-events:none}
 
-/* ── HERO ENTRANCE — cinematic stagger ── */
-.hero-animate{opacity:0;animation:heroSlam .9s cubic-bezier(.16,1,.3,1) forwards;}
+/* ── HERO ENTRANCE ── */
+.hero-animate{opacity:0;animation:heroSlam .9s cubic-bezier(.16,1,.3,1) forwards}
 @keyframes heroSlam{
-  0%  {opacity:0;transform:translateY(40px) skewY(-2deg);filter:blur(4px)}
-  60% {opacity:1;transform:translateY(-6px) skewY(.5deg);filter:blur(0)}
+  0%{opacity:0;transform:translateY(50px) skewY(-3deg);filter:blur(6px)}
+  65%{opacity:1;transform:translateY(-8px) skewY(.8deg);filter:blur(0)}
   100%{opacity:1;transform:translateY(0) skewY(0)}
 }
-.ha-d1{animation-delay:.1s}.ha-d2{animation-delay:.25s}.ha-d3{animation-delay:.4s}
-.ha-d4{animation-delay:.55s}.ha-d5{animation-delay:.68s}.ha-d6{animation-delay:.82s}
+.ha-d1{animation-delay:.1s}.ha-d2{animation-delay:.26s}.ha-d3{animation-delay:.42s}
+.ha-d4{animation-delay:.56s}.ha-d5{animation-delay:.70s}.ha-d6{animation-delay:.84s}
 
-/* ── SCROLL REVEAL — 4 cinematic styles, applied via data-anim ── */
-
-/* BASE hidden state */
+/* ── BASE REVEAL STATE — all elements start invisible ── */
 .rv{opacity:0}
+.rv.in{opacity:1}
 
-/* SLIDE (default) — dramatic Y travel + slight rotation */
-[data-anim="slide"] .rv, .rv:not([data-anim] *) {
-  transform:translateY(60px) rotateX(12deg);
-  transform-origin:top center;
-  transition:opacity .75s ease, transform .75s cubic-bezier(.16,1,.3,1);
-}
-[data-anim="slide"] .rv.in, .rv.in:not([data-anim] *){
-  opacity:1;transform:translateY(0) rotateX(0);
-}
+/* ══════════════════════════════════════════════════════════════
+   SLIDE PRESETS — Google-Slides-style transitions
+   Picked per section via data-slide="X" on the section element
+   ══════════════════════════════════════════════════════════════ */
 
-/* FADE — pure opacity, sharp */
-[data-anim="fade"] .rv{
-  transform:none;
-  transition:opacity .65s ease;
+/* SLIDE-PUSH (default) — element pushes up from below */
+[data-slide="push"] .rv, .rv.push-reveal {
+  transform:translateY(70px);
+  transition:opacity .72s ease, transform .72s cubic-bezier(.16,1,.3,1);
 }
-[data-anim="fade"] .rv.in{opacity:1;transform:none}
+[data-slide="push"] .rv.in, .rv.push-reveal.in { transform:translateY(0) }
 
-/* ZOOM — dramatic scale punch-in */
-[data-anim="zoom"] .rv{
-  transform:scale(.7) translateY(30px);
-  transform-origin:center;
-  transition:opacity .65s cubic-bezier(.34,1.3,.64,1), transform .65s cubic-bezier(.34,1.3,.64,1);
+/* SLIDE-FLIP — 3D card flip on Y axis, like a page turning */
+[data-slide="flip"] .rv {
+  transform:perspective(1000px) rotateY(-90deg);
+  transform-origin:right center;
+  transition:opacity .75s ease, transform .75s cubic-bezier(.34,1.2,.64,1);
 }
-[data-anim="zoom"] .rv.in{opacity:1;transform:scale(1) translateY(0)}
+[data-slide="flip"] .rv.in { transform:perspective(1000px) rotateY(0) }
 
-/* ROTATE — full 3D barrel roll in */
-[data-anim="rotate"] .rv{
-  transform:perspective(800px) rotateY(-55deg) translateX(-60px) scale(.85);
+/* SLIDE-CUBE — cubic face transition, element rolls in from the left */
+[data-slide="cube"] .rv {
+  transform:perspective(1200px) rotateY(-60deg) translateX(-80px) scale(.88);
   transform-origin:left center;
   transition:opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
 }
-[data-anim="rotate"] .rv.in{opacity:1;transform:perspective(800px) rotateY(0) translateX(0) scale(1)}
+[data-slide="cube"] .rv.in { transform:perspective(1200px) rotateY(0) translateX(0) scale(1) }
 
-/* Default (when no data-anim on ancestor) — slide style */
-.rv.in{opacity:1;transform:translateY(0) rotateX(0) rotateY(0) scale(1) translateX(0)}
+/* SLIDE-GALLERY — pans in horizontally like a carousel */
+[data-slide="gallery"] .rv {
+  transform:translateX(-80px);
+  transition:opacity .65s ease, transform .65s cubic-bezier(.22,1,.36,1);
+}
+[data-slide="gallery"] .rv.in { transform:translateX(0) }
 
-/* ── STAGGER GRID CHILDREN ── */
-.rv-stagger > *{
+/* ══════════════════════════════════════════════════════════════
+   ROTATE — elements spin into view around Z axis
+   ══════════════════════════════════════════════════════════════ */
+[data-slide="rotate"] .rv {
+  transform:rotate(-180deg) scale(.4);
+  transform-origin:center;
+  transition:opacity .8s ease, transform .9s cubic-bezier(.34,1.15,.64,1);
+}
+[data-slide="rotate"] .rv.in { transform:rotate(0deg) scale(1) }
+
+/* Stagger children rotate in sequence — carousel spin effect */
+[data-slide="rotate"] .rv-stagger > * {
   opacity:0;
-  transform:translateY(50px) rotateX(14deg) scale(.94);
-  transform-origin:top center;
+  transform:rotate(-120deg) scale(.5) translateY(20px);
+  transform-origin:center bottom;
+  transition:opacity .65s ease, transform .7s cubic-bezier(.34,1.2,.64,1);
+}
+[data-slide="rotate"] .rv-stagger.in > * { opacity:1; transform:rotate(0) scale(1) translateY(0) }
+
+/* ══════════════════════════════════════════════════════════════
+   ZOOM — scales in + hue shift during the zoom
+   ══════════════════════════════════════════════════════════════ */
+[data-slide="zoom"] .rv {
+  transform:scale(.55) translateY(40px);
+  filter:hue-rotate(-30deg) saturate(0.4) brightness(0.6);
+  transition:opacity .75s ease, transform .75s cubic-bezier(.34,1.25,.64,1), filter .75s ease;
+}
+[data-slide="zoom"] .rv.in {
+  opacity:1;
+  transform:scale(1) translateY(0);
+  filter:hue-rotate(0deg) saturate(1) brightness(1);
+}
+
+/* Zoom stagger with color progression */
+[data-slide="zoom"] .rv-stagger > * {
+  opacity:0;
+  transform:scale(.6) translateY(30px);
+  filter:hue-rotate(-25deg) saturate(.3);
+  transition:opacity .6s ease, transform .65s cubic-bezier(.34,1.25,.64,1), filter .65s ease;
+}
+[data-slide="zoom"] .rv-stagger.in > * {
+  opacity:1; transform:scale(1) translateY(0); filter:none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FADE — sharp opacity with subtle warm colour wash
+   ══════════════════════════════════════════════════════════════ */
+[data-slide="fade"] .rv {
+  transform:none;
+  filter:brightness(1.6) saturate(0);
+  transition:opacity .7s ease, filter .7s ease;
+}
+[data-slide="fade"] .rv.in { opacity:1; filter:brightness(1) saturate(1) }
+
+/* ══════════════════════════════════════════════════════════════
+   UNIVERSAL STAGGER (non-rotate/zoom use push motion)
+   ══════════════════════════════════════════════════════════════ */
+.rv-stagger > * {
+  opacity:0;
+  transform:translateY(55px) scale(.95);
   transition:opacity .65s ease, transform .7s cubic-bezier(.16,1,.3,1);
   will-change:opacity,transform;
 }
-.rv-stagger.in > *{opacity:1;transform:none}
+.rv-stagger.in > * { opacity:1; transform:none }
 .rv-stagger.in > *:nth-child(1){transition-delay:.0s}
-.rv-stagger.in > *:nth-child(2){transition-delay:.1s}
-.rv-stagger.in > *:nth-child(3){transition-delay:.2s}
-.rv-stagger.in > *:nth-child(4){transition-delay:.3s}
-.rv-stagger.in > *:nth-child(5){transition-delay:.4s}
-.rv-stagger.in > *:nth-child(6){transition-delay:.5s}
+.rv-stagger.in > *:nth-child(2){transition-delay:.11s}
+.rv-stagger.in > *:nth-child(3){transition-delay:.22s}
+.rv-stagger.in > *:nth-child(4){transition-delay:.33s}
+.rv-stagger.in > *:nth-child(5){transition-delay:.44s}
+.rv-stagger.in > *:nth-child(6){transition-delay:.55s}
 
 /* ── BLOG CARD CINEMATIC REVEAL ── */
 .cinema-reveal{
   opacity:0;
-  transform:perspective(900px) rotateY(-18deg) translateY(40px) scale(.93);
+  transform:perspective(900px) rotateY(-20deg) translateY(40px) scale(.92);
   transform-origin:left center;
-  transition:opacity .7s ease, transform .75s cubic-bezier(.16,1,.3,1);
+  transition:opacity .72s ease, transform .78s cubic-bezier(.16,1,.3,1);
   will-change:opacity,transform;
 }
-.cinema-reveal.revealed{
-  opacity:1;
-  transform:perspective(900px) rotateY(0) translateY(0) scale(1);
-}
+.cinema-reveal.revealed{opacity:1;transform:perspective(900px) rotateY(0) translateY(0) scale(1)}
 
 /* ── 3D TILT CARD ── */
 .tilt-card{transform-style:preserve-3d;will-change:transform;transition:transform .12s ease,box-shadow .25s ease!important}
-.tilt-shine{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.08) 0%,transparent 60%);pointer-events:none;opacity:0;transition:opacity .3s}
+.tilt-shine{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.08) 0%,transparent 60%)}
 .tilt-card:hover .tilt-shine{opacity:1}
 
-/* ── KPI COUNTER ── */
+/* ── KPI ── */
 .kpi-v[data-count]{transition:color .3s}
 
-/* ── CURSOR ── */
+/* ── CUSTOM CURSOR ── */
 #cursor-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;position:fixed;pointer-events:none;z-index:99997;transform:translate(-50%,-50%);opacity:0;mix-blend-mode:screen;transition:opacity .3s}
-#cursor-ring{width:34px;height:34px;border:1.5px solid rgba(212,168,67,.4);border-radius:50%;position:fixed;pointer-events:none;z-index:99996;transform:translate(-50%,-50%);opacity:0;transition:transform .18s cubic-bezier(.22,1,.36,1),width .2s,height .2s,opacity .3s,border-color .2s}
+#cursor-ring{width:34px;height:34px;border:1.5px solid rgba(212,168,67,.4);border-radius:50%;position:fixed;pointer-events:none;z-index:99996;transform:translate(-50%,-50%);opacity:0;transition:width .2s,height .2s,opacity .3s,border-color .2s}
 body.cursor-ready #cursor-dot,body.cursor-ready #cursor-ring{opacity:1}
 body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,67,.7)}
 
 /* ── ACTIVE NAV ── */
 .nav-links a{position:relative}
 .nav-links a.nav-active{color:var(--gold)!important;border-bottom-color:var(--gold)!important}
-.nav-links a.nav-active::after{content:'';position:absolute;bottom:-1px;left:16px;right:16px;height:2px;background:var(--gold);border-radius:2px;animation:navLine .3s ease forwards}
-@keyframes navLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-
-/* ── SECTION TITLE WORD REVEAL ── */
-.sec-title .word{display:inline-block;opacity:0;transform:translateY(20px) skewY(3deg);transition:opacity .5s ease,transform .55s cubic-bezier(.16,1,.3,1)}
-.rv.in .sec-title .word,.rv-stagger.in .sec-title .word{opacity:1;transform:none}
-.sec-title .word:nth-child(2){transition-delay:.1s}
-.sec-title .word:nth-child(3){transition-delay:.2s}
-.sec-title .word:nth-child(4){transition-delay:.3s}
 
 /* ── BUTTON RIPPLE ── */
 .btn{position:relative;overflow:hidden}
 .btn-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.25);transform:scale(0);animation:rippleOut .55s ease-out forwards;pointer-events:none}
 @keyframes rippleOut{to{transform:scale(5);opacity:0}}
 
-/* ── GLITCH — hero name one-time ── */
+/* ── HERO GLITCH ── */
 @keyframes glitchSlam{
-  0%  {text-shadow:none;transform:none}
-  8%  {text-shadow:3px 0 0 rgba(3,70,148,.8),-3px 0 0 rgba(212,168,67,.6);transform:skewX(-3deg)}
-  16% {text-shadow:-2px 0 0 rgba(3,70,148,.5),2px 0 0 rgba(212,168,67,.4);transform:skewX(2deg)}
-  24% {text-shadow:none;transform:none}
-  100%{text-shadow:none;transform:none}
+  0%,100%{text-shadow:none;transform:none}
+  8%{text-shadow:4px 0 0 rgba(3,70,148,.9),-4px 0 0 rgba(212,168,67,.7);transform:skewX(-4deg)}
+  16%{text-shadow:-2px 0 0 rgba(3,70,148,.5),2px 0 0 rgba(212,168,67,.4);transform:skewX(2deg)}
+  24%{text-shadow:none;transform:none}
 }
-.hero-name{animation:glitchSlam 3s ease 1.2s 1}
+.hero-name{animation:glitchSlam 3.2s ease 1.4s 1}
 
-/* ── ORB PARALLAX ── */
-.orb{position:absolute;border-radius:50%;pointer-events:none;will-change:transform;filter:blur(70px);opacity:.16;transition:transform .1s linear}
+/* ── ORBS ── */
+.orb{position:absolute;border-radius:50%;pointer-events:none;will-change:transform;filter:blur(70px);opacity:.16}
 #orb-1{width:550px;height:550px;background:var(--blue-mid);top:8%;right:-10%;z-index:0}
 #orb-2{width:380px;height:380px;background:var(--gold);bottom:3%;left:-8%;z-index:0;opacity:.055}
 
-/* ── PILLAR ENTRANCE ── */
+/* ── PILLAR ── */
 .pillar{position:relative;overflow:hidden}
 .pillar::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(3,70,148,.15),transparent);opacity:0;transition:opacity .4s;border-radius:inherit}
 .pillar:hover::after{opacity:1}
-.rv.in .pillar-n{animation:pillarSlam .7s cubic-bezier(.34,1.4,.64,1) forwards}
-@keyframes pillarSlam{from{transform:translateY(30px) scale(.7);opacity:0}to{transform:none;opacity:1}}
 
 /* ── EYEBROW PULSE ── */
 .hero-eyebrow::before{content:'';display:inline-block;width:28px;height:1.5px;background:var(--gold);border-radius:2px;animation:eyebrowPulse 2.5s ease-in-out infinite}
-@keyframes eyebrowPulse{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:.35;transform:scaleX(.5)}}
+@keyframes eyebrowPulse{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:.3;transform:scaleX(.45)}}
 
 /* ── HEART ── */
 .eng-btn.liked .heart-icon{animation:heartPop .35s cubic-bezier(.34,1.56,.64,1)}
-@keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+@keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.55)}100%{transform:scale(1)}}
 
-/* ── TRANSITIONS FROM SETTINGS ── */
-:root{--anim-speed:1;--slide-dur:calc(0.55s * var(--anim-speed));--fade-dur:calc(0.4s * var(--anim-speed));--pop-dur:calc(0.35s * var(--anim-speed))}
+/* ── READER MODAL ── */
+:root{--slide-dur:.62s;--fade-dur:.45s}
 #post-reader-modal .modal{animation:readerCinema var(--slide-dur) cubic-bezier(.16,1,.3,1)}
 @keyframes readerCinema{
-  from{opacity:0;transform:perspective(1000px) rotateY(-8deg) translateX(80px) scale(.95)}
-  to  {opacity:1;transform:perspective(1000px) rotateY(0) translateX(0) scale(1)}
+  from{opacity:0;transform:perspective(1000px) rotateY(-10deg) translateX(100px) scale(.94)}
+  to  {opacity:1;transform:none}
 }
+
+/* ══════════════════════════════════════════════════════════════
+   AMBIENT BACKGROUND SYMBOLS — constant professional atmosphere
+   Finance/accounting symbols that float gently forever
+   ══════════════════════════════════════════════════════════════ */
+#ambient-symbols{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.sym{
+  position:absolute;
+  font-family:'IBM Plex Mono',monospace;
+  color:rgba(3,70,148,.18);
+  font-weight:400;
+  user-select:none;
+  pointer-events:none;
+  animation:symFloat linear infinite;
+  will-change:transform,opacity;
+}
+@keyframes symFloat{
+  0%  {transform:translateY(0) rotate(0deg);opacity:0}
+  8%  {opacity:1}
+  92% {opacity:1}
+  100%{transform:translateY(-100vh) rotate(360deg);opacity:0}
+}
+
+/* ── SECTION TITLE WORD REVEAL ── */
+.sec-title .word{display:inline-block;opacity:0;transform:translateY(22px) skewY(3deg);transition:opacity .52s ease,transform .56s cubic-bezier(.16,1,.3,1)}
+.rv.in .sec-title .word,.rv-stagger.in .sec-title .word{opacity:1;transform:none}
+.sec-title .word:nth-child(2){transition-delay:.1s}
+.sec-title .word:nth-child(3){transition-delay:.2s}
+.sec-title .word:nth-child(4){transition-delay:.3s}
 
 /* ── REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-  #page-loader{display:none}
+  #page-loader,#ambient-symbols{display:none}
   #cursor-dot,#cursor-ring{display:none}
   .cinema-reveal{opacity:1;transform:none}
   .rv{opacity:1;transform:none}
 }
+
 
 /* ══ ENGAGEMENT STYLES ══ */
 .post-engagement{display:flex;align-items:center;gap:14px;padding:14px 22px;border-top:1px solid var(--border);flex-wrap:wrap}
@@ -683,6 +735,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 <!-- Orbs -->
 <div class="orb" id="orb-1"></div>
 <div class="orb" id="orb-2"></div>
+<div id="ambient-symbols"></div>
 <!-- Top Ad Banner (settings-controlled) -->
 <div id="ad-top-banner" style="display:none"></div>
 
@@ -779,7 +832,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </div>
 
 <!-- HERO -->
-<section id="hero">
+<section id="hero" data-slide="push">
   <div class="hero-left">
     <div class="rv">
       <div class="hero-eyebrow hero-animate ha-d1" data-ed="hero-eyebrow">Accounting &amp; Financial Systems Strategist</div>
@@ -815,7 +868,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </section>
 
 <!-- ABOUT -->
-<section id="about">
+<section id="about" data-slide="gallery">
   <div class="about-photo-wrap rv">
     <div class="ph about-photo" data-pid="about" onclick="openPhotoModal('about')">
       <img id="img-about" alt="About Evans">
@@ -840,7 +893,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </section>
 
 <!-- EXPERTISE -->
-<section id="expertise">
+<section id="expertise" data-slide="flip">
   <div class="rv" style="margin-bottom:48px">
     <div class="eyebrow">Core Expertise</div>
     <h2 class="sec-title" data-ed="exp-title">Where Accounting<br>Meets Strategy</h2>
@@ -856,7 +909,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </section>
 
 <!-- SKILLS -->
-<section id="skills">
+<section id="skills" data-slide="zoom">
   <div class="skills-layout">
     <div class="rv">
       <div class="eyebrow">Technical Skills</div>
@@ -881,7 +934,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </section>
 
 <!-- PHILOSOPHY -->
-<section id="philosophy">
+<section id="philosophy" data-slide="rotate">
   <div class="rv" style="margin-bottom:60px">
     <div class="eyebrow" style="justify-content:center">Core Philosophy</div>
     <div class="big-stmt" data-ed="phil-main">Execution<br>Over Excitement.</div>
@@ -897,7 +950,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </section>
 
 <!-- PROJECTS -->
-<section id="projects">
+<section id="projects" data-slide="cube">
   <div class="rv" style="margin-bottom:48px">
     <div class="eyebrow">Featured Work</div>
     <h2 class="sec-title" data-ed="proj-title">Strategic<br>Projects &amp; Models</h2>
@@ -911,7 +964,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </section>
 
 <!-- BLOG -->
-<section id="blog">
+<section id="blog" data-slide="fade">
   <div class="rv" style="margin-bottom:48px">
     <div class="eyebrow">Thought Leadership</div>
     <h2 class="sec-title">Insights &amp;<br>Perspectives</h2>
@@ -932,7 +985,7 @@ body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,6
 </section>
 
 <!-- CONTACT -->
-<section id="contact">
+<section id="contact" data-slide="push">
   <div class="contact-left rv">
     <div class="eyebrow">Get In Touch</div>
     <h2 class="sec-title" data-ed="con-title">Let's Build<br>Something Real</h2>
@@ -1000,10 +1053,12 @@ try {
 
 // ── Site settings (loaded from DB, fallback to defaults) ──
 let CFG = {
+  // Engagement toggles (set from Supabase site_settings)
   show_views: true, show_comments: true, show_likes: true,
   show_comment_count: true, comments_require_moderation: true,
-  ads_enabled: true, animation_speed: 'normal', animation_style: 'slide',
-  hero_animation: true, scroll_progress: true, cursor_effect: true, particle_bg: false
+  ads_enabled: true,
+  // Animations are hardcoded in CSS/JS — no remote control
+  scroll_progress: true, cursor_effect: true
 };
 
 // ── State ──
@@ -1039,110 +1094,80 @@ async function loadSettings() {
 }
 
 function applyAnimationSettings() {
-  const speeds = { slow: 1.6, normal: 1, fast: 0.55 };
-  const speed = speeds[CFG.animation_speed] ?? 1;
-  document.documentElement.style.setProperty('--anim-speed', speed);
-
-  // Set animation style on root for CSS data-anim selectors
-  const style = CFG.animation_style || 'slide';
-  document.documentElement.setAttribute('data-anim', style);
-
-  if (!CFG.scroll_progress) {
-    const el = document.getElementById('scroll-progress');
-    if (el) el.style.display = 'none';
-  }
-  if (!CFG.cursor_effect) {
-    const d = document.getElementById('cursor-dot');
-    const r = document.getElementById('cursor-ring');
-    if (d) d.style.display = 'none';
-    if (r) r.style.display = 'none';
-  }
+  // Animations are hardcoded — no admin control needed
+  // Speed is always "normal" (can be tuned here directly)
+  document.documentElement.style.setProperty('--slide-dur', '.62s');
+  document.documentElement.style.setProperty('--fade-dur',  '.45s');
 }
 
 // ════════════════════════════════════════════════════════
 //  ANIMATION ENGINE
 // ════════════════════════════════════════════════════════
 function initAnimationEngine() {
-  const style = CFG.animation_style || 'slide';
 
-  // Apply animation style to root so CSS selectors [data-anim="x"] work
-  document.documentElement.setAttribute('data-anim', style);
-
-  // 1 — Page loader with cinematic exit
+  // ── 1. Page Loader ──
   window.addEventListener('load', () => {
     setTimeout(() => {
       const loader = document.getElementById('page-loader');
-      if (loader) {
-        loader.style.transition = 'opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1)';
-        loader.style.transform = 'scale(1.05)';
-        loader.classList.add('out');
-      }
-    }, 1300);
+      if (loader) loader.classList.add('out');
+    }, 1350);
   });
 
-  // 2 — Scroll progress bar
-  if (CFG.scroll_progress) {
-    const bar = document.getElementById('scroll-progress');
+  // ── 2. Scroll progress ──
+  const bar = document.getElementById('scroll-progress');
+  if (bar) {
     window.addEventListener('scroll', () => {
       const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-      if (bar) bar.style.width = Math.min(pct, 100) + '%';
+      bar.style.width = Math.min(pct, 100) + '%';
     }, { passive: true });
   }
 
-  // 3 — Custom cursor (desktop only)
-  if (CFG.cursor_effect && window.matchMedia('(pointer:fine)').matches) {
-    const dot = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
+  // ── 3. Custom cursor (desktop only) ──
+  const isDesktop = window.matchMedia('(pointer:fine)').matches;
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (isDesktop && dot && ring) {
     let mx = 0, my = 0, rx = 0, ry = 0;
     document.addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
       dot.style.left = mx + 'px'; dot.style.top = my + 'px';
       document.body.classList.add('cursor-ready');
     });
-    function animRing() {
+    (function animRing() {
       rx += (mx - rx) * 0.13; ry += (my - ry) * 0.13;
       ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
       requestAnimationFrame(animRing);
-    }
-    animRing();
+    })();
     document.querySelectorAll('a,button,.blog-card,.exp-card,.proj-card,.pillar').forEach(el => {
       el.addEventListener('mouseenter', () => document.body.classList.add('cursor-link'));
       el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-link'));
     });
   } else {
-    const dot = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
     if (dot) dot.style.display = 'none';
     if (ring) ring.style.display = 'none';
   }
 
-  // 4 — Hero cinematic entrance (waits for loader to clear)
-  if (CFG.hero_animation !== false) {
-    document.querySelectorAll('.hero-animate').forEach((el, i) => {
-      el.style.animationDelay = (0.1 + i * 0.16) + 's';
-    });
-  } else {
-    document.querySelectorAll('.hero-animate').forEach(el => {
-      el.style.opacity = '1'; el.style.animation = 'none';
-    });
-  }
+  // ── 4. Hero entrance ──
+  document.querySelectorAll('.hero-animate').forEach((el, i) => {
+    el.style.animationDelay = (0.1 + i * 0.16) + 's';
+  });
 
-  // 5 — Parallax orbs (desktop only — skip on mobile to save memory)
-  if (window.matchMedia('(pointer:fine)').matches) {
+  // ── 5. Mouse parallax orbs (desktop only, saves mobile memory) ──
+  if (isDesktop) {
     const orb1 = document.getElementById('orb-1');
     const orb2 = document.getElementById('orb-2');
     document.addEventListener('mousemove', e => {
-      const x = (e.clientX / window.innerWidth - .5) * 2;
-      const y = (e.clientY / window.innerHeight - .5) * 2;
-      if (orb1) orb1.style.transform = `translate(${x * 22}px,${y * 16}px)`;
-      if (orb2) orb2.style.transform = `translate(${x * -14}px,${y * -10}px)`;
+      const x = (e.clientX / innerWidth - .5) * 2;
+      const y = (e.clientY / innerHeight - .5) * 2;
+      if (orb1) orb1.style.transform = `translate(${x*22}px,${y*16}px)`;
+      if (orb2) orb2.style.transform = `translate(${x*-14}px,${y*-10}px)`;
       const hw = document.querySelector('.hero-photo-wrap');
-      if (hw) hw.style.transform = `translate(${x * 8}px,${y * 6}px)`;
+      if (hw) hw.style.transform = `translate(${x*8}px,${y*5}px)`;
     }, { passive: true });
   }
 
-  // 6 — Cinematic 3D card tilt (desktop only)
-  if (window.matchMedia('(pointer:fine)').matches) {
+  // ── 6. 3D Card tilt (desktop only) ──
+  if (isDesktop) {
     document.querySelectorAll('.tilt-card').forEach(card => {
       const shine = document.createElement('div');
       shine.className = 'tilt-shine';
@@ -1152,7 +1177,7 @@ function initAnimationEngine() {
         const r = card.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - .5;
         const y = (e.clientY - r.top)  / r.height - .5;
-        card.style.transform = `perspective(700px) rotateY(${x * 14}deg) rotateX(${-y * 10}deg) translateY(-8px) scale(1.04)`;
+        card.style.transform = `perspective(700px) rotateY(${x*14}deg) rotateX(${-y*10}deg) translateY(-8px) scale(1.04)`;
         shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%,rgba(255,255,255,.1) 0%,transparent 58%)`;
         shine.style.opacity = '1';
       });
@@ -1163,39 +1188,36 @@ function initAnimationEngine() {
     });
   }
 
-  // 7 — KPI counter (animates up from 0)
+  // ── 7. KPI counter ──
   const kpiObs = new IntersectionObserver(entries => {
     entries.forEach(({ isIntersecting, target }) => {
       if (!isIntersecting) return;
       const end = parseInt(target.dataset.count) || 0;
       const suffix = target.dataset.suffix || '';
-      let s = 0, steps = 60;
+      let s = 0;
       const iv = setInterval(() => {
         s++;
-        target.textContent = Math.round(end * easeOut(s / steps)) + suffix;
-        if (s >= steps) { target.textContent = end + suffix; clearInterval(iv); }
-      }, 1100 / steps);
+        target.textContent = Math.round(end * easeOut(s / 60)) + suffix;
+        if (s >= 60) { target.textContent = end + suffix; clearInterval(iv); }
+      }, 1100 / 60);
       kpiObs.unobserve(target);
     });
   }, { threshold: 0.7 });
   document.querySelectorAll('[data-count]').forEach(el => kpiObs.observe(el));
 
-  // 8 — Active nav section spy
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
-  const navObs = new IntersectionObserver(entries => {
+  // ── 8. Active nav section spy ──
+  const sectionObs = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (!e.isIntersecting) return;
-      navLinks.forEach(a => a.classList.remove('nav-active'));
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-active'));
       const a = document.querySelector('.nav-links a[href="#' + e.target.id + '"]');
       if (a) a.classList.add('nav-active');
     });
   }, { rootMargin: '-35% 0px -55% 0px' });
-  sections.forEach(s => navObs.observe(s));
+  document.querySelectorAll('section[id]').forEach(s => sectionObs.observe(s));
 
-  // 9 — Button ripple
+  // ── 9. Button ripple ──
   document.querySelectorAll('.btn').forEach(btn => {
-    btn.style.overflow = 'hidden';
     btn.addEventListener('click', e => {
       const r = btn.getBoundingClientRect();
       const size = Math.max(r.width, r.height);
@@ -1207,45 +1229,80 @@ function initAnimationEngine() {
     });
   });
 
-  // 10 — Cinematic stagger for static rv-stagger grids
-  // (blog cards use their own cinema-reveal system)
-  document.querySelectorAll('.rv-stagger').forEach(grid => {
-    const children = Array.from(grid.children);
-    const dur = style === 'fast' ? .45 : style === 'slow' ? .9 : .65;
-    const travel = style === 'zoom' ? 'scale(.75) translateY(30px)' :
-                   style === 'rotate' ? 'perspective(900px) rotateY(-45deg) translateX(-40px)' :
-                   style === 'fade' ? 'none' : 'translateY(55px) rotateX(15deg)';
-    children.forEach((child, i) => {
-      child.style.opacity = '0';
-      child.style.transform = travel;
-      child.style.transformOrigin = 'top center';
-      child.style.transition = `opacity ${dur}s ease ${i * 0.1}s, transform ${dur}s cubic-bezier(.16,1,.3,1) ${i * 0.1}s`;
-      child.style.willChange = 'opacity,transform';
+  // ── 10. Section title word-split for staggered reveal ──
+  document.querySelectorAll('.sec-title:not(.split-done)').forEach(title => {
+    title.classList.add('split-done');
+    Array.from(title.childNodes).forEach(node => {
+      if (node.nodeType !== 3 || !node.textContent.trim()) return;
+      const words = node.textContent.split(/\s+/).filter(Boolean);
+      const frag = document.createDocumentFragment();
+      words.forEach((w, i) => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = w;
+        frag.appendChild(span);
+        if (i < words.length - 1) frag.appendChild(document.createTextNode(' '));
+      });
+      title.replaceChild(frag, node);
     });
   });
 
-  // 11 — Section title word-split for reveal
-  document.querySelectorAll('.sec-title:not(.split-done)').forEach(title => {
-    title.classList.add('split-done');
-    // Only split text nodes, preserve <br>
-    title.childNodes.forEach(node => {
-      if (node.nodeType === 3) { // text node
-        const words = node.textContent.split(/\s+/).filter(Boolean);
-        const frag = document.createDocumentFragment();
-        words.forEach((w, i) => {
-          const span = document.createElement('span');
-          span.className = 'word';
-          span.textContent = w;
-          frag.appendChild(span);
-          if (i < words.length - 1) frag.appendChild(document.createTextNode(' '));
-        });
-        title.replaceChild(frag, node);
-      }
-    });
-  });
+  // ── 11. Ambient symbols ──
+  spawnAmbientSymbols();
 }
 
 function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+// ── AMBIENT FLOATING SYMBOLS ──
+function spawnAmbientSymbols() {
+  const container = document.getElementById('ambient-symbols');
+  if (!container) return;
+
+  const symbols = [
+    '$','€','£','¥','%','∑','∆','∞','≈','÷','×',
+    '₿','#','@','σ','π','μ','∫','√','≤','≥',
+    '01','10','∴','⊕','◈','⬡','◇','▲','▽'
+  ];
+
+  // Spawn on desktop — fewer on mobile for performance
+  const isMobile = !window.matchMedia('(pointer:fine)').matches;
+  const count = isMobile ? 10 : 22;
+
+  function spawnSymbol(delay) {
+    const el = document.createElement('span');
+    el.className = 'sym';
+    const sym = symbols[Math.floor(Math.random() * symbols.length)];
+    el.textContent = sym;
+
+    // Random position, size, speed, opacity
+    const x      = Math.random() * 100;
+    const size   = 10 + Math.random() * 22;
+    const dur    = 14 + Math.random() * 22;
+    const startY = 20 + Math.random() * 80; // start in lower portion, float up
+
+    el.style.cssText = [
+      'left:' + x + 'vw',
+      'bottom:-80px',
+      'font-size:' + size + 'px',
+      'animation-duration:' + dur + 's',
+      'animation-delay:' + delay + 's',
+      'opacity:0',
+      'color:rgba(3,70,148,' + (0.06 + Math.random() * 0.14) + ')'
+    ].join(';');
+
+    container.appendChild(el);
+
+    // Remove and respawn after animation completes to avoid DOM bloat
+    setTimeout(() => {
+      el.remove();
+      spawnSymbol(Math.random() * 8);
+    }, (dur + delay) * 1000 + 500);
+  }
+
+  for (let i = 0; i < count; i++) {
+    spawnSymbol(i * (28 / count)); // stagger initial spawns
+  }
+}
 
 // ════════════════════════════════════════════════════════
 //  SCROLL REVEAL
@@ -1762,13 +1819,6 @@ function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',oth
 // ── INIT ──
 init();
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const loader = document.getElementById("page-loader");
-  if (loader) {
-    loader.style.display = "none";   // always hide once DOM is ready
-  }
-});
-</script>
+
 </body>
 </html>
