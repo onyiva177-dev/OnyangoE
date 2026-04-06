@@ -409,229 +409,195 @@ body.admin-mode .blog-admin-actions{display:flex}
 .upload-status{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px}
 
 /* ══════════════════════════════════════════════════════════════
-   PROFESSIONAL ANIMATION SYSTEM
-   All layers are additive — zero interference with existing code
+   CINEMATIC ANIMATION SYSTEM — Bold, 3D, Movie-Trailer Grade
    ══════════════════════════════════════════════════════════════ */
 
-/* ── 1. PAGE LOADER ── */
+/* ── PAGE LOADER ── */
 #page-loader{
   position:fixed;inset:0;z-index:99999;
   background:var(--bg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
-  transition:opacity .6s ease, visibility .6s ease;
+  transition:opacity .7s ease, visibility .7s ease;
 }
 #page-loader.out{opacity:0;visibility:hidden;pointer-events:none}
 .loader-monogram{
-  font-family:'Playfair Display',serif;font-weight:900;font-size:56px;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:64px;
   color:transparent;
   background:linear-gradient(135deg,var(--white) 0%,var(--gold) 100%);
   -webkit-background-clip:text;background-clip:text;
-  animation:loaderPop .6s cubic-bezier(.34,1.56,.64,1) forwards;
   opacity:0;
+  animation:loaderDrop .7s cubic-bezier(.34,1.56,.64,1) .1s forwards;
 }
-@keyframes loaderPop{
-  from{opacity:0;transform:scale(.7) translateY(10px)}
-  to  {opacity:1;transform:scale(1)  translateY(0)}
+@keyframes loaderDrop{
+  from{opacity:0;transform:scale(1.4) translateY(-20px);filter:blur(8px)}
+  to  {opacity:1;transform:scale(1) translateY(0);filter:blur(0)}
 }
-.loader-bar-wrap{width:180px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-.loader-bar{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,var(--blue),var(--gold));
-  border-radius:2px;
-  animation:loaderFill 1.2s cubic-bezier(.4,0,.2,1) .2s forwards;
-}
-@keyframes loaderFill{from{width:0%}to{width:100%}}
-.loader-text{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--muted);
-  animation:loaderFadeIn .5s ease .3s forwards;opacity:0;
-}
+.loader-bar-wrap{width:200px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.loader-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:2px;animation:loaderFill 1.1s cubic-bezier(.4,0,.2,1) .3s forwards;}
+@keyframes loaderFill{to{width:100%}}
+.loader-text{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);opacity:0;animation:loaderFadeIn .4s ease .4s forwards;}
 @keyframes loaderFadeIn{to{opacity:1}}
 
-/* ── 2. SCROLL PROGRESS BAR ── */
-#scroll-progress{
-  position:fixed;top:0;left:0;height:2px;width:0%;z-index:99998;
-  background:linear-gradient(90deg,var(--blue),var(--gold));
-  transition:width .08s linear;
-  pointer-events:none;
+/* ── SCROLL PROGRESS ── */
+#scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;z-index:99998;background:linear-gradient(90deg,var(--blue),var(--gold));pointer-events:none;transition:width .06s linear}
+
+/* ── HERO ENTRANCE — cinematic stagger ── */
+.hero-animate{opacity:0;animation:heroSlam .9s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes heroSlam{
+  0%  {opacity:0;transform:translateY(40px) skewY(-2deg);filter:blur(4px)}
+  60% {opacity:1;transform:translateY(-6px) skewY(.5deg);filter:blur(0)}
+  100%{opacity:1;transform:translateY(0) skewY(0)}
+}
+.ha-d1{animation-delay:.1s}.ha-d2{animation-delay:.25s}.ha-d3{animation-delay:.4s}
+.ha-d4{animation-delay:.55s}.ha-d5{animation-delay:.68s}.ha-d6{animation-delay:.82s}
+
+/* ── SCROLL REVEAL — 4 cinematic styles, applied via data-anim ── */
+
+/* BASE hidden state */
+.rv{opacity:0}
+
+/* SLIDE (default) — dramatic Y travel + slight rotation */
+[data-anim="slide"] .rv, .rv:not([data-anim] *) {
+  transform:translateY(60px) rotateX(12deg);
+  transform-origin:top center;
+  transition:opacity .75s ease, transform .75s cubic-bezier(.16,1,.3,1);
+}
+[data-anim="slide"] .rv.in, .rv.in:not([data-anim] *){
+  opacity:1;transform:translateY(0) rotateX(0);
 }
 
-/* ── 3. HERO ENTRANCE (staggered, replaces plain .rv for hero children) ── */
-.hero-animate{
-  opacity:0;transform:translateY(24px);
-  animation:heroUp .8s cubic-bezier(.22,1,.36,1) forwards;
+/* FADE — pure opacity, sharp */
+[data-anim="fade"] .rv{
+  transform:none;
+  transition:opacity .65s ease;
 }
-@keyframes heroUp{
-  to{opacity:1;transform:translateY(0)}
-}
-.ha-d1{animation-delay:.15s}
-.ha-d2{animation-delay:.32s}
-.ha-d3{animation-delay:.48s}
-.ha-d4{animation-delay:.62s}
-.ha-d5{animation-delay:.76s}
-.ha-d6{animation-delay:.90s}
+[data-anim="fade"] .rv.in{opacity:1;transform:none}
 
-/* ── 4. ENHANCED SCROLL REVEAL — stagger children inside grids ── */
+/* ZOOM — dramatic scale punch-in */
+[data-anim="zoom"] .rv{
+  transform:scale(.7) translateY(30px);
+  transform-origin:center;
+  transition:opacity .65s cubic-bezier(.34,1.3,.64,1), transform .65s cubic-bezier(.34,1.3,.64,1);
+}
+[data-anim="zoom"] .rv.in{opacity:1;transform:scale(1) translateY(0)}
+
+/* ROTATE — full 3D barrel roll in */
+[data-anim="rotate"] .rv{
+  transform:perspective(800px) rotateY(-55deg) translateX(-60px) scale(.85);
+  transform-origin:left center;
+  transition:opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
+}
+[data-anim="rotate"] .rv.in{opacity:1;transform:perspective(800px) rotateY(0) translateX(0) scale(1)}
+
+/* Default (when no data-anim on ancestor) — slide style */
+.rv.in{opacity:1;transform:translateY(0) rotateX(0) rotateY(0) scale(1) translateX(0)}
+
+/* ── STAGGER GRID CHILDREN ── */
 .rv-stagger > *{
-  opacity:0;transform:translateY(22px);
-  transition:opacity .65s ease, transform .65s cubic-bezier(.22,1,.36,1);
+  opacity:0;
+  transform:translateY(50px) rotateX(14deg) scale(.94);
+  transform-origin:top center;
+  transition:opacity .65s ease, transform .7s cubic-bezier(.16,1,.3,1);
+  will-change:opacity,transform;
 }
-.rv-stagger.in > *:nth-child(1){opacity:1;transform:none;transition-delay:.0s}
-.rv-stagger.in > *:nth-child(2){opacity:1;transform:none;transition-delay:.12s}
-.rv-stagger.in > *:nth-child(3){opacity:1;transform:none;transition-delay:.24s}
-.rv-stagger.in > *:nth-child(4){opacity:1;transform:none;transition-delay:.36s}
-.rv-stagger.in > *:nth-child(5){opacity:1;transform:none;transition-delay:.48s}
-.rv-stagger.in > *:nth-child(6){opacity:1;transform:none;transition-delay:.60s}
+.rv-stagger.in > *{opacity:1;transform:none}
+.rv-stagger.in > *:nth-child(1){transition-delay:.0s}
+.rv-stagger.in > *:nth-child(2){transition-delay:.1s}
+.rv-stagger.in > *:nth-child(3){transition-delay:.2s}
+.rv-stagger.in > *:nth-child(4){transition-delay:.3s}
+.rv-stagger.in > *:nth-child(5){transition-delay:.4s}
+.rv-stagger.in > *:nth-child(6){transition-delay:.5s}
 
-/* ── 5. EYEBROW LINE DRAW ── */
-.eyebrow::before{
-  content:'//';opacity:.45;
-  /* line-draw shimmer on enter */
-  display:inline-block;
-  animation:none;
+/* ── BLOG CARD CINEMATIC REVEAL ── */
+.cinema-reveal{
+  opacity:0;
+  transform:perspective(900px) rotateY(-18deg) translateY(40px) scale(.93);
+  transform-origin:left center;
+  transition:opacity .7s ease, transform .75s cubic-bezier(.16,1,.3,1);
+  will-change:opacity,transform;
 }
-.rv.in .eyebrow::before,
-.rv-stagger.in .eyebrow::before{
-  animation:eyebrowShimmer .8s ease forwards;
-}
-@keyframes eyebrowShimmer{
-  0%  {opacity:0;letter-spacing:.5em}
-  100%{opacity:.45;letter-spacing:normal}
+.cinema-reveal.revealed{
+  opacity:1;
+  transform:perspective(900px) rotateY(0) translateY(0) scale(1);
 }
 
-/* ── 6. 3D CARD TILT ── */
-.tilt-card{
-  transform-style:preserve-3d;
-  will-change:transform;
-  transition:transform .12s ease, box-shadow .25s ease !important;
-}
-.tilt-card .tilt-shine{
-  position:absolute;inset:0;border-radius:inherit;
-  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.06) 0%, transparent 60%);
-  pointer-events:none;opacity:0;transition:opacity .3s;
-}
+/* ── 3D TILT CARD ── */
+.tilt-card{transform-style:preserve-3d;will-change:transform;transition:transform .12s ease,box-shadow .25s ease!important}
+.tilt-shine{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.08) 0%,transparent 60%);pointer-events:none;opacity:0;transition:opacity .3s}
 .tilt-card:hover .tilt-shine{opacity:1}
 
-/* ── 7. KPI COUNTER ── */
-.kpi-v[data-count]{
-  transition:color .3s;
-}
+/* ── KPI COUNTER ── */
+.kpi-v[data-count]{transition:color .3s}
 
-/* ── 8. CURSOR DOT ── */
-#cursor-dot{
-  width:8px;height:8px;
-  background:var(--gold);
-  border-radius:50%;
-  position:fixed;pointer-events:none;z-index:99997;
-  transform:translate(-50%,-50%);
-  transition:transform .08s ease, opacity .3s;
-  opacity:0;mix-blend-mode:screen;
-}
-#cursor-ring{
-  width:32px;height:32px;
-  border:1.5px solid rgba(212,168,67,.35);
-  border-radius:50%;
-  position:fixed;pointer-events:none;z-index:99996;
-  transform:translate(-50%,-50%);
-  transition:transform .22s cubic-bezier(.22,1,.36,1), width .2s, height .2s, opacity .3s, border-color .2s;
-  opacity:0;
-}
-body.cursor-ready #cursor-dot,
-body.cursor-ready #cursor-ring{opacity:1}
-body.cursor-link #cursor-ring{
-  width:48px;height:48px;
-  border-color:rgba(212,168,67,.6);
-}
+/* ── CURSOR ── */
+#cursor-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;position:fixed;pointer-events:none;z-index:99997;transform:translate(-50%,-50%);opacity:0;mix-blend-mode:screen;transition:opacity .3s}
+#cursor-ring{width:34px;height:34px;border:1.5px solid rgba(212,168,67,.4);border-radius:50%;position:fixed;pointer-events:none;z-index:99996;transform:translate(-50%,-50%);opacity:0;transition:transform .18s cubic-bezier(.22,1,.36,1),width .2s,height .2s,opacity .3s,border-color .2s}
+body.cursor-ready #cursor-dot,body.cursor-ready #cursor-ring{opacity:1}
+body.cursor-link #cursor-ring{width:52px;height:52px;border-color:rgba(212,168,67,.7)}
 
-/* ── 9. ACTIVE NAV INDICATOR ── */
+/* ── ACTIVE NAV ── */
 .nav-links a{position:relative}
 .nav-links a.nav-active{color:var(--gold)!important;border-bottom-color:var(--gold)!important}
-.nav-links a.nav-active::after{
-  content:'';position:absolute;bottom:-1px;left:16px;right:16px;
-  height:2px;background:var(--gold);border-radius:2px;
-  animation:navActiveLine .3s ease forwards;
-}
-@keyframes navActiveLine{
-  from{transform:scaleX(0)}to{transform:scaleX(1)}
-}
+.nav-links a.nav-active::after{content:'';position:absolute;bottom:-1px;left:16px;right:16px;height:2px;background:var(--gold);border-radius:2px;animation:navLine .3s ease forwards}
+@keyframes navLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
-/* ── 10. SECTION TITLE WORD REVEAL ── */
-.sec-title .word{
-  display:inline-block;
-  opacity:0;transform:translateY(18px) skewY(2deg);
-  transition:opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
-}
-.rv.in .sec-title .word,
-.rv-stagger.in .sec-title .word{opacity:1;transform:none}
+/* ── SECTION TITLE WORD REVEAL ── */
+.sec-title .word{display:inline-block;opacity:0;transform:translateY(20px) skewY(3deg);transition:opacity .5s ease,transform .55s cubic-bezier(.16,1,.3,1)}
+.rv.in .sec-title .word,.rv-stagger.in .sec-title .word{opacity:1;transform:none}
 .sec-title .word:nth-child(2){transition-delay:.1s}
 .sec-title .word:nth-child(3){transition-delay:.2s}
 .sec-title .word:nth-child(4){transition-delay:.3s}
 
-/* ── 11. BUTTON RIPPLE ── */
+/* ── BUTTON RIPPLE ── */
 .btn{position:relative;overflow:hidden}
-.btn-ripple{
-  position:absolute;border-radius:50%;
-  background:rgba(255,255,255,.25);
-  transform:scale(0);animation:rippleOut .55s ease-out forwards;
-  pointer-events:none;
-}
-@keyframes rippleOut{
-  to{transform:scale(4);opacity:0}
-}
+.btn-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.25);transform:scale(0);animation:rippleOut .55s ease-out forwards;pointer-events:none}
+@keyframes rippleOut{to{transform:scale(5);opacity:0}}
 
-/* ── 12. GLITCH SHIMMER ON HERO NAME (one-time) ── */
-@keyframes glitchShimmer{
-  0%  {text-shadow:none}
-  10% {text-shadow:2px 0 0 rgba(3,70,148,.6),-2px 0 0 rgba(212,168,67,.4)}
-  20% {text-shadow:-1px 0 0 rgba(3,70,148,.4), 1px 0 0 rgba(212,168,67,.3)}
-  30% {text-shadow:none}
-  100%{text-shadow:none}
+/* ── GLITCH — hero name one-time ── */
+@keyframes glitchSlam{
+  0%  {text-shadow:none;transform:none}
+  8%  {text-shadow:3px 0 0 rgba(3,70,148,.8),-3px 0 0 rgba(212,168,67,.6);transform:skewX(-3deg)}
+  16% {text-shadow:-2px 0 0 rgba(3,70,148,.5),2px 0 0 rgba(212,168,67,.4);transform:skewX(2deg)}
+  24% {text-shadow:none;transform:none}
+  100%{text-shadow:none;transform:none}
 }
-.hero-name{animation:glitchShimmer 2.8s ease 1.2s 1}
+.hero-name{animation:glitchSlam 3s ease 1.2s 1}
 
-/* ── 13. SECTION BG PARALLAX ORBS ── */
-.orb{
-  position:absolute;border-radius:50%;pointer-events:none;
-  will-change:transform;filter:blur(60px);opacity:.18;
-  transition:transform .1s linear;
-}
-#orb-1{width:500px;height:500px;background:var(--blue-mid);top:10%;right:-8%;z-index:0}
-#orb-2{width:350px;height:350px;background:var(--gold);bottom:5%;left:-5%;z-index:0;opacity:.06}
+/* ── ORB PARALLAX ── */
+.orb{position:absolute;border-radius:50%;pointer-events:none;will-change:transform;filter:blur(70px);opacity:.16;transition:transform .1s linear}
+#orb-1{width:550px;height:550px;background:var(--blue-mid);top:8%;right:-10%;z-index:0}
+#orb-2{width:380px;height:380px;background:var(--gold);bottom:3%;left:-8%;z-index:0;opacity:.055}
 
-/* ── 14. PHILOSOPHY SECTION COUNT-UP ── */
+/* ── PILLAR ENTRANCE ── */
 .pillar{position:relative;overflow:hidden}
-.pillar::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(3,70,148,.15),transparent);
-  opacity:0;transition:opacity .4s;border-radius:inherit;
-}
+.pillar::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(3,70,148,.15),transparent);opacity:0;transition:opacity .4s;border-radius:inherit}
 .pillar:hover::after{opacity:1}
-.pillar-n{
-  transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .4s;
-  display:block;
-}
-.rv.in .pillar-n{animation:pillarNumIn .6s cubic-bezier(.34,1.56,.64,1) forwards}
-@keyframes pillarNumIn{
-  from{transform:translateY(20px);opacity:0}
-  to  {transform:translateY(0);opacity:1}
+.rv.in .pillar-n{animation:pillarSlam .7s cubic-bezier(.34,1.4,.64,1) forwards}
+@keyframes pillarSlam{from{transform:translateY(30px) scale(.7);opacity:0}to{transform:none;opacity:1}}
+
+/* ── EYEBROW PULSE ── */
+.hero-eyebrow::before{content:'';display:inline-block;width:28px;height:1.5px;background:var(--gold);border-radius:2px;animation:eyebrowPulse 2.5s ease-in-out infinite}
+@keyframes eyebrowPulse{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:.35;transform:scaleX(.5)}}
+
+/* ── HEART ── */
+.eng-btn.liked .heart-icon{animation:heartPop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+
+/* ── TRANSITIONS FROM SETTINGS ── */
+:root{--anim-speed:1;--slide-dur:calc(0.55s * var(--anim-speed));--fade-dur:calc(0.4s * var(--anim-speed));--pop-dur:calc(0.35s * var(--anim-speed))}
+#post-reader-modal .modal{animation:readerCinema var(--slide-dur) cubic-bezier(.16,1,.3,1)}
+@keyframes readerCinema{
+  from{opacity:0;transform:perspective(1000px) rotateY(-8deg) translateX(80px) scale(.95)}
+  to  {opacity:1;transform:perspective(1000px) rotateY(0) translateX(0) scale(1)}
 }
 
-/* ── 15. FLOATING BADGE PULSE (hero photo badge) ── */
-.hero-eyebrow::before{
-  content:'';display:inline-block;
-  width:28px;height:1.5px;background:var(--gold);border-radius:2px;
-  animation:eyebrowPulse 2.5s ease-in-out infinite;
-}
-@keyframes eyebrowPulse{
-  0%,100%{opacity:1;transform:scaleX(1)}
-  50%    {opacity:.4;transform:scaleX(.6)}
-}
-
-/* ── Reduced motion respect ── */
+/* ── REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   #page-loader{display:none}
   #cursor-dot,#cursor-ring{display:none}
+  .cinema-reveal{opacity:1;transform:none}
+  .rv{opacity:1;transform:none}
 }
 
 /* ══ ENGAGEMENT STYLES ══ */
@@ -1077,13 +1043,19 @@ function applyAnimationSettings() {
   const speed = speeds[CFG.animation_speed] ?? 1;
   document.documentElement.style.setProperty('--anim-speed', speed);
 
+  // Set animation style on root for CSS data-anim selectors
+  const style = CFG.animation_style || 'slide';
+  document.documentElement.setAttribute('data-anim', style);
+
   if (!CFG.scroll_progress) {
     const el = document.getElementById('scroll-progress');
     if (el) el.style.display = 'none';
   }
   if (!CFG.cursor_effect) {
-    document.getElementById('cursor-dot').style.display = 'none';
-    document.getElementById('cursor-ring').style.display = 'none';
+    const d = document.getElementById('cursor-dot');
+    const r = document.getElementById('cursor-ring');
+    if (d) d.style.display = 'none';
+    if (r) r.style.display = 'none';
   }
 }
 
@@ -1091,11 +1063,20 @@ function applyAnimationSettings() {
 //  ANIMATION ENGINE
 // ════════════════════════════════════════════════════════
 function initAnimationEngine() {
-  // 1 — Page loader
+  const style = CFG.animation_style || 'slide';
+
+  // Apply animation style to root so CSS selectors [data-anim="x"] work
+  document.documentElement.setAttribute('data-anim', style);
+
+  // 1 — Page loader with cinematic exit
   window.addEventListener('load', () => {
     setTimeout(() => {
       const loader = document.getElementById('page-loader');
-      if (loader) loader.classList.add('out');
+      if (loader) {
+        loader.style.transition = 'opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1)';
+        loader.style.transform = 'scale(1.05)';
+        loader.classList.add('out');
+      }
     }, 1300);
   });
 
@@ -1129,64 +1110,71 @@ function initAnimationEngine() {
       el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-link'));
     });
   } else {
-    document.getElementById('cursor-dot').style.display = 'none';
-    document.getElementById('cursor-ring').style.display = 'none';
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    if (dot) dot.style.display = 'none';
+    if (ring) ring.style.display = 'none';
   }
 
-  // 4 — Hero animation (sequential entrance)
-  if (CFG.hero_animation) {
+  // 4 — Hero cinematic entrance (waits for loader to clear)
+  if (CFG.hero_animation !== false) {
     document.querySelectorAll('.hero-animate').forEach((el, i) => {
-      el.style.animationDelay = (0.12 + i * 0.16) + 's';
+      el.style.animationDelay = (0.1 + i * 0.16) + 's';
+    });
+  } else {
+    document.querySelectorAll('.hero-animate').forEach(el => {
+      el.style.opacity = '1'; el.style.animation = 'none';
     });
   }
 
-  // 5 — Parallax orbs on mouse move
-  const orb1 = document.getElementById('orb-1');
-  const orb2 = document.getElementById('orb-2');
-  if (orb1 && orb2) {
+  // 5 — Parallax orbs (desktop only — skip on mobile to save memory)
+  if (window.matchMedia('(pointer:fine)').matches) {
+    const orb1 = document.getElementById('orb-1');
+    const orb2 = document.getElementById('orb-2');
     document.addEventListener('mousemove', e => {
       const x = (e.clientX / window.innerWidth - .5) * 2;
       const y = (e.clientY / window.innerHeight - .5) * 2;
-      orb1.style.transform = `translate(${x * 20}px,${y * 14}px)`;
-      orb2.style.transform = `translate(${x * -12}px,${y * -9}px)`;
+      if (orb1) orb1.style.transform = `translate(${x * 22}px,${y * 16}px)`;
+      if (orb2) orb2.style.transform = `translate(${x * -14}px,${y * -10}px)`;
       const hw = document.querySelector('.hero-photo-wrap');
-      if (hw) hw.style.transform = `translate(${x * 7}px,${y * 5}px)`;
+      if (hw) hw.style.transform = `translate(${x * 8}px,${y * 6}px)`;
     }, { passive: true });
   }
 
-  // 6 — 3D card tilt
-  document.querySelectorAll('.tilt-card').forEach(card => {
-    const shine = document.createElement('div');
-    shine.className = 'tilt-shine';
-    card.style.position = 'relative';
-    card.appendChild(shine);
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - .5;
-      const y = (e.clientY - r.top)  / r.height - .5;
-      card.style.transform = `perspective(700px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-5px) scale(1.02)`;
-      shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%,rgba(255,255,255,.08) 0%,transparent 60%)`;
-      shine.style.opacity = '1';
+  // 6 — Cinematic 3D card tilt (desktop only)
+  if (window.matchMedia('(pointer:fine)').matches) {
+    document.querySelectorAll('.tilt-card').forEach(card => {
+      const shine = document.createElement('div');
+      shine.className = 'tilt-shine';
+      card.style.position = 'relative';
+      card.appendChild(shine);
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5;
+        const y = (e.clientY - r.top)  / r.height - .5;
+        card.style.transform = `perspective(700px) rotateY(${x * 14}deg) rotateX(${-y * 10}deg) translateY(-8px) scale(1.04)`;
+        shine.style.background = `radial-gradient(circle at ${(x+.5)*100}% ${(y+.5)*100}%,rgba(255,255,255,.1) 0%,transparent 58%)`;
+        shine.style.opacity = '1';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        shine.style.opacity = '0';
+      });
     });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      shine.style.opacity = '0';
-    });
-  });
+  }
 
-  // 7 — KPI counter
+  // 7 — KPI counter (animates up from 0)
   const kpiObs = new IntersectionObserver(entries => {
     entries.forEach(({ isIntersecting, target }) => {
       if (!isIntersecting) return;
       const end = parseInt(target.dataset.count) || 0;
       const suffix = target.dataset.suffix || '';
-      let cur = 0, steps = 60, s = 0;
+      let s = 0, steps = 60;
       const iv = setInterval(() => {
         s++;
-        cur = Math.round(end * easeOut(s / steps));
-        target.textContent = cur + suffix;
+        target.textContent = Math.round(end * easeOut(s / steps)) + suffix;
         if (s >= steps) { target.textContent = end + suffix; clearInterval(iv); }
-      }, 1200 / steps);
+      }, 1100 / steps);
       kpiObs.unobserve(target);
     });
   }, { threshold: 0.7 });
@@ -1199,7 +1187,7 @@ function initAnimationEngine() {
     entries.forEach(e => {
       if (!e.isIntersecting) return;
       navLinks.forEach(a => a.classList.remove('nav-active'));
-      const a = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      const a = document.querySelector('.nav-links a[href="#' + e.target.id + '"]');
       if (a) a.classList.add('nav-active');
     });
   }, { rootMargin: '-35% 0px -55% 0px' });
@@ -1213,18 +1201,46 @@ function initAnimationEngine() {
       const size = Math.max(r.width, r.height);
       const rip = document.createElement('span');
       rip.className = 'btn-ripple';
-      rip.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,.22);width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px;transform:scale(0);animation:rippleOut .55s ease-out forwards;pointer-events:none`;
+      rip.style.cssText = 'position:absolute;border-radius:50%;background:rgba(255,255,255,.22);width:'+size+'px;height:'+size+'px;left:'+(e.clientX-r.left-size/2)+'px;top:'+(e.clientY-r.top-size/2)+'px;transform:scale(0);animation:rippleOut .55s ease-out forwards;pointer-events:none';
       btn.appendChild(rip);
       setTimeout(() => rip.remove(), 600);
     });
   });
 
-  // 10 — Stagger children in grids when revealed
+  // 10 — Cinematic stagger for static rv-stagger grids
+  // (blog cards use their own cinema-reveal system)
   document.querySelectorAll('.rv-stagger').forEach(grid => {
-    Array.from(grid.children).forEach((child, i) => {
+    const children = Array.from(grid.children);
+    const dur = style === 'fast' ? .45 : style === 'slow' ? .9 : .65;
+    const travel = style === 'zoom' ? 'scale(.75) translateY(30px)' :
+                   style === 'rotate' ? 'perspective(900px) rotateY(-45deg) translateX(-40px)' :
+                   style === 'fade' ? 'none' : 'translateY(55px) rotateX(15deg)';
+    children.forEach((child, i) => {
       child.style.opacity = '0';
-      child.style.transform = 'translateY(22px)';
-      child.style.transition = `opacity .55s ease ${i * 0.1}s, transform .55s cubic-bezier(.22,1,.36,1) ${i * 0.1}s`;
+      child.style.transform = travel;
+      child.style.transformOrigin = 'top center';
+      child.style.transition = `opacity ${dur}s ease ${i * 0.1}s, transform ${dur}s cubic-bezier(.16,1,.3,1) ${i * 0.1}s`;
+      child.style.willChange = 'opacity,transform';
+    });
+  });
+
+  // 11 — Section title word-split for reveal
+  document.querySelectorAll('.sec-title:not(.split-done)').forEach(title => {
+    title.classList.add('split-done');
+    // Only split text nodes, preserve <br>
+    title.childNodes.forEach(node => {
+      if (node.nodeType === 3) { // text node
+        const words = node.textContent.split(/\s+/).filter(Boolean);
+        const frag = document.createDocumentFragment();
+        words.forEach((w, i) => {
+          const span = document.createElement('span');
+          span.className = 'word';
+          span.textContent = w;
+          frag.appendChild(span);
+          if (i < words.length - 1) frag.appendChild(document.createTextNode(' '));
+        });
+        title.replaceChild(frag, node);
+      }
     });
   });
 }
@@ -1239,7 +1255,7 @@ function initScrollReveal() {
     entries.forEach(({ isIntersecting, target }) => {
       if (!isIntersecting) return;
       target.classList.add('in');
-      // Stagger children if rv-stagger
+      // Animate stagger children
       if (target.classList.contains('rv-stagger')) {
         Array.from(target.children).forEach(child => {
           child.style.opacity = '1';
@@ -1247,7 +1263,7 @@ function initScrollReveal() {
         });
       }
     });
-  }, { threshold: 0.07 });
+  }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.rv').forEach(el => ro.observe(el));
 }
 
@@ -1334,14 +1350,20 @@ async function loadBlogPosts() {
   renderBlogGrid(data, true);
   if (data.length >= PAGE_SIZE) more.style.display = 'flex';
 
-  // Re-observe new cards
-  setTimeout(() => {
-    document.querySelectorAll('.blog-card-wrap.rv').forEach(el => {
-      new IntersectionObserver(([e]) => {
-        if (e.isIntersecting) e.target.classList.add('in');
-      }, { threshold: 0.07 }).observe(el);
+  observeBlogCards();
+}
+
+function observeBlogCards() {
+  const unobserved = document.querySelectorAll('.blog-card.cinema-reveal:not(.revealed)');
+  if (!unobserved.length) return;
+  const cardObs = new IntersectionObserver((entries) => {
+    entries.forEach(({ isIntersecting, target }) => {
+      if (!isIntersecting) return;
+      target.classList.add('revealed');
+      cardObs.unobserve(target);
     });
-  }, 50);
+  }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+  unobserved.forEach(el => cardObs.observe(el));
 }
 
 async function loadMorePosts() {
@@ -1371,9 +1393,10 @@ function renderBlogGrid(posts, fresh) {
 
   // Build a 3-col grid with ads injected every N posts
   const cards = posts.map((p, i) => {
-    const cardHtml = renderBlogCard(p);
+    // Pass global card index for stagger timing
+    const globalIdx = fresh ? i : (allPosts.length - posts.length + i);
+    const cardHtml = renderBlogCard(p, globalIdx);
     let adHtml = '';
-    // Insert a between-post ad after every 3rd card
     if ((i + 1) % 3 === 0 && betweenAds[adIdx]) {
       const ad = betweenAds[adIdx++];
       adHtml = `<div class="ad-between" style="grid-column:1/-1">
@@ -1389,14 +1412,16 @@ function renderBlogGrid(posts, fresh) {
   }).join('');
 
   if (fresh) {
-    wrap.innerHTML = `<div class="blog-grid rv rv-stagger" id="blog-grid">${cards}</div>`;
+    wrap.innerHTML = `<div class="blog-grid" id="blog-grid">${cards}</div>`;
   } else {
     const grid = document.getElementById('blog-grid');
     if (grid) grid.insertAdjacentHTML('beforeend', cards);
   }
+  // Observe newly added cards (works because they are real block elements now)
+  setTimeout(() => observeBlogCards(), 30);
 }
 
-function renderBlogCard(p) {
+function renderBlogCard(p, idx=0) {
   const date = new Date(p.created_at).toLocaleDateString('en-KE', { year:'numeric', month:'short', day:'numeric' });
   const cover = p.cover_url
     ? `<img class="blog-card-img" src="${esc(p.cover_url)}" alt="${esc(p.title)}" loading="lazy">`
@@ -1409,8 +1434,8 @@ function renderBlogCard(p) {
   const likeNote = CFG.show_likes && p.likes > 0
     ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)">♡ ${p.likes}</span>` : '';
 
-  return `<div class="blog-card-wrap rv" style="display:contents">
-    <div class="blog-card tilt-card" onclick="openPost('${p.id}')">
+  // No wrapper div — card IS the observable element (fixes display:contents IO bug on mobile)
+  return `<div class="blog-card tilt-card cinema-reveal" style="animation-delay:${Math.min(idx,5)*0.12}s" onclick="openPost('${p.id}')">
       ${cover}
       <div class="blog-card-body">
         <div class="blog-cat">${esc(p.category || 'General')}</div>
@@ -1421,8 +1446,7 @@ function renderBlogCard(p) {
           <div style="display:flex;gap:8px;align-items:center">${fileNote}${viewNote}${likeNote}<span class="blog-date">${date}</span></div>
         </div>
       </div>
-    </div>
-  </div>`;
+    </div>`;
 }
 
 function showBlogEmpty() {
