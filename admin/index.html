@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evans Onyango — Admin</title>
+
+<script>
+  window.SB_URL  = 'https://npdnoqoftisnlgniukdg.supabase.co';
+  window.SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZG5vcW9mdGlzbmxnbml1a2RnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMTIzNzEsImV4cCI6MjA5MDY4ODM3MX0.CkD6VQI_QnKy3dh6tklGn-zKa3wh8CIqDM7Rj3wEMvw';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --blue:#034694;--blue-mid:#0a56b0;--blue-light:#1a6fd4;--blue-deep:#012a5c;--blue-dark:#011833;
+  --gold:#d4a843;--gold-light:#f0c96a;
+  --bg:#020d1f;--bg2:#040f24;--card:#071a35;--card2:#0c2244;
+  --border:rgba(3,70,148,.35);--border2:rgba(3,70,148,.6);
+  --text:#dce8ff;--text2:#7a9abe;--muted:#3d5a7a;
+  --red:#e55;--green:#25d366;
+  --r-sm:8px;--r-md:14px;--r-lg:20px;--r-xl:28px;--r-full:9999px;
+  --tr:all .22s cubic-bezier(.4,0,.2,1);
+  --sidebar:240px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px;height:100%}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100%;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(10,86,176,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(10,86,176,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+
+/* ── LOGIN ── */
+#login-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+#login-screen.hidden{display:none}
+.login-box{width:100%;max-width:380px;padding:0 24px}
+.login-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:42px;text-align:center;margin-bottom:6px}
+.login-logo span{color:var(--gold)}
+.login-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:40px}
+.field{margin-bottom:16px}
+.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:11px 16px;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field textarea{resize:vertical;min-height:80px;font-family:'IBM Plex Sans',sans-serif}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue-mid));color:#fff;border:none;padding:13px 28px;border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:var(--tr);width:100%}
+.btn-primary:hover{background:linear-gradient(135deg,var(--blue-mid),var(--blue-light));transform:translateY(-1px)}
+.btn-sm{padding:6px 16px;font-size:10px;border-radius:var(--r-full);border:1px solid var(--border2);color:var(--text2);background:none;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:var(--tr);white-space:nowrap}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm.danger:hover{border-color:var(--red);color:var(--red)}
+.btn-sm.success{border-color:var(--green);color:var(--green)}
+.btn-sm.success:hover{background:var(--green);color:#000}
+.btn-sm.gold{border-color:var(--gold);color:var(--gold)}
+.btn-sm.gold:hover{background:var(--gold);color:#000}
+.login-error{color:var(--red);font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:10px;text-align:center;min-height:16px}
+
+/* ── SIDEBAR ── */
+#sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;position:relative;overflow-y:auto}
+.sb-header{padding:24px 20px 18px;border-bottom:1px solid var(--border)}
+.sb-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:22px}
+.sb-logo span{color:var(--gold)}
+.sb-role{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.sb-email{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+nav.sb-nav{padding:12px 0;flex:1}
+.sb-section{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:14px 20px 6px}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;cursor:pointer;transition:var(--tr);border-left:2px solid transparent;text-decoration:none}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.sb-link.active{color:var(--gold);background:rgba(212,168,67,.06);border-left-color:var(--gold)}
+.sb-link .icon{width:18px;text-align:center;font-size:14px}
+.sb-badge{margin-left:auto;background:rgba(212,168,67,.2);color:var(--gold);border-radius:var(--r-full);padding:2px 8px;font-size:9px}
+.sb-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.sb-logout{display:flex;align-items:center;gap:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;cursor:pointer;transition:color .2s}
+.sb-logout:hover{color:var(--red)}
+.sb-view-site{display:block;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:10px;padding:6px;border:1px solid var(--border);border-radius:var(--r-full);transition:var(--tr)}
+.sb-view-site:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── MAIN ── */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.top-bar{background:rgba(4,15,36,.95);border-bottom:1px solid var(--border);padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);position:sticky;top:0;z-index:5;flex-shrink:0}
+.top-bar-title{font-family:'Playfair Display',serif;font-size:18px}
+.top-bar-actions{display:flex;gap:10px;align-items:center}
+.content{padding:32px;flex:1;position:relative;z-index:1;max-width:1200px}
+
+/* ── DASHBOARD STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-lg);padding:20px 22px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--blue-light))}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.stat-value{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--gold);line-height:1}
+.stat-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px}
+
+/* ── TABLE ── */
+.table-wrap{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-lg);overflow:hidden}
+.table-toolbar{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.table-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 16px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+td{padding:12px 16px;border-bottom:1px solid rgba(3,70,148,.15);font-size:13px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em}
+.badge-pub{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:#4ddb8a}
+.badge-draft{background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.3);color:var(--gold)}
+.badge-pending{background:rgba(255,150,50,.1);border:1px solid rgba(255,150,50,.3);color:#ffaa66}
+.badge-approved{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:#4ddb8a}
+.badge-rejected{background:rgba(229,85,85,.1);border:1px solid rgba(229,85,85,.3);color:var(--red)}
+.td-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* ── MODAL / DRAWER ── */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(2,13,31,.88);display:none;align-items:flex-start;justify-content:flex-end;backdrop-filter:blur(4px)}
+.overlay.open{display:flex}
+.drawer{background:linear-gradient(145deg,var(--card2),var(--card));border-left:1px solid var(--border2);width:min(700px,100vw);height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:0;animation:drawerIn .3s cubic-bezier(.22,1,.36,1)}
+@keyframes drawerIn{from{transform:translateX(60px);opacity:0}to{transform:none;opacity:1}}
+.drawer-header{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:inherit;z-index:5}
+.drawer-title{font-family:'Playfair Display',serif;font-size:20px}
+.drawer-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .2s}
+.drawer-close:hover{color:var(--text)}
+.drawer-body{padding:24px 28px;display:flex;flex-direction:column;gap:18px;flex:1}
+.drawer-footer{padding:18px 28px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:inherit}
+
+/* ── RICH TEXT EDITOR ── */
+.editor-toolbar{display:flex;gap:5px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-bottom:none;border-radius:var(--r-sm) var(--r-sm) 0 0}
+.tb{background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--text2);width:30px;height:26px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;transition:var(--tr)}
+.tb:hover{border-color:var(--gold);color:var(--gold)}
+.rich-editor{min-height:220px;padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:0 0 var(--r-sm) var(--r-sm);color:var(--text);font-size:14px;line-height:1.85;outline:none;font-family:'IBM Plex Sans',sans-serif}
+.rich-editor:focus{border-color:var(--gold)}
+.rich-editor h1,.rich-editor h2,.rich-editor h3{font-family:'Playfair Display',serif;color:var(--text);margin:12px 0 6px}
+.rich-editor blockquote{border-left:3px solid var(--gold);padding:8px 16px;background:rgba(212,168,67,.06);margin:10px 0;border-radius:0 5px 5px 0}
+.rich-editor code,.rich-editor pre{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+
+/* ── TOGGLE SWITCH ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info{flex:1}
+.toggle-label{font-size:14px;color:var(--text);margin-bottom:2px}
+.toggle-desc{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)}
+.toggle{width:42px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .22s;flex-shrink:0}
+.toggle.on{background:var(--blue-mid)}
+.toggle::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .22s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.toggle.on::after{transform:translateX(20px)}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-btn{padding:6px 14px;border:1px solid var(--border2);border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;transition:var(--tr)}
+.radio-btn.active,.radio-btn:hover{border-color:var(--gold);color:var(--gold)}
+.radio-btn.active{background:rgba(212,168,67,.08)}
+
+/* ── TAGS ── */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);min-height:40px;align-items:center;cursor:text}
+.tags-wrap input{border:none;background:transparent;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;flex:1;min-width:80px}
+.tag-chip{background:rgba(3,70,148,.35);border:1px solid rgba(3,70,148,.6);color:#b8d4ff;padding:3px 8px;border-radius:var(--r-full);font-size:9px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:4px;cursor:pointer}
+.tag-chip:hover{border-color:var(--red);color:#ffaaaa}
+
+/* ── FILE UPLOAD ── */
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--r-md);padding:20px;text-align:center;cursor:pointer;transition:var(--tr)}
+.drop-zone:hover,.drop-zone.over{border-color:var(--gold);background:rgba(212,168,67,.04)}
+.drop-zone p{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);pointer-events:none}
+.prog-bar-wrap{background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;height:5px;margin:6px 0}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-light));border-radius:4px;width:0%;transition:width .3s}
+.attach-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-sm);font-size:11px;margin-bottom:6px}
+.attach-name{flex:1;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attach-size{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)}
+
+/* ── GRID ── */
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.media-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;transition:var(--tr)}
+.media-item:hover{border-color:var(--gold)}
+.media-thumb{width:100%;height:96px;object-fit:cover;display:block;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:28px}
+.media-info{padding:8px}
+.media-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
+.media-size{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted)}
+.media-actions{display:flex;gap:4px;margin-top:6px}
+
+/* ── EMPTY / LOADING ── */
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty-icon{font-size:40px;opacity:.3;margin-bottom:14px}
+.empty-text{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.loading-dots::after{content:'...';animation:dots 1.2s infinite}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-full);padding:10px 24px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  #sidebar{width:58px}
+  .sb-link span:not(.icon){display:none}
+  .sb-header{padding:16px 10px}.sb-logo,.sb-role,.sb-email,.sb-section{display:none}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Evans<span>.</span></div>
+    <div class="login-sub">Admin Dashboard</div>
+    <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com" autocomplete="email"></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div id="login-err" class="login-error"></div>
+    <button class="btn-primary" onclick="doLogin()" id="login-btn" style="margin-top:8px">Login →</button>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside id="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">EO<span>.</span></div>
+    <div class="sb-role">Admin Dashboard</div>
+    <div class="sb-email" id="sb-email-display"></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Content</div>
+    <div class="sb-link active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <span class="icon">📊</span><span>Dashboard</span>
+    </div>
+    <div class="sb-link" onclick="showPage('posts')" id="nav-posts">
+      <span class="icon">✍️</span><span>Posts</span>
+      <span class="sb-badge" id="nav-posts-count" style="display:none"></span>
+    </div>
+    <div class="sb-link" onclick="showPage('media')" id="nav-media">
+      <span class="icon">📂</span><span>Media Library</span>
+    </div>
+    <div class="sb-section">Engagement</div>
+    <div class="sb-link" onclick="showPage('comments')" id="nav-comments">
+      <span class="icon">💬</span><span>Comments</span>
+      <span class="sb-badge" id="nav-comments-badge" style="display:none"></span>
+    </div>
+    <div class="sb-section">Monetisation</div>
+    <div class="sb-link" onclick="showPage('ads')" id="nav-ads">
+      <span class="icon">📢</span><span>Ads</span>
+    </div>
+    <div class="sb-section">System</div>
+    <div class="sb-link" onclick="showPage('settings')" id="nav-settings">
+      <span class="icon">⚙️</span><span>Settings</span>
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <a class="sb-view-site" href="../" target="_blank">↗ View Site</a>
+    <div class="sb-logout" onclick="doLogout()">
+      <span style="font-size:14px">🚪</span><span>Log out</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+  <div class="top-bar">
+    <div class="top-bar-title" id="top-bar-title">Dashboard</div>
+    <div class="top-bar-actions" id="top-bar-actions"></div>
+  </div>
+  <div class="content" id="page-content">
+    <div class="empty-state"><div class="loading-dots">Loading</div></div>
+  </div>
+</div>
+
+<!-- ══ POST EDITOR DRAWER ══ -->
+<div class="overlay" id="post-drawer">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title" id="drawer-post-title">New Post</div>
+      <button class="drawer-close" onclick="closeDrawer('post-drawer')">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div class="field"><label>Title *</label><input type="text" id="p-title" placeholder="Post title..."></div>
+      <div class="field"><label>Excerpt</label><textarea id="p-excerpt" rows="2" placeholder="Short summary shown on the blog grid..."></textarea></div>
+      <div class="field">
+        <label>Content</label>
+        <div class="editor-toolbar">
+          <button class="tb" onclick="ef('bold')" title="Bold"><b>B</b></button>
+          <button class="tb" onclick="ef('italic')" title="Italic"><i>I</i></button>
+          <button class="tb" onclick="ef('underline')" title="Underline"><u>U</u></button>
+          <button class="tb" onclick="eb('h2')">H2</button>
+          <button class="tb" onclick="eb('h3')">H3</button>
+          <button class="tb" onclick="eb('blockquote')">❝</button>
+          <button class="tb" onclick="ef('insertUnorderedList')">•</button>
+          <button class="tb" onclick="ef('insertOrderedList')">1.</button>
+          <button class="tb" onclick="elink()">🔗</button>
+          <button class="tb" onclick="ef('removeFormat')">✕</button>
+        </div>
+        <div class="rich-editor" id="p-content" contenteditable="true" data-placeholder="Write your post..."></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="field">
+          <label>Category</label>
+          <select id="p-category">
+            <option>General</option><option>Accounting</option><option>Finance</option>
+            <option>Technology</option><option>Business</option><option>Data Analytics</option>
+            <option>Agribusiness</option><option>Personal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="p-published">
+            <option value="false">Draft</option>
+            <option value="true">Published</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tags</label>
+        <div class="tags-wrap" id="p-tags-wrap" onclick="this.querySelector('input').focus()">
+          <input type="text" id="p-tag-input" placeholder="Add tag + Enter" onkeydown="handleTag(event)">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Cover Image</label>
+        <div class="drop-zone" id="cover-drop" onclick="document.getElementById('cover-file-inp').click()" style="padding:14px">
+          <img id="cover-prev" style="display:none;width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px">
+          <div id="cover-drop-lbl">🖼 Click to upload or paste URL below</div>
+        </div>
+        <input type="file" id="cover-file-inp" accept="image/*" style="display:none" onchange="handleCoverFile(event)">
+        <input type="text" id="cover-url-inp" placeholder="Or paste image URL..." style="margin-top:8px;padding:9px 14px;width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none" oninput="previewCoverUrl(this.value)">
+      </div>
+
+      <div class="field">
+        <label>Attachments (any file type)</label>
+        <div class="drop-zone" id="attach-drop" onclick="document.getElementById('attach-file-inp').click()">
+          <div style="font-size:24px;margin-bottom:6px">📎</div>
+          <p>Drop files or click to browse</p>
+          <p style="margin-top:4px">PDF, DOCX, XLSX, images, video, ZIP…</p>
+        </div>
+        <input type="file" id="attach-file-inp" multiple style="display:none" onchange="handleAttachFiles(event)">
+        <div id="attach-prog" style="display:none"><div class="prog-bar-wrap"><div class="prog-bar" id="attach-prog-bar"></div></div><div id="attach-prog-text" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)"></div></div>
+        <div id="attach-list" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button class="btn-sm" onclick="closeDrawer('post-drawer')">Cancel</button>
+      <button class="btn-sm gold" onclick="savePost(false)">💾 Save Draft</button>
+      <button class="btn-primary" style="padding:8px 24px;font-size:11px;width:auto" onclick="savePost(true)">🚀 Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ AD EDITOR DRAWER ══ -->
+<div class="overlay" id="ad-drawer">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title" id="drawer-ad-title">New Ad</div>
+      <button class="drawer-close" onclick="closeDrawer('ad-drawer')">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div class="field"><label>Title *</label><input type="text" id="ad-title" placeholder="Ad headline..."></div>
+      <div class="field"><label>Body HTML</label><textarea id="ad-body" rows="3" placeholder="Description text, or custom HTML..."></textarea></div>
+      <div class="field"><label>Image URL</label><input type="text" id="ad-image" placeholder="https://..."></div>
+      <div class="field"><label>Link URL</label><input type="text" id="ad-link" placeholder="https://..."></div>
+      <div class="field">
+        <label>Placement</label>
+        <select id="ad-placement">
+          <option value="between_posts">Between Posts (blog grid)</option>
+          <option value="top_banner">Top Banner</option>
+          <option value="sidebar">Sidebar</option>
+        </select>
+      </div>
+      <div class="field"><label>Position (ordering)</label><input type="number" id="ad-position" value="0" min="0"></div>
+      <div class="field">
+        <label>Active</label>
+        <select id="ad-active"><option value="true">Yes</option><option value="false">No</option></select>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button class="btn-sm" onclick="closeDrawer('ad-drawer')">Cancel</button>
+      <button class="btn-primary" style="padding:8px 24px;font-size:11px;width:auto" onclick="saveAd()">💾 Save Ad</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  EVANS ONYANGO — ADMIN PANEL
+// ══════════════════════════════════════════════════════════
+
+let sb, currentUser, editingPostId = null, editingAdId = null;
+let editorTags = [], editorPendingFiles = [], editorCoverUrl = null;
+let currentPage = 'dashboard';
+let siteSettings = {};
+
+try {
+  sb = window.supabase.createClient(window.SB_URL, window.SB_ANON);
+} catch(e) { console.error('Supabase init failed'); }
+
+// ════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const errEl = document.getElementById('login-err');
+  const btn   = document.getElementById('login-btn');
+  errEl.textContent = '';
+  btn.textContent = 'Logging in…'; btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Login →'; btn.disabled = false;
+  if (error) { errEl.textContent = error.message; return; }
+  onAuthed(data.user);
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+function onAuthed(user) {
+  currentUser = user;
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('sb-email-display').textContent = user.email;
+  loadSettings().then(() => showPage('dashboard'));
+  loadPendingCommentsCount();
+}
+
+sb?.auth.getSession().then(({ data }) => {
+  if (data?.session) onAuthed(data.session.user);
+});
+
+// ════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════
+function showPage(page) {
+  currentPage = page;
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('nav-' + page)?.classList.add('active');
+  const titleMap = { dashboard:'Dashboard', posts:'Blog Posts', media:'Media Library',
+    comments:'Comments', ads:'Ads Manager', settings:'Site Settings' };
+  document.getElementById('top-bar-title').textContent = titleMap[page] || page;
+  document.getElementById('top-bar-actions').innerHTML = '';
+  const content = document.getElementById('page-content');
+  content.innerHTML = '<div class="empty-state"><div class="loading-dots">Loading</div></div>';
+  const pages = { dashboard: renderDashboard, posts: renderPosts, media: renderMedia,
+    comments: renderComments, ads: renderAds, settings: renderSettings };
+  (pages[page] || renderDashboard)();
+}
+
+// ════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════
+async function renderDashboard() {
+  const [postsR, commentsR, adsR, filesR] = await Promise.all([
+    sb.from('blog_posts').select('id,title,views,likes,published,created_at', { count:'exact' }),
+    sb.from('blog_comments').select('id,status', { count:'exact' }),
+    sb.from('blog_ads').select('id,title,clicks,impressions,active', { count:'exact' }),
+    sb.from('blog_files').select('id', { count:'exact' })
+  ]);
+  const posts     = postsR.data || [];
+  const comments  = commentsR.data || [];
+  const ads       = adsR.data || [];
+  const totalViews   = posts.reduce((a,p) => a + (p.views||0), 0);
+  const totalLikes   = posts.reduce((a,p) => a + (p.likes||0), 0);
+  const pubCount     = posts.filter(p => p.published).length;
+  const pendingCount = comments.filter(c => c.status === 'pending').length;
+  const totalClicks  = ads.reduce((a,d) => a + (d.clicks||0), 0);
+  const totalImpressions = ads.reduce((a,d) => a + (d.impressions||0), 0);
+  const ctr = totalImpressions > 0 ? ((totalClicks/totalImpressions)*100).toFixed(1)+'%' : '—';
+
+  const recentPosts = [...posts].sort((a,b) => b.created_at.localeCompare(a.created_at)).slice(0,5);
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Posts</div>
+        <div class="stat-value">${posts.length}</div>
+        <div class="stat-sub">${pubCount} published · ${posts.length - pubCount} drafts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Views</div>
+        <div class="stat-value">${totalViews.toLocaleString()}</div>
+        <div class="stat-sub">Across all posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Likes</div>
+        <div class="stat-value">${totalLikes}</div>
+        <div class="stat-sub">${pendingCount} comments pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ad CTR</div>
+        <div class="stat-value">${ctr}</div>
+        <div class="stat-sub">${totalClicks} clicks · ${totalImpressions} impressions</div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <div class="table-title">Recent Posts</div>
+        <button class="btn-sm gold" onclick="showPage('posts')">View All →</button>
+      </div>
+      <table>
+        <thead><tr><th>Title</th><th>Category</th><th>Views</th><th>Likes</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+          ${recentPosts.length === 0 ? `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;font-family:'IBM Plex Mono',monospace;font-size:11px">No posts yet</td></tr>` :
+          recentPosts.map(p => `<tr>
+            <td style="font-weight:500;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.title)}</td>
+            <td class="td-mono">${esc(p.category||'General')}</td>
+            <td class="td-mono">${p.views||0}</td>
+            <td class="td-mono">${p.likes||0}</td>
+            <td>${p.published ? '<span class="badge badge-pub">Published</span>' : '<span class="badge badge-draft">Draft</span>'}</td>
+            <td class="td-mono">${new Date(p.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric'})}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ════════════════════════════════════
+//  POSTS
+// ════════════════════════════════════
+async function renderPosts() {
+  document.getElementById('top-bar-actions').innerHTML =
+    '<button class="btn-sm gold" onclick="openPostDrawer(null)">✏️ New Post</button>';
+
+  const { data: posts } = await sb.from('blog_posts')
+    .select('*, blog_files(id)')
+    .order('created_at', { ascending: false });
+
+  const draftCount = (posts||[]).filter(p => !p.published).length;
+  document.getElementById('nav-posts-count').textContent = draftCount;
+  document.getElementById('nav-posts-count').style.display = draftCount > 0 ? 'inline-flex' : 'none';
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <div class="table-title">${(posts||[]).length} Posts</div>
+        <div style="display:flex;gap:8px"><button class="btn-sm gold" onclick="openPostDrawer(null)">✏️ New Post</button></div>
+      </div>
+      <table>
+        <thead><tr><th>Title</th><th>Category</th><th>Files</th><th>Views</th><th>Likes</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="posts-tbody">
+          ${(!posts||posts.length===0) ? `<tr><td colspan="8" style="text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No posts yet. Click New Post to write your first.</td></tr>` :
+          posts.map(p => `<tr>
+            <td style="font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.title)}</td>
+            <td class="td-mono">${esc(p.category||'General')}</td>
+            <td class="td-mono">${(p.blog_files||[]).length}</td>
+            <td class="td-mono">${p.views||0}</td>
+            <td class="td-mono">${p.likes||0}</td>
+            <td>${p.published ? '<span class="badge badge-pub">Published</span>' : '<span class="badge badge-draft">Draft</span>'}</td>
+            <td class="td-mono">${new Date(p.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'numeric'})}</td>
+            <td><div class="td-actions">
+              <button class="btn-sm" onclick="openPostDrawer('${p.id}')">✏️ Edit</button>
+              <button class="btn-sm ${p.published?'':'success'}" onclick="togglePublish('${p.id}',${p.published})">${p.published?'Unpublish':'🚀 Publish'}</button>
+              <button class="btn-sm danger" onclick="deletePost('${p.id}')">Delete</button>
+            </div></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function openPostDrawer(postId) {
+  editingPostId = postId;
+  editorTags = []; editorPendingFiles = []; editorCoverUrl = null;
+  document.getElementById('drawer-post-title').textContent = postId ? 'Edit Post' : 'New Post';
+  document.getElementById('p-title').value = '';
+  document.getElementById('p-excerpt').value = '';
+  document.getElementById('p-content').innerHTML = '';
+  document.getElementById('p-category').value = 'General';
+  document.getElementById('p-published').value = 'false';
+  document.getElementById('cover-url-inp').value = '';
+  document.getElementById('cover-prev').style.display = 'none';
+  document.getElementById('cover-drop-lbl').style.display = 'block';
+  document.getElementById('attach-list').innerHTML = '';
+  document.getElementById('attach-prog').style.display = 'none';
+  renderEditorTags();
+
+  if (postId) {
+    const { data } = await sb.from('blog_posts').select('*, blog_files(*)').eq('id', postId).single();
+    if (data) {
+      document.getElementById('p-title').value   = data.title || '';
+      document.getElementById('p-excerpt').value = data.excerpt || '';
+      document.getElementById('p-content').innerHTML = data.content || '';
+      document.getElementById('p-category').value = data.category || 'General';
+      document.getElementById('p-published').value = String(data.published);
+      if (data.cover_url) { setCoverPreview(data.cover_url); document.getElementById('cover-url-inp').value = data.cover_url; }
+      editorTags = data.tags || [];
+      renderEditorTags();
+      (data.blog_files||[]).forEach(f => addAttachItem({ id:f.id, name:f.file_name, type:f.file_type, size:f.file_size, url:f.file_url, saved:true }));
+    }
+  }
+  openDrawer('post-drawer');
+  setTimeout(() => document.getElementById('p-title').focus(), 300);
+}
+
+async function savePost(publish) {
+  const title    = document.getElementById('p-title').value.trim();
+  const excerpt  = document.getElementById('p-excerpt').value.trim();
+  const content  = document.getElementById('p-content').innerHTML;
+  const category = document.getElementById('p-category').value;
+  const published = publish || document.getElementById('p-published').value === 'true';
+  const coverUrl = editorCoverUrl || document.getElementById('cover-url-inp').value.trim() || null;
+  if (!title) { toast('⚠️ Title is required'); return; }
+
+  const payload = { title, excerpt, content, category, tags: editorTags, published, cover_url: coverUrl, updated_at: new Date().toISOString() };
+
+  let postId = editingPostId, error;
+  if (postId) {
+    ({ error } = await sb.from('blog_posts').update(payload).eq('id', postId));
+  } else {
+    const res = await sb.from('blog_posts').insert(payload).select().single();
+    error = res.error; postId = res.data?.id;
+  }
+  if (error) { toast('❌ ' + error.message); return; }
+
+  // Upload pending files
+  for (const pf of editorPendingFiles) {
+    if (pf.saved) continue;
+    const path = `blog/${postId}/${Date.now()}-${pf.file.name}`;
+    const { error: upErr } = await sb.storage.from('documents').upload(path, pf.file, { upsert: true });
+    if (upErr) { toast('⚠️ File error: ' + pf.file.name); continue; }
+    const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
+    await sb.from('blog_files').insert({ post_id: postId, file_url: publicUrl, file_name: pf.file.name, file_type: getFileType(pf.file.type), file_size: pf.file.size });
+  }
+
+  toast(published ? '🚀 Post published!' : '💾 Draft saved!');
+  closeDrawer('post-drawer');
+  renderPosts();
+}
+
+async function togglePublish(id, current) {
+  await sb.from('blog_posts').update({ published: !current }).eq('id', id);
+  toast(current ? '📥 Unpublished' : '🚀 Published!');
+  renderPosts();
+}
+
+async function deletePost(id) {
+  if (!confirm('Delete this post and all its attachments permanently?')) return;
+  const { data: files } = await sb.from('blog_files').select('file_url').eq('post_id', id);
+  for (const f of (files||[])) {
+    const path = f.file_url.split('/documents/')[1];
+    if (path) await sb.storage.from('documents').remove([path]);
+  }
+  await sb.from('blog_posts').delete().eq('id', id);
+  toast('🗑 Post deleted');
+  renderPosts();
+}
+
+// ── Rich text ──
+function ef(cmd) { document.execCommand(cmd,false,null); document.getElementById('p-content').focus(); }
+function eb(tag) { document.execCommand('formatBlock',false,tag); document.getElementById('p-content').focus(); }
+function elink() { const u=prompt('URL:'); if(u){document.execCommand('createLink',false,u);} }
+
+// ── Tags ──
+function handleTag(e) {
+  if (e.key==='Enter'||e.key===',') {
+    e.preventDefault();
+    const v=document.getElementById('p-tag-input').value.trim().replace(/,$/,'');
+    if(v&&!editorTags.includes(v)){editorTags.push(v);renderEditorTags();}
+    document.getElementById('p-tag-input').value='';
+  } else if(e.key==='Backspace'&&!document.getElementById('p-tag-input').value&&editorTags.length>0){
+    editorTags.pop();renderEditorTags();
+  }
+}
+function renderEditorTags() {
+  const wrap=document.getElementById('p-tags-wrap');
+  wrap.querySelectorAll('.tag-chip').forEach(c=>c.remove());
+  const inp=document.getElementById('p-tag-input');
+  editorTags.forEach((t,i)=>{
+    const chip=document.createElement('span'); chip.className='tag-chip'; chip.textContent=t;
+    chip.onclick=()=>{editorTags.splice(i,1);renderEditorTags();};
+    wrap.insertBefore(chip,inp);
+  });
+}
+
+// ── Cover ──
+async function handleCoverFile(e) {
+  const file=e.target.files[0]; if(!file) return;
+  toast('⏳ Uploading cover...');
+  const path='covers/'+Date.now()+'-'+file.name;
+  const {error}=await sb.storage.from('documents').upload(path,file,{upsert:true});
+  if(error){toast('❌ Upload failed');return;}
+  const {data:{publicUrl}}=sb.storage.from('documents').getPublicUrl(path);
+  editorCoverUrl=publicUrl; setCoverPreview(publicUrl);
+  document.getElementById('cover-url-inp').value=publicUrl;
+  toast('✅ Cover uploaded');
+}
+function previewCoverUrl(url){if(url.startsWith('http'))setCoverPreview(url);}
+function setCoverPreview(url){
+  const p=document.getElementById('cover-prev'),l=document.getElementById('cover-drop-lbl');
+  p.src=url;p.style.display='block';l.style.display='none';
+}
+
+// ── Attachments ──
+function handleAttachFiles(e){
+  Array.from(e.target.files).forEach(file=>{
+    const pf={file,name:file.name,type:getFileType(file.type),size:file.size,saved:false,id:'p'+Date.now()+Math.random()};
+    editorPendingFiles.push(pf); addAttachItem(pf);
+  }); e.target.value='';
+}
+function addAttachItem(f){
+  const list=document.getElementById('attach-list');
+  const d=document.createElement('div'); d.className='attach-item'; d.id='ai-'+f.id;
+  d.innerHTML=`<span style="font-size:18px">${fileEmoji(f.type)}</span><span class="attach-name">${esc(f.name)}</span><span class="attach-size">${fmtBytes(f.size)}</span><button onclick="removeAttach('${f.id}','${f.saved}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px">✕</button>`;
+  list.appendChild(d);
+}
+async function removeAttach(id,saved){
+  document.getElementById('ai-'+id)?.remove();
+  if(saved==='true'){
+    const {data:fd}=await sb.from('blog_files').select('file_url').eq('id',id).single();
+    if(fd){const p=fd.file_url.split('/documents/')[1];if(p)await sb.storage.from('documents').remove([p]);await sb.from('blog_files').delete().eq('id',id);}
+  } else {
+    editorPendingFiles=editorPendingFiles.filter(f=>f.id!==id);
+  }
+}
+
+// ── Drop ──
+['attach-drop','cover-drop'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over');});
+  el.addEventListener('dragleave',()=>el.classList.remove('over'));
+  el.addEventListener('drop',e=>{
+    e.preventDefault();el.classList.remove('over');
+    if(id==='attach-drop') Array.from(e.dataTransfer.files).forEach(file=>{
+      const pf={file,name:file.name,type:getFileType(file.type),size:file.size,saved:false,id:'p'+Date.now()+Math.random()};
+      editorPendingFiles.push(pf);addAttachItem(pf);
+    });
+  });
+});
+
+// ════════════════════════════════════
+//  MEDIA LIBRARY
+// ════════════════════════════════════
+async function renderMedia() {
+  document.getElementById('top-bar-actions').innerHTML =
+    '<button class="btn-sm gold" onclick="document.getElementById(\'lib-inp\').click()">+ Upload Files</button><input type="file" id="lib-inp" multiple style="display:none" onchange="handleLibUpload(event)">';
+
+  document.getElementById('page-content').innerHTML = `
+    <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap" id="lib-filter-bar">
+      <button class="btn-sm active-filter" onclick="filterMedia(this,'')">All</button>
+      <button class="btn-sm" onclick="filterMedia(this,'image')">🖼 Images</button>
+      <button class="btn-sm" onclick="filterMedia(this,'video')">🎥 Video</button>
+      <button class="btn-sm" onclick="filterMedia(this,'pdf')">📄 PDF</button>
+      <button class="btn-sm" onclick="filterMedia(this,'doc')">📝 Docs</button>
+      <button class="btn-sm" onclick="filterMedia(this,'other')">📦 Other</button>
+    </div>
+    <div id="lib-prog" style="display:none;margin-bottom:16px">
+      <div class="prog-bar-wrap"><div class="prog-bar" id="lib-prog-bar"></div></div>
+      <div id="lib-prog-text" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px"></div>
+    </div>
+    <div id="media-grid-wrap"><div class="empty-state"><div class="loading-dots">Loading</div></div></div>`;
+
+  await loadMediaGrid('');
+}
+
+let _libFilter = '';
+async function loadMediaGrid(filter) {
+  _libFilter = filter;
+  const { data, error } = await sb.storage.from('documents').list('', { limit:200, sortBy:{column:'created_at',order:'desc'} });
+  const wrap = document.getElementById('media-grid-wrap');
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">📂</div><div class="empty-text">No files uploaded yet</div></div>'; return; }
+
+  let files = data.filter(f => f.name && !f.name.endsWith('/'));
+  if (filter) {
+    files = files.filter(f => {
+      const mime = f.metadata?.mimetype || '';
+      return getFileType(mime) === filter || (filter==='pdf'&&f.name.toLowerCase().endsWith('.pdf'));
+    });
+  }
+  if (files.length === 0) { wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No files match this filter</div></div>'; return; }
+
+  wrap.innerHTML = `<div class="media-grid">${files.map(f => {
+    const {data:{publicUrl}} = sb.storage.from('documents').getPublicUrl(f.name);
+    const mime = f.metadata?.mimetype||'';
+    const isImg = mime.startsWith('image/');
+    const thumb = isImg
+      ? `<img style="width:100%;height:96px;object-fit:cover;display:block" src="${esc(publicUrl)}" loading="lazy">`
+      : `<div class="media-thumb">${fileEmoji(getFileType(mime))}</div>`;
+    return `<div class="media-item">
+      ${thumb}
+      <div class="media-info">
+        <div class="media-name" title="${esc(f.name)}">${esc(f.name.split('/').pop())}</div>
+        <div class="media-size">${fmtBytes(f.metadata?.size||0)}</div>
+        <div class="media-actions">
+          <a class="btn-sm" href="${esc(publicUrl)}" target="_blank" style="font-size:9px;padding:3px 8px;text-decoration:none">↗</a>
+          <button class="btn-sm danger" style="font-size:9px;padding:3px 8px" onclick="deleteLibFile('${esc(f.name)}',this)">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function filterMedia(btn, filter) {
+  document.querySelectorAll('#lib-filter-bar .btn-sm').forEach(b => b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  loadMediaGrid(filter);
+}
+
+async function handleLibUpload(e) {
+  const files = Array.from(e.target.files); if(!files.length) return;
+  const prog=document.getElementById('lib-prog'),bar=document.getElementById('lib-prog-bar'),text=document.getElementById('lib-prog-text');
+  prog.style.display='block';
+  for(let i=0;i<files.length;i++){
+    bar.style.width=Math.round((i/files.length)*100)+'%';
+    text.textContent=`Uploading ${i+1}/${files.length}: ${files[i].name}`;
+    await sb.storage.from('documents').upload('library/'+Date.now()+'-'+files[i].name, files[i], {upsert:true});
+  }
+  bar.style.width='100%'; text.textContent='Done!';
+  setTimeout(()=>{prog.style.display='none';},1500);
+  e.target.value=''; toast(`✅ ${files.length} file(s) uploaded`);
+  loadMediaGrid(_libFilter);
+}
+
+async function deleteLibFile(name, btn) {
+  if(!confirm('Delete this file permanently?')) return;
+  btn.textContent='…';
+  const {error}=await sb.storage.from('documents').remove([name]);
+  if(!error){toast('🗑 File deleted');loadMediaGrid(_libFilter);}
+  else{toast('❌ Delete failed');btn.textContent='🗑';}
+}
+
+// ════════════════════════════════════
+//  COMMENTS
+// ════════════════════════════════════
+async function renderComments() {
+  document.getElementById('top-bar-actions').innerHTML = '';
+  const {data}=await sb.from('blog_comments').select('*, blog_posts(title)').order('created_at',{ascending:false});
+  const pending=(data||[]).filter(c=>c.status==='pending').length;
+  document.getElementById('nav-comments-badge').textContent=pending;
+  document.getElementById('nav-comments-badge').style.display=pending>0?'inline-flex':'none';
+
+  document.getElementById('page-content').innerHTML=`
+    <div class="table-wrap">
+      <div class="table-toolbar"><div class="table-title">${(data||[]).length} Comments · ${pending} pending</div></div>
+      <table>
+        <thead><tr><th>Author</th><th>Comment</th><th>Post</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${(!data||data.length===0)?`<tr><td colspan="6" style="text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No comments yet</td></tr>`:
+          data.map(c=>`<tr>
+            <td style="font-weight:500">${esc(c.author_name)}</td>
+            <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">${esc(c.content)}</td>
+            <td class="td-mono" style="font-size:10px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.blog_posts?.title||'—')}</td>
+            <td><span class="badge badge-${c.status}">${c.status}</span></td>
+            <td class="td-mono">${new Date(c.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'numeric'})}</td>
+            <td><div class="td-actions">
+              ${c.status!=='approved'?`<button class="btn-sm success" onclick="moderateComment('${c.id}','approved')">✅ Approve</button>`:''}
+              ${c.status!=='rejected'?`<button class="btn-sm danger" onclick="moderateComment('${c.id}','rejected')">❌ Reject</button>`:''}
+              <button class="btn-sm danger" onclick="deleteComment('${c.id}')">🗑</button>
+            </div></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function moderateComment(id, status) {
+  await sb.from('blog_comments').update({ status }).eq('id', id);
+  toast(status === 'approved' ? '✅ Comment approved' : '❌ Comment rejected');
+  renderComments();
+}
+
+async function deleteComment(id) {
+  if(!confirm('Delete this comment permanently?')) return;
+  await sb.from('blog_comments').delete().eq('id', id);
+  toast('🗑 Comment deleted'); renderComments();
+}
+
+async function loadPendingCommentsCount() {
+  if(!sb) return;
+  const {count}=await sb.from('blog_comments').select('id',{count:'exact',head:true}).eq('status','pending');
+  if(count>0){
+    document.getElementById('nav-comments-badge').textContent=count;
+    document.getElementById('nav-comments-badge').style.display='inline-flex';
+  }
+}
+
+// ════════════════════════════════════
+//  ADS
+// ════════════════════════════════════
+async function renderAds() {
+  document.getElementById('top-bar-actions').innerHTML =
+    '<button class="btn-sm gold" onclick="openAdDrawer(null)">+ New Ad</button>';
+  const {data}=await sb.from('blog_ads').select('*').order('placement').order('position');
+
+  document.getElementById('page-content').innerHTML=`
+    <div class="table-wrap">
+      <div class="table-toolbar"><div class="table-title">${(data||[]).length} Ads</div><button class="btn-sm gold" onclick="openAdDrawer(null)">+ New Ad</button></div>
+      <table>
+        <thead><tr><th>Title</th><th>Placement</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${(!data||data.length===0)?`<tr><td colspan="7" style="text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No ads yet. Create one to start monetising.</td></tr>`:
+          data.map(a=>{
+            const ctr=a.impressions>0?((a.clicks/a.impressions)*100).toFixed(1)+'%':'—';
+            return `<tr>
+              <td style="font-weight:500">${esc(a.title)}</td>
+              <td class="td-mono">${esc(a.placement)}</td>
+              <td class="td-mono">${(a.impressions||0).toLocaleString()}</td>
+              <td class="td-mono">${(a.clicks||0).toLocaleString()}</td>
+              <td class="td-mono">${ctr}</td>
+              <td><span class="badge ${a.active?'badge-pub':'badge-draft'}">${a.active?'Active':'Inactive'}</span></td>
+              <td><div class="td-actions">
+                <button class="btn-sm" onclick="openAdDrawer('${a.id}')">✏️ Edit</button>
+                <button class="btn-sm ${a.active?'danger':'success'}" onclick="toggleAd('${a.id}',${a.active})">${a.active?'Deactivate':'Activate'}</button>
+                <button class="btn-sm danger" onclick="deleteAd('${a.id}')">🗑</button>
+              </div></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function openAdDrawer(adId) {
+  editingAdId = adId;
+  document.getElementById('drawer-ad-title').textContent = adId ? 'Edit Ad' : 'New Ad';
+  document.getElementById('ad-title').value = '';
+  document.getElementById('ad-body').value = '';
+  document.getElementById('ad-image').value = '';
+  document.getElementById('ad-link').value = '';
+  document.getElementById('ad-placement').value = 'between_posts';
+  document.getElementById('ad-position').value = '0';
+  document.getElementById('ad-active').value = 'true';
+  if (adId) {
+    const {data}=await sb.from('blog_ads').select('*').eq('id',adId).single();
+    if(data){
+      document.getElementById('ad-title').value=data.title||'';
+      document.getElementById('ad-body').value=data.body_html||'';
+      document.getElementById('ad-image').value=data.image_url||'';
+      document.getElementById('ad-link').value=data.link_url||'';
+      document.getElementById('ad-placement').value=data.placement||'between_posts';
+      document.getElementById('ad-position').value=data.position||0;
+      document.getElementById('ad-active').value=String(data.active);
+    }
+  }
+  openDrawer('ad-drawer');
+}
+
+async function saveAd() {
+  const payload={
+    title:document.getElementById('ad-title').value.trim(),
+    body_html:document.getElementById('ad-body').value.trim(),
+    image_url:document.getElementById('ad-image').value.trim()||null,
+    link_url:document.getElementById('ad-link').value.trim()||null,
+    placement:document.getElementById('ad-placement').value,
+    position:parseInt(document.getElementById('ad-position').value)||0,
+    active:document.getElementById('ad-active').value==='true',
+    updated_at:new Date().toISOString()
+  };
+  if(!payload.title){toast('⚠️ Title required');return;}
+  if(editingAdId){await sb.from('blog_ads').update(payload).eq('id',editingAdId);}
+  else{await sb.from('blog_ads').insert(payload);}
+  toast('✅ Ad saved!'); closeDrawer('ad-drawer'); renderAds();
+}
+
+async function toggleAd(id,current){
+  await sb.from('blog_ads').update({active:!current}).eq('id',id);
+  toast(current?'Ad deactivated':'Ad activated'); renderAds();
+}
+async function deleteAd(id){
+  if(!confirm('Delete this ad?'))return;
+  await sb.from('blog_ads').delete().eq('id',id);
+  toast('🗑 Ad deleted'); renderAds();
+}
+
+// ════════════════════════════════════
+//  SETTINGS
+// ════════════════════════════════════
+async function loadSettings() {
+  if(!sb)return;
+  const {data}=await sb.from('site_settings').select('key,value');
+  if(data)data.forEach(r=>{siteSettings[r.key]=r.value;});
+}
+
+async function saveSetting(key, value) {
+  if(!sb)return;
+  await sb.from('site_settings').upsert({key, value, updated_at: new Date().toISOString()});
+  siteSettings[key] = value;
+}
+
+function renderSettings() {
+  const s = siteSettings;
+
+  document.getElementById('page-content').innerHTML = `
+    <div style="max-width:680px;display:flex;flex-direction:column;gap:24px">
+
+      <div class="table-wrap">
+        <div class="table-toolbar"><div class="table-title">Engagement Features</div></div>
+        <div style="padding:4px 20px">
+          ${toggleRow('show_views','Show View Counts','Display view count on blog cards and post reader',s.show_views!==false)}
+          ${toggleRow('show_likes','Show Like Button','Let visitors like posts',s.show_likes!==false)}
+          ${toggleRow('show_comments','Show Comments Section','Allow visitors to read and submit comments',s.show_comments!==false)}
+          ${toggleRow('show_comment_count','Show Comment Count','Show comment count badge on post reader',s.show_comment_count!==false)}
+          ${toggleRow('comments_require_moderation','Moderate Comments','New comments wait for approval before appearing',s.comments_require_moderation!==false)}
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-toolbar"><div class="table-title">Ads</div></div>
+        <div style="padding:4px 20px">
+          ${toggleRow('ads_enabled','Enable Ads','Show ads between posts and in banners',s.ads_enabled!==false)}
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-toolbar"><div class="table-title">Animation Controls</div></div>
+        <div style="padding:4px 20px">
+          ${toggleRow('hero_animation','Hero Entrance Animation','Staggered slide-in on page load',s.hero_animation!==false)}
+          ${toggleRow('scroll_progress','Scroll Progress Bar','Gold/blue bar at top showing scroll depth',s.scroll_progress!==false)}
+          ${toggleRow('cursor_effect','Custom Cursor','Gold cursor dot + ring effect (desktop only)',s.cursor_effect!==false)}
+        </div>
+        <div style="padding:16px 20px;border-top:1px solid var(--border)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Animation Speed</div>
+          <div class="radio-group" id="speed-group">
+            ${['slow','normal','fast'].map(v=>`<div class="radio-btn${(s.animation_speed||'normal')===v?' active':''}" onclick="setRadio('animation_speed','${v}','speed-group',this)">${v.charAt(0).toUpperCase()+v.slice(1)}</div>`).join('')}
+          </div>
+        </div>
+        <div style="padding:16px 20px;border-top:1px solid var(--border)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Reveal Animation Style</div>
+          <div class="radio-group" id="style-group">
+            ${['slide','fade','zoom','rotate'].map(v=>`<div class="radio-btn${(s.animation_style||'slide')===v?' active':''}" onclick="setRadio('animation_style','${v}','style-group',this)">${v.charAt(0).toUpperCase()+v.slice(1)}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-align:center">
+        Settings are saved instantly and applied on next public page load.
+      </div>
+    </div>`;
+}
+
+function toggleRow(key, label, desc, val) {
+  return `<div class="toggle-row">
+    <div class="toggle-info">
+      <div class="toggle-label">${label}</div>
+      <div class="toggle-desc">${desc}</div>
+    </div>
+    <div class="toggle ${val?'on':''}" id="toggle-${key}" onclick="clickToggle('${key}',this)"></div>
+  </div>`;
+}
+
+async function clickToggle(key, el) {
+  const newVal = !el.classList.contains('on');
+  el.classList.toggle('on', newVal);
+  await saveSetting(key, newVal);
+  toast(newVal ? `✅ ${key} enabled` : `⛔ ${key} disabled`);
+}
+
+async function setRadio(key, val, groupId, el) {
+  document.querySelectorAll('#'+groupId+' .radio-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  await saveSetting(key, val);
+  toast(`✅ ${key} set to "${val}"`);
+}
+
+// ════════════════════════════════════
+//  DRAWER / OVERLAY HELPERS
+// ════════════════════════════════════
+function openDrawer(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeDrawer(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)closeDrawer(o.id);});
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(d=>closeDrawer(d.id));
+});
+
+// ════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════
+function toast(msg,dur=3200){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ════════════════════════════════════
+//  UTILITIES
+// ════════════════════════════════════
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtBytes(b){if(!b||b===0)return'—';if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+function getFileType(m){if(!m)return'other';const s=m.toLowerCase();if(s.startsWith('image/'))return'image';if(s.startsWith('video/'))return'video';if(s.includes('pdf'))return'pdf';if(s.includes('word')||s.includes('document')||s.includes('sheet')||s.includes('excel')||s.includes('presentation'))return'doc';if(s.startsWith('text/'))return'doc';return'other';}
+function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',other:'📦'}[t]||'📎';}
+</script>
+</body>
+</html>
