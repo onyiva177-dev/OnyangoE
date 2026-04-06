@@ -604,14 +604,20 @@ async function savePost(publish) {
   }
   if (error) { toast('❌ ' + error.message); return; }
 
-  // Upload pending files
+  // Upload pending files (compress images, upload others directly, yield between each)
   for (const pf of editorPendingFiles) {
     if (pf.saved) continue;
-    const path = `blog/${postId}/${Date.now()}-${pf.file.name}`;
-    const { error: upErr } = await sb.storage.from('documents').upload(path, pf.file, { upsert: true });
-    if (upErr) { toast('⚠️ File error: ' + pf.file.name); continue; }
-    const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
-    await sb.from('blog_files').insert({ post_id: postId, file_url: publicUrl, file_name: pf.file.name, file_type: getFileType(pf.file.type), file_size: pf.file.size });
+    try {
+      let file = pf.file;
+      if (file.type.startsWith('image/')) file = await compressImage(file, 1400, 0.82);
+      const path = `blog/${postId}/${Date.now()}-${file.name}`;
+      const { error: upErr } = await sb.storage.from('documents').upload(path, file, { upsert: true });
+      if (upErr) { toast('⚠️ File error: ' + pf.file.name); continue; }
+      const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
+      await sb.from('blog_files').insert({ post_id: postId, file_url: publicUrl, file_name: pf.file.name, file_type: getFileType(pf.file.type), file_size: pf.file.size });
+      file = null; // allow GC
+      await new Promise(r => setTimeout(r, 60)); // yield to browser
+    } catch(err) { toast('⚠️ Upload failed: ' + pf.file.name); }
   }
 
   toast(published ? '🚀 Post published!' : '💾 Draft saved!');
@@ -665,16 +671,50 @@ function renderEditorTags() {
 }
 
 // ── Cover ──
+// Compress image via canvas before upload — dramatically reduces mobile memory use
+async function compressImage(file, maxPx=1600, quality=0.82) {
+  return new Promise((resolve) => {
+    const isMobile = window.matchMedia('(pointer:coarse)').matches;
+    // On mobile, use tighter limits to avoid OOM
+    if (isMobile) { maxPx = 1200; quality = 0.78; }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url); // free immediately
+      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => {
+        canvas.width = 0; canvas.height = 0; // release canvas memory
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 async function handleCoverFile(e) {
-  const file=e.target.files[0]; if(!file) return;
-  toast('⏳ Uploading cover...');
-  const path='covers/'+Date.now()+'-'+file.name;
-  const {error}=await sb.storage.from('documents').upload(path,file,{upsert:true});
-  if(error){toast('❌ Upload failed');return;}
-  const {data:{publicUrl}}=sb.storage.from('documents').getPublicUrl(path);
-  editorCoverUrl=publicUrl; setCoverPreview(publicUrl);
-  document.getElementById('cover-url-inp').value=publicUrl;
-  toast('✅ Cover uploaded');
+  const rawFile = e.target.files[0]; if (!rawFile) return;
+  e.target.value = ''; // clear input immediately to free reference
+  toast('⏳ Processing cover image...');
+  let file = rawFile;
+  if (rawFile.type.startsWith('image/')) {
+    file = await compressImage(rawFile, 1400, 0.82);
+    toast(`⏳ Uploading (${fmtBytes(file.size)})...`);
+  }
+  const path = 'covers/' + Date.now() + '-' + file.name;
+  const { error } = await sb.storage.from('documents').upload(path, file, { upsert: true });
+  if (error) { toast('❌ Upload failed: ' + error.message); return; }
+  const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
+  editorCoverUrl = publicUrl;
+  setCoverPreview(publicUrl);
+  document.getElementById('cover-url-inp').value = publicUrl;
+  toast('✅ Cover uploaded successfully');
 }
 function previewCoverUrl(url){if(url.startsWith('http'))setCoverPreview(url);}
 function setCoverPreview(url){
@@ -789,17 +829,50 @@ function filterMedia(btn, filter) {
 }
 
 async function handleLibUpload(e) {
-  const files = Array.from(e.target.files); if(!files.length) return;
-  const prog=document.getElementById('lib-prog'),bar=document.getElementById('lib-prog-bar'),text=document.getElementById('lib-prog-text');
-  prog.style.display='block';
-  for(let i=0;i<files.length;i++){
-    bar.style.width=Math.round((i/files.length)*100)+'%';
-    text.textContent=`Uploading ${i+1}/${files.length}: ${files[i].name}`;
-    await sb.storage.from('documents').upload('library/'+Date.now()+'-'+files[i].name, files[i], {upsert:true});
+  const rawFiles = Array.from(e.target.files); if (!rawFiles.length) return;
+  e.target.value = ''; // free file reference immediately
+  const prog = document.getElementById('lib-prog');
+  const bar  = document.getElementById('lib-prog-bar');
+  const text = document.getElementById('lib-prog-text');
+  prog.style.display = 'block';
+  let errors = 0;
+
+  for (let i = 0; i < rawFiles.length; i++) {
+    const raw = rawFiles[i];
+    bar.style.width = Math.round((i / rawFiles.length) * 100) + '%';
+    text.textContent = `Processing ${i + 1}/${rawFiles.length}: ${raw.name}`;
+
+    // Warn if file is very large on mobile
+    const isMobile = window.matchMedia('(pointer:coarse)').matches;
+    if (isMobile && raw.size > 50 * 1024 * 1024) {
+      toast(`⚠️ ${raw.name} is over 50 MB — may fail on mobile`);
+    }
+
+    try {
+      // Compress images; upload other files directly
+      let file = raw;
+      if (raw.type.startsWith('image/')) {
+        file = await compressImage(raw, 1600, 0.83);
+        text.textContent = `Uploading ${i + 1}/${rawFiles.length}: ${raw.name} (${fmtBytes(file.size)})`;
+      }
+      const path = 'library/' + Date.now() + '-' + file.name;
+      const { error } = await sb.storage.from('documents').upload(path, file, { upsert: true });
+      if (error) { errors++; console.error('Upload error:', error.message); }
+      // Explicitly null out reference to allow GC
+      file = null;
+    } catch (err) {
+      errors++;
+      console.error('Upload exception:', err);
+    }
+
+    // Yield to browser between files — lets GC run, prevents memory spike
+    await new Promise(r => setTimeout(r, 80));
   }
-  bar.style.width='100%'; text.textContent='Done!';
-  setTimeout(()=>{prog.style.display='none';},1500);
-  e.target.value=''; toast(`✅ ${files.length} file(s) uploaded`);
+
+  bar.style.width = '100%';
+  text.textContent = errors > 0 ? `Done with ${errors} error(s)` : 'All files uploaded!';
+  setTimeout(() => { prog.style.display = 'none'; }, 1800);
+  toast(errors > 0 ? `⚠️ ${rawFiles.length - errors}/${rawFiles.length} uploaded` : `✅ ${rawFiles.length} file(s) uploaded`);
   loadMediaGrid(_libFilter);
 }
 
