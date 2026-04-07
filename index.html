@@ -515,10 +515,6 @@ footer{background:var(--ink);border-top:1px solid var(--border);padding:28px 48p
     <span></span><span></span><span></span>
   </button>
 </nav>
-<!-- ── AD SLOTS ── -->
-<div id="ad-top-banner" class="ad-block"></div>
-<div id="ad-between-posts" class="ad-block ad-between"></div>
-<div id="ad-sidebar" class="ad-block"></div>
 <div class="mob-nav" id="mob-nav"></div>
 
 <!-- ══ HERO ══ -->
@@ -633,7 +629,14 @@ footer{background:var(--ink);border-top:1px solid var(--border);padding:28px 48p
     </div>
   </div>
 </section>
-
+  
+<div id="custom-ad-slot" style="display:none; max-content: 1200px; margin: 40px auto; padding: 0 48px;">
+    <div style="background: var(--card2); border: 1px solid var(--border2); border-radius: var(--r3); padding: 24px; text-align: center;">
+        <span class="eyebrow" style="justify-content: center; margin-bottom: 12px;">Sponsored</span>
+        <div id="ad-content">
+            </div>
+    </div>
+</div>
 <!-- ══ FOOTER ══ -->
 <footer>
   <div class="footer-logo" id="f-logo">Evans<span>.</span></div>
@@ -1364,6 +1367,30 @@ function fmtBytes(b){if(!b||b===0)return'—';if(b<1024)return b+' B';if(b<10485
 function catEmoji(c){return{Accounting:'📊',Finance:'💰',Technology:'💻',Business:'🏢','Data Analytics':'📈',Agribusiness:'🌾',Personal:'✍️',General:'📝'}[c]||'📝';}
 function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',other:'📦'}[t]||'📎';}
 
+async function initAds() {
+  // This matches the 'Show Ads' toggle in your Admin Screenshot
+  const { data } = await supabase.from('site_settings').select('show_ads').single();
+
+  if (data && data.show_ads) {
+    const adSlot = document.getElementById('custom-ad-slot');
+    if (adSlot) {
+      adSlot.style.display = 'block'; // Make it visible if Admin says ON
+      
+      // Now fetch your actual custom ad content from your ads table
+      const { data: ad } = await supabase.from('custom_ads').select('*').limit(1).single();
+      if (ad) {
+        document.getElementById('ad-content').innerHTML = `
+          <a href="${ad.link}" target="_blank">
+            <img src="${ad.image_url}" style="max-width:100%; border-radius:var(--r2);">
+          </a>`;
+      }
+    }
+  }
+}
+
+// Start the check as soon as the window loads
+window.addEventListener('DOMContentLoaded', initAds);
+
 init();
 </script>
 <script>
@@ -1375,16 +1402,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
-<script>
-function renderAd(placement, html) {
-  if (placement === "top-banner") {
-    document.getElementById("ad-top-banner").innerHTML = html;
-  } else if (placement === "between-posts") {
-    document.getElementById("ad-between-posts").innerHTML = html;
-  } else if (placement === "sidebar") {
-    document.getElementById("ad-sidebar").innerHTML = html;
-  }
-}
-</script>
+
 </body>
 </html>
