@@ -2,622 +2,876 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evans Onyango — Admin</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — Evans Onyango</title>
 <script>
   window.SB_URL  = 'https://npdnoqoftisnlgniukdg.supabase.co';
   window.SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZG5vcW9mdGlzbmxnbml1a2RnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMTIzNzEsImV4cCI6MjA5MDY4ODM3MX0.CkD6VQI_QnKy3dh6tklGn-zKa3wh8CIqDM7Rj3wEMvw';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --blue:#034694;--blue-mid:#0a56b0;--blue-light:#1a6fd4;--blue-deep:#012a5c;--blue-dark:#011833;
-  --gold:#d4a843;--gold-light:#f0c96a;
-  --bg:#020d1f;--bg2:#040f24;--card:#071a35;--card2:#0c2244;
-  --border:rgba(3,70,148,.35);--border2:rgba(3,70,148,.6);
-  --text:#dce8ff;--text2:#7a9abe;--muted:#3d5a7a;
-  --red:#e55;--green:#25d366;
-  --r-sm:8px;--r-md:14px;--r-lg:20px;--r-xl:28px;--r-full:9999px;
+:root{
+  --ink:#080c18;--ink2:#0d1326;--card:#111827;--card2:#162035;
+  --blue:#034694;--blue-b:#0550d5;--blue-l:#2272f5;
+  --gold:#d4a843;--text:#e8eeff;--text2:#8899bb;--muted:#3d5272;
+  --border:rgba(3,70,148,.28);--border2:rgba(3,70,148,.55);
+  --red:#ef4444;--green:#22c55e;
+  --r:8px;--r2:14px;--r3:20px;--rfull:9999px;
   --tr:all .22s cubic-bezier(.4,0,.2,1);
-  --sidebar:240px;
+  --sidebar:252px;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{font-size:15px;height:100%}
-body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100%;overflow:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(10,86,176,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(10,86,176,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+html,body{height:100%;font-family:'Sora',sans-serif;background:var(--ink);color:var(--text);overflow:hidden}
 
 /* ── LOGIN ── */
-#login-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
-#login-screen.hidden{display:none}
-.login-box{width:100%;max-width:380px;padding:0 24px}
-.login-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:42px;text-align:center;margin-bottom:6px}
-.login-logo span{color:var(--gold)}
-.login-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:40px}
-.field{margin-bottom:16px}
-.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:11px 16px;outline:none;transition:border-color .2s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
-.field textarea{resize:vertical;min-height:80px;font-family:'IBM Plex Sans',sans-serif}
-.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue-mid));color:#fff;border:none;padding:13px 28px;border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:var(--tr);width:100%}
-.btn-primary:hover{background:linear-gradient(135deg,var(--blue-mid),var(--blue-light));transform:translateY(-1px)}
-.btn-sm{padding:6px 16px;font-size:10px;border-radius:var(--r-full);border:1px solid var(--border2);color:var(--text2);background:none;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:var(--tr);white-space:nowrap}
+#login{position:fixed;inset:0;z-index:9999;background:var(--ink);display:flex;align-items:center;justify-content:center;padding:24px}
+#login.gone{display:none}
+.lbox{width:100%;max-width:360px}
+.llogo{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:52px;text-align:center;margin-bottom:4px;background:linear-gradient(135deg,#e8eeff 0%,var(--gold) 55%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lsub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:36px}
+.lf{margin-bottom:14px}
+.lf label{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.lf input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:11px 16px;outline:none;transition:border-color .2s}
+.lf input:focus{border-color:var(--gold)}
+.lerr{color:var(--red);font-family:'JetBrains Mono',monospace;font-size:10px;margin:8px 0;min-height:16px;text-align:center}
+.lbtn{width:100%;background:linear-gradient(135deg,var(--blue),var(--blue-b));color:#fff;border:none;padding:13px;border-radius:var(--rfull);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:var(--tr)}
+.lbtn:hover{background:linear-gradient(135deg,var(--blue-b),var(--blue-l));transform:translateY(-1px)}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100%}
+aside{width:var(--sidebar);flex-shrink:0;background:var(--ink2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+.sb-hdr{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.sb-brand{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:20px;color:var(--text)}
+.sb-brand span{color:var(--gold)}
+.sb-role{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.sb-email{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-nav{padding:10px 0;flex:1}
+.sb-sec{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:12px 18px 4px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:10px 18px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;cursor:pointer;transition:var(--tr);border-left:2px solid transparent;user-select:none}
+.sb-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.sb-item.on{color:var(--gold);background:rgba(212,168,67,.05);border-left-color:var(--gold)}
+.sb-icon{width:16px;text-align:center;font-size:14px;flex-shrink:0}
+.sb-badge{margin-left:auto;background:rgba(212,168,67,.18);color:var(--gold);border-radius:var(--rfull);padding:1px 7px;font-size:8px;display:none}
+.sb-badge.show{display:inline}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.sb-view{display:block;text-align:center;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:6px;border:1px solid var(--border);border-radius:var(--rfull);transition:var(--tr)}
+.sb-view:hover{border-color:var(--gold);color:var(--gold)}
+.sb-logout{display:flex;align-items:center;gap:7px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:color .2s}
+.sb-logout:hover{color:var(--red)}
+
+/* ── MAIN ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:rgba(13,19,38,.96);border-bottom:1px solid var(--border);padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;backdrop-filter:blur(12px)}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600}
+.topbar-acts{display:flex;gap:8px;align-items:center}
+.page{flex:1;overflow-y:auto;padding:28px;position:relative}
+
+/* ── BUTTONS ── */
+.btn-sm{padding:6px 16px;font-size:9px;border-radius:var(--rfull);border:1px solid var(--border2);color:var(--text2);background:none;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:var(--tr);letter-spacing:.06em;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
 .btn-sm:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm.gold{border-color:var(--gold);color:var(--gold)}
+.btn-sm.gold:hover{background:var(--gold);color:#000}
 .btn-sm.danger:hover{border-color:var(--red);color:var(--red)}
 .btn-sm.success{border-color:var(--green);color:var(--green)}
 .btn-sm.success:hover{background:var(--green);color:#000}
-.btn-sm.gold{border-color:var(--gold);color:var(--gold)}
-.btn-sm.gold:hover{background:var(--gold);color:#000}
-.login-error{color:var(--red);font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:10px;text-align:center;min-height:16px}
+.btn-prim{background:linear-gradient(135deg,var(--blue),var(--blue-b));color:#fff;border:none;padding:9px 22px;border-radius:var(--rfull);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:var(--tr)}
+.btn-prim:hover{background:linear-gradient(135deg,var(--blue-b),var(--blue-l));transform:translateY(-1px)}
 
-/* ── SIDEBAR ── */
-#sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;position:relative;overflow-y:auto}
-.sb-header{padding:24px 20px 18px;border-bottom:1px solid var(--border)}
-.sb-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:22px}
-.sb-logo span{color:var(--gold)}
-.sb-role{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px}
-.sb-email{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-nav.sb-nav{padding:12px 0;flex:1}
-.sb-section{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:14px 20px 6px}
-.sb-link{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;cursor:pointer;transition:var(--tr);border-left:2px solid transparent;text-decoration:none}
-.sb-link:hover{color:var(--text);background:rgba(255,255,255,.04)}
-.sb-link.active{color:var(--gold);background:rgba(212,168,67,.06);border-left-color:var(--gold)}
-.sb-link .icon{width:18px;text-align:center;font-size:14px}
-.sb-badge{margin-left:auto;background:rgba(212,168,67,.2);color:var(--gold);border-radius:var(--r-full);padding:2px 8px;font-size:9px}
-.sb-footer{padding:16px 20px;border-top:1px solid var(--border)}
-.sb-logout{display:flex;align-items:center;gap:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;cursor:pointer;transition:color .2s}
-.sb-logout:hover{color:var(--red)}
-.sb-view-site{display:block;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:10px;padding:6px;border:1px solid var(--border);border-radius:var(--r-full);transition:var(--tr)}
-.sb-view-site:hover{border-color:var(--gold);color:var(--gold)}
-
-/* ── MAIN ── */
-#main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
-.top-bar{background:rgba(4,15,36,.95);border-bottom:1px solid var(--border);padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);position:sticky;top:0;z-index:5;flex-shrink:0}
-.top-bar-title{font-family:'Playfair Display',serif;font-size:18px}
-.top-bar-actions{display:flex;gap:10px;align-items:center}
-.content{padding:32px;flex:1;position:relative;z-index:1;max-width:1200px}
-
-/* ── DASHBOARD STATS ── */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-.stat-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-lg);padding:20px 22px;position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--blue-light))}
-.stat-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.stat-value{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--gold);line-height:1}
-.stat-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px}
+/* ── STATS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r3);padding:18px 20px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue-b),var(--gold))}
+.stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:var(--gold);line-height:1}
+.stat-sub{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px}
 
 /* ── TABLE ── */
-.table-wrap{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r-lg);overflow:hidden}
-.table-toolbar{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
-.table-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tbl-wrap{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:var(--r3);overflow:hidden;margin-bottom:20px}
+.tbl-bar{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.tbl-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 table{width:100%;border-collapse:collapse}
-th{padding:11px 16px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
-td{padding:12px 16px;border-bottom:1px solid rgba(3,70,148,.15);font-size:13px;vertical-align:middle}
+th{padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+td{padding:11px 14px;border-bottom:1px solid rgba(3,70,148,.1);font-size:12px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.02)}
-.td-mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em}
-.badge-pub{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:#4ddb8a}
-.badge-draft{background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.3);color:var(--gold)}
-.badge-pending{background:rgba(255,150,50,.1);border:1px solid rgba(255,150,50,.3);color:#ffaa66}
-.badge-approved{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:#4ddb8a}
-.badge-rejected{background:rgba(229,85,85,.1);border:1px solid rgba(229,85,85,.3);color:var(--red)}
-.td-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+tr:hover td{background:rgba(255,255,255,.015)}
+.mono{font-family:'JetBrains Mono',monospace;font-size:10px}
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:var(--rfull);font-family:'JetBrains Mono',monospace;font-size:8px}
+.bp{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#4ade80}
+.bd{background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.3);color:var(--gold)}
+.bpnd{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:#fb923c}
+.brj{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.td-acts{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
 
-/* ── MODAL / DRAWER ── */
-.overlay{position:fixed;inset:0;z-index:100;background:rgba(2,13,31,.88);display:none;align-items:flex-start;justify-content:flex-end;backdrop-filter:blur(4px)}
+/* ── DRAWER ── */
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(8,12,24,.88);display:none;align-items:flex-start;justify-content:flex-end;backdrop-filter:blur(5px)}
 .overlay.open{display:flex}
-.drawer{background:linear-gradient(145deg,var(--card2),var(--card));border-left:1px solid var(--border2);width:min(700px,100vw);height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:0;animation:drawerIn .3s cubic-bezier(.22,1,.36,1)}
-@keyframes drawerIn{from{transform:translateX(60px);opacity:0}to{transform:none;opacity:1}}
-.drawer-header{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:inherit;z-index:5}
-.drawer-title{font-family:'Playfair Display',serif;font-size:20px}
-.drawer-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .2s}
-.drawer-close:hover{color:var(--text)}
-.drawer-body{padding:24px 28px;display:flex;flex-direction:column;gap:18px;flex:1}
-.drawer-footer{padding:18px 28px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:inherit}
+.drawer{background:linear-gradient(145deg,var(--card2),var(--card));border-left:1px solid var(--border2);width:min(700px,100vw);height:100%;overflow-y:auto;display:flex;flex-direction:column;animation:dIn .3s cubic-bezier(.22,1,.36,1)}
+@keyframes dIn{from{transform:translateX(60px);opacity:0}to{transform:none;opacity:1}}
+.d-hdr{padding:22px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:inherit;z-index:5}
+.d-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700}
+.d-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .2s}
+.d-close:hover{color:var(--text)}
+.d-body{padding:22px 26px;flex:1;display:flex;flex-direction:column;gap:16px}
+.d-foot{padding:16px 26px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:inherit}
 
-/* ── RICH TEXT EDITOR ── */
-.editor-toolbar{display:flex;gap:5px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-bottom:none;border-radius:var(--r-sm) var(--r-sm) 0 0}
-.tb{background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--text2);width:30px;height:26px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;transition:var(--tr)}
+/* ── FIELDS ── */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select,.field textarea{background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'Sora',sans-serif;font-size:13px;padding:10px 14px;outline:none;transition:border-color .2s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.field select option{background:var(--card2)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* ── RICH EDITOR ── */
+.editor-tb{display:flex;gap:5px;flex-wrap:wrap;padding:7px;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-bottom:none;border-radius:var(--r) var(--r) 0 0}
+.tb{background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--text2);width:28px;height:24px;border-radius:5px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;transition:var(--tr)}
 .tb:hover{border-color:var(--gold);color:var(--gold)}
-.rich-editor{min-height:220px;padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:0 0 var(--r-sm) var(--r-sm);color:var(--text);font-size:14px;line-height:1.85;outline:none;font-family:'IBM Plex Sans',sans-serif}
-.rich-editor:focus{border-color:var(--gold)}
-.rich-editor h1,.rich-editor h2,.rich-editor h3{font-family:'Playfair Display',serif;color:var(--text);margin:12px 0 6px}
-.rich-editor blockquote{border-left:3px solid var(--gold);padding:8px 16px;background:rgba(212,168,67,.06);margin:10px 0;border-radius:0 5px 5px 0}
-.rich-editor code,.rich-editor pre{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px}
-
-/* ── TOGGLE SWITCH ── */
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-.toggle-row:last-child{border-bottom:none}
-.toggle-info{flex:1}
-.toggle-label{font-size:14px;color:var(--text);margin-bottom:2px}
-.toggle-desc{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)}
-.toggle{width:42px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .22s;flex-shrink:0}
-.toggle.on{background:var(--blue-mid)}
-.toggle::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .22s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-.toggle.on::after{transform:translateX(20px)}
-.radio-group{display:flex;gap:8px;flex-wrap:wrap}
-.radio-btn{padding:6px 14px;border:1px solid var(--border2);border-radius:var(--r-full);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;transition:var(--tr)}
-.radio-btn.active,.radio-btn:hover{border-color:var(--gold);color:var(--gold)}
-.radio-btn.active{background:rgba(212,168,67,.08)}
+.rich{min-height:200px;padding:13px;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:0 0 var(--r) var(--r);color:var(--text);font-size:14px;line-height:1.85;outline:none;font-family:'Sora',sans-serif}
+.rich:focus{border-color:var(--gold)}
+.rich h1,.rich h2,.rich h3{font-family:'Cormorant Garamond',serif;color:var(--text);margin:10px 0 5px}
+.rich blockquote{border-left:3px solid var(--gold);padding:8px 16px;background:rgba(212,168,67,.05);margin:10px 0;border-radius:0 var(--r) var(--r) 0}
+.rich code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.rich a{color:var(--blue-l)}
 
 /* ── TAGS ── */
-.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);min-height:40px;align-items:center;cursor:text}
-.tags-wrap input{border:none;background:transparent;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;flex:1;min-width:80px}
-.tag-chip{background:rgba(3,70,148,.35);border:1px solid rgba(3,70,148,.6);color:#b8d4ff;padding:3px 8px;border-radius:var(--r-full);font-size:9px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:4px;cursor:pointer}
-.tag-chip:hover{border-color:var(--red);color:#ffaaaa}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);min-height:38px;align-items:center;cursor:text}
+.tags-wrap input{border:none;background:transparent;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;flex:1;min-width:80px}
+.tchip{background:rgba(5,80,213,.3);border:1px solid rgba(5,80,213,.55);color:#b8d4ff;padding:2px 8px;border-radius:var(--rfull);font-size:9px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:4px;cursor:pointer}
+.tchip:hover{border-color:var(--red);color:#ffaaaa}
 
-/* ── FILE UPLOAD ── */
-.drop-zone{border:2px dashed var(--border2);border-radius:var(--r-md);padding:20px;text-align:center;cursor:pointer;transition:var(--tr)}
-.drop-zone:hover,.drop-zone.over{border-color:var(--gold);background:rgba(212,168,67,.04)}
-.drop-zone p{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);pointer-events:none}
-.prog-bar-wrap{background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;height:5px;margin:6px 0}
-.prog-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-light));border-radius:4px;width:0%;transition:width .3s}
-.attach-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-sm);font-size:11px;margin-bottom:6px}
-.attach-name{flex:1;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.attach-size{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)}
+/* ── FILE DROP ── */
+.drop{border:2px dashed var(--border2);border-radius:var(--r2);padding:18px;text-align:center;cursor:pointer;transition:var(--tr)}
+.drop:hover,.drop.over{border-color:var(--gold);background:rgba(212,168,67,.03)}
+.drop p{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);pointer-events:none;margin-top:4px}
+.prog-wrap{background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;height:4px;margin:6px 0}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--blue-b),var(--blue-l));border-radius:4px;width:0%;transition:width .3s}
+.prog-txt{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px}
+.att-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r);font-size:11px;margin-bottom:6px}
+.att-nm{flex:1;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att-sz{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted)}
 
-/* ── GRID ── */
-.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.media-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;transition:var(--tr)}
-.media-item:hover{border-color:var(--gold)}
-.media-thumb{width:100%;height:96px;object-fit:cover;display:block;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:28px}
-.media-info{padding:8px}
-.media-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
-.media-size{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted)}
-.media-actions{display:flex;gap:4px;margin-top:6px}
+/* ── TOGGLE ── */
+.tgl-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.tgl-row:last-child{border-bottom:none}
+.tgl-info{flex:1}
+.tgl-lbl{font-size:13px;color:var(--text);margin-bottom:2px}
+.tgl-desc{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+.tgl{width:40px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .22s;flex-shrink:0}
+.tgl.on{background:var(--blue-b)}
+.tgl::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .22s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.tgl.on::after{transform:translateX(18px)}
+.radio-grp{display:flex;gap:7px;flex-wrap:wrap}
+.rb{padding:5px 13px;border:1px solid var(--border2);border-radius:var(--rfull);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);cursor:pointer;transition:var(--tr)}
+.rb.on,.rb:hover{border-color:var(--gold);color:var(--gold)}
+.rb.on{background:rgba(212,168,67,.08)}
+
+/* ── SECTION CONTENT EDITOR ── */
+.section-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.stab{padding:6px 14px;border:1px solid var(--border2);border-radius:var(--rfull);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);cursor:pointer;transition:var(--tr)}
+.stab.on,.stab:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.06)}
+.json-area{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;padding:12px;outline:none;resize:vertical;min-height:100px;transition:border-color .2s;line-height:1.6}
+.json-area:focus{border-color:var(--gold)}
+.hint{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px}
+
+/* ── PHOTO / MEDIA GRIDS ── */
+.photo-grid,.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.photo-item,.media-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:var(--tr)}
+.photo-item:hover,.media-item:hover{border-color:var(--gold)}
+.thumb{width:100%;height:90px;object-fit:cover;display:block}
+.thumb-ph{width:100%;height:90px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--muted)}
+.item-meta{padding:8px}
+.item-sec{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.item-nm{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px}
+.item-sz{font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);margin-bottom:5px}
+.item-acts{display:flex;gap:4px;flex-wrap:wrap}
 
 /* ── EMPTY / LOADING ── */
-.empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
-.empty-icon{font-size:40px;opacity:.3;margin-bottom:14px}
-.empty-text{font-family:'IBM Plex Mono',monospace;font-size:11px}
-.loading-dots::after{content:'...';animation:dots 1.2s infinite}
-@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-icon{font-size:36px;opacity:.25;margin-bottom:14px}
+.empty-txt{font-family:'JetBrains Mono',monospace;font-size:10px}
+.ldots::after{content:'...';animation:ld 1.2s infinite}
+@keyframes ld{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
 
 /* ── TOAST ── */
-#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-full);padding:10px 24px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);border:1px solid var(--border2);border-radius:var(--rfull);padding:9px 22px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text);z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
-  #sidebar{width:58px}
-  .sb-link span:not(.icon){display:none}
-  .sb-header{padding:16px 10px}.sb-logo,.sb-role,.sb-email,.sb-section{display:none}
-  .stats-grid{grid-template-columns:1fr 1fr}
-  .content{padding:16px}
+  aside{width:54px}
+  .sb-item span:not(.sb-icon){display:none}
+  .sb-hdr{padding:12px 8px}.sb-brand,.sb-role,.sb-email,.sb-sec{display:none}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .page{padding:16px}
+  .field-row{grid-template-columns:1fr}
+  .drawer{width:100vw}
 }
 </style>
 </head>
 <body>
-
-<!-- ══ LOGIN SCREEN ══ -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">Evans<span>.</span></div>
-    <div class="login-sub">Admin Dashboard</div>
-    <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com" autocomplete="email"></div>
-    <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div id="login-err" class="login-error"></div>
-    <button class="btn-primary" onclick="doLogin()" id="login-btn" style="margin-top:8px">Login →</button>
-  </div>
-</div>
-
-<!-- ══ TOAST ══ -->
 <div id="toast"></div>
 
-<!-- ══ SIDEBAR ══ -->
-<aside id="sidebar">
-  <div class="sb-header">
-    <div class="sb-logo">EO<span>.</span></div>
-    <div class="sb-role">Admin Dashboard</div>
-    <div class="sb-email" id="sb-email-display"></div>
-  </div>
-  <nav class="sb-nav">
-    <div class="sb-section">Content</div>
-    <div class="sb-link active" onclick="showPage('dashboard')" id="nav-dashboard">
-      <span class="icon">📊</span><span>Dashboard</span>
-    </div>
-    <div class="sb-link" onclick="showPage('posts')" id="nav-posts">
-      <span class="icon">✍️</span><span>Posts</span>
-      <span class="sb-badge" id="nav-posts-count" style="display:none"></span>
-    </div>
-    <div class="sb-link" onclick="showPage('media')" id="nav-media">
-      <span class="icon">📂</span><span>Media Library</span>
-    </div>
-    <div class="sb-section">Engagement</div>
-    <div class="sb-link" onclick="showPage('comments')" id="nav-comments">
-      <span class="icon">💬</span><span>Comments</span>
-      <span class="sb-badge" id="nav-comments-badge" style="display:none"></span>
-    </div>
-    <div class="sb-section">Monetisation</div>
-    <div class="sb-link" onclick="showPage('ads')" id="nav-ads">
-      <span class="icon">📢</span><span>Ads</span>
-    </div>
-    <div class="sb-section">System</div>
-    <div class="sb-link" onclick="showPage('settings')" id="nav-settings">
-      <span class="icon">⚙️</span><span>Settings</span>
-    </div>
-  </nav>
-  <div class="sb-footer">
-    <a class="sb-view-site" href="../" target="_blank">↗ View Site</a>
-    <div class="sb-logout" onclick="doLogout()">
-      <span style="font-size:14px">🚪</span><span>Log out</span>
-    </div>
-  </div>
-</aside>
-
-<!-- ══ MAIN ══ -->
-<div id="main">
-  <div class="top-bar">
-    <div class="top-bar-title" id="top-bar-title">Dashboard</div>
-    <div class="top-bar-actions" id="top-bar-actions"></div>
-  </div>
-  <div class="content" id="page-content">
-    <div class="empty-state"><div class="loading-dots">Loading</div></div>
+<!-- LOGIN -->
+<div id="login">
+  <div class="lbox">
+    <div class="llogo">EO</div>
+    <div class="lsub">Admin Dashboard</div>
+    <div class="lf"><label>Email</label><input type="email" id="le" autocomplete="email" placeholder="your@email.com"></div>
+    <div class="lf"><label>Password</label><input type="password" id="lp" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="lerr" id="lerr"></div>
+    <button class="lbtn" id="lbtn" onclick="doLogin()">Login →</button>
   </div>
 </div>
 
-<!-- ══ POST EDITOR DRAWER ══ -->
+<!-- APP -->
+<div id="app">
+  <aside>
+    <div class="sb-hdr">
+      <div class="sb-brand">EO<span>.</span></div>
+      <div class="sb-role">Admin</div>
+      <div class="sb-email" id="sb-email"></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Overview</div>
+      <div class="sb-item on" id="nav-dashboard" onclick="go('dashboard')"><span class="sb-icon">📊</span><span>Dashboard</span></div>
+      <div class="sb-sec">Portfolio</div>
+      <div class="sb-item" id="nav-content"  onclick="go('content')"> <span class="sb-icon">✏️</span><span>Content Editor</span></div>
+      <div class="sb-item" id="nav-photos"   onclick="go('photos')">  <span class="sb-icon">🖼</span><span>Photos</span></div>
+      <div class="sb-sec">Blog</div>
+      <div class="sb-item" id="nav-posts"    onclick="go('posts')">   <span class="sb-icon">✍️</span><span>Posts</span><span class="sb-badge" id="bd-drafts"></span></div>
+      <div class="sb-item" id="nav-media"    onclick="go('media')">   <span class="sb-icon">📂</span><span>Media Library</span></div>
+      <div class="sb-item" id="nav-comments" onclick="go('comments')"><span class="sb-icon">💬</span><span>Comments</span><span class="sb-badge" id="bd-comments"></span></div>
+      <div class="sb-sec">Monetisation</div>
+      <div class="sb-item" id="nav-ads"      onclick="go('ads')">     <span class="sb-icon">📢</span><span>Ads</span></div>
+      <div class="sb-sec">System</div>
+      <div class="sb-item" id="nav-settings" onclick="go('settings')"><span class="sb-icon">⚙️</span><span>Settings</span></div>
+    </nav>
+    <div class="sb-foot">
+      <a class="sb-view" href="../" target="_blank">↗ View Site</a>
+      <div class="sb-logout" onclick="doLogout()"><span>🚪</span><span>Logout</span></div>
+    </div>
+  </aside>
+
+  <div id="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-acts" id="topbar-acts"></div>
+    </div>
+    <div class="page" id="page">
+      <div class="empty"><div class="ldots">Loading</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- POST DRAWER -->
 <div class="overlay" id="post-drawer">
   <div class="drawer">
-    <div class="drawer-header">
-      <div class="drawer-title" id="drawer-post-title">New Post</div>
-      <button class="drawer-close" onclick="closeDrawer('post-drawer')">✕</button>
-    </div>
-    <div class="drawer-body">
-      <div class="field"><label>Title *</label><input type="text" id="p-title" placeholder="Post title..."></div>
-      <div class="field"><label>Excerpt</label><textarea id="p-excerpt" rows="2" placeholder="Short summary shown on the blog grid..."></textarea></div>
+    <div class="d-hdr"><div class="d-title" id="pd-title">New Post</div><button class="d-close" onclick="closeDrawer('post-drawer')">✕</button></div>
+    <div class="d-body">
+      <div class="field"><label>Title *</label><input type="text" id="pd-ttl" placeholder="Post title…"></div>
+      <div class="field"><label>Excerpt</label><textarea id="pd-exc" rows="2" placeholder="Short summary shown on blog grid…"></textarea></div>
       <div class="field">
         <label>Content</label>
-        <div class="editor-toolbar">
-          <button class="tb" onclick="ef('bold')" title="Bold"><b>B</b></button>
-          <button class="tb" onclick="ef('italic')" title="Italic"><i>I</i></button>
-          <button class="tb" onclick="ef('underline')" title="Underline"><u>U</u></button>
+        <div class="editor-tb">
+          <button class="tb" onclick="ef('bold')"><b>B</b></button>
+          <button class="tb" onclick="ef('italic')"><i>I</i></button>
+          <button class="tb" onclick="ef('underline')"><u>U</u></button>
           <button class="tb" onclick="eb('h2')">H2</button>
           <button class="tb" onclick="eb('h3')">H3</button>
           <button class="tb" onclick="eb('blockquote')">❝</button>
           <button class="tb" onclick="ef('insertUnorderedList')">•</button>
           <button class="tb" onclick="ef('insertOrderedList')">1.</button>
           <button class="tb" onclick="elink()">🔗</button>
-          <button class="tb" onclick="ef('removeFormat')">✕</button>
+          <button class="tb" onclick="ef('removeFormat')" title="Clear formatting">✕</button>
         </div>
-        <div class="rich-editor" id="p-content" contenteditable="true" data-placeholder="Write your post..."></div>
+        <div class="rich" id="pd-body" contenteditable="true"></div>
       </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="field">
-          <label>Category</label>
-          <select id="p-category">
+      <div class="field-row">
+        <div class="field"><label>Category</label>
+          <select id="pd-cat">
             <option>General</option><option>Accounting</option><option>Finance</option>
             <option>Technology</option><option>Business</option><option>Data Analytics</option>
             <option>Agribusiness</option><option>Personal</option>
           </select>
         </div>
-        <div class="field">
-          <label>Status</label>
-          <select id="p-published">
-            <option value="false">Draft</option>
-            <option value="true">Published</option>
-          </select>
+        <div class="field"><label>Status</label>
+          <select id="pd-pub"><option value="false">Draft</option><option value="true">Published</option></select>
         </div>
       </div>
-
-      <div class="field">
-        <label>Tags</label>
-        <div class="tags-wrap" id="p-tags-wrap" onclick="this.querySelector('input').focus()">
-          <input type="text" id="p-tag-input" placeholder="Add tag + Enter" onkeydown="handleTag(event)">
+      <div class="field"><label>Tags</label>
+        <div class="tags-wrap" id="pd-tags-wrap" onclick="this.querySelector('input').focus()">
+          <input type="text" id="pd-tag-inp" placeholder="Add tag, press Enter" onkeydown="handleTag(event)">
         </div>
       </div>
-
       <div class="field">
         <label>Cover Image</label>
-        <div class="drop-zone" id="cover-drop" onclick="document.getElementById('cover-file-inp').click()" style="padding:14px">
-          <img id="cover-prev" style="display:none;width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px">
-          <div id="cover-drop-lbl">🖼 Click to upload or paste URL below</div>
+        <div class="drop" id="cover-drop" onclick="document.getElementById('cover-inp').click()" style="padding:12px">
+          <img id="cover-prev" style="display:none;width:100%;height:100px;object-fit:cover;border-radius:6px;margin-bottom:8px">
+          <div id="cover-lbl" style="font-size:22px">🖼</div>
+          <p>Click to upload cover image</p>
         </div>
-        <input type="file" id="cover-file-inp" accept="image/*" style="display:none" onchange="handleCoverFile(event)">
-        <input type="text" id="cover-url-inp" placeholder="Or paste image URL..." style="margin-top:8px;padding:9px 14px;width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r-sm);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none" oninput="previewCoverUrl(this.value)">
+        <input type="file" id="cover-inp" accept="image/*" style="display:none" onchange="handleCover(event)">
+        <input type="text" id="cover-url" placeholder="Or paste image URL…" style="margin-top:8px;padding:9px 13px;width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;transition:border-color .2s" oninput="previewCover(this.value)">
       </div>
-
       <div class="field">
-        <label>Attachments (any file type)</label>
-        <div class="drop-zone" id="attach-drop" onclick="document.getElementById('attach-file-inp').click()">
-          <div style="font-size:24px;margin-bottom:6px">📎</div>
-          <p>Drop files or click to browse</p>
-          <p style="margin-top:4px">PDF, DOCX, XLSX, images, video, ZIP…</p>
+        <label>Attachments — any file type (PDF, DOCX, images, video…)</label>
+        <div class="drop" id="att-drop" onclick="document.getElementById('att-inp').click()">
+          <div style="font-size:22px;margin-bottom:4px">📎</div>
+          <p>Drop files here or click to browse</p>
         </div>
-        <input type="file" id="attach-file-inp" multiple style="display:none" onchange="handleAttachFiles(event)">
-        <div id="attach-prog" style="display:none"><div class="prog-bar-wrap"><div class="prog-bar" id="attach-prog-bar"></div></div><div id="attach-prog-text" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)"></div></div>
-        <div id="attach-list" style="margin-top:8px"></div>
+        <input type="file" id="att-inp" multiple style="display:none" onchange="handleAtts(event)">
+        <div id="att-prog-wrap" style="display:none"><div class="prog-wrap"><div class="prog-bar" id="att-prog-bar"></div></div><div class="prog-txt" id="att-prog-txt"></div></div>
+        <div id="att-list" style="margin-top:8px"></div>
       </div>
     </div>
-    <div class="drawer-footer">
+    <div class="d-foot">
       <button class="btn-sm" onclick="closeDrawer('post-drawer')">Cancel</button>
       <button class="btn-sm gold" onclick="savePost(false)">💾 Save Draft</button>
-      <button class="btn-primary" style="padding:8px 24px;font-size:11px;width:auto" onclick="savePost(true)">🚀 Publish</button>
+      <button class="btn-prim" onclick="savePost(true)">🚀 Publish</button>
     </div>
   </div>
 </div>
 
-<!-- ══ AD EDITOR DRAWER ══ -->
-<div class="overlay" id="ad-drawer">
+<!-- PHOTO UPLOAD DRAWER -->
+<div class="overlay" id="photo-drawer">
   <div class="drawer">
-    <div class="drawer-header">
-      <div class="drawer-title" id="drawer-ad-title">New Ad</div>
-      <button class="drawer-close" onclick="closeDrawer('ad-drawer')">✕</button>
-    </div>
-    <div class="drawer-body">
-      <div class="field"><label>Title *</label><input type="text" id="ad-title" placeholder="Ad headline..."></div>
-      <div class="field"><label>Body HTML</label><textarea id="ad-body" rows="3" placeholder="Description text, or custom HTML..."></textarea></div>
-      <div class="field"><label>Image URL</label><input type="text" id="ad-image" placeholder="https://..."></div>
-      <div class="field"><label>Link URL</label><input type="text" id="ad-link" placeholder="https://..."></div>
-      <div class="field">
-        <label>Placement</label>
-        <select id="ad-placement">
-          <option value="between_posts">Between Posts (blog grid)</option>
-          <option value="top_banner">Top Banner</option>
-          <option value="sidebar">Sidebar</option>
+    <div class="d-hdr"><div class="d-title">Upload Photo</div><button class="d-close" onclick="closeDrawer('photo-drawer')">✕</button></div>
+    <div class="d-body">
+      <div class="field"><label>Section this photo belongs to</label>
+        <select id="ph-section">
+          <option value="hero">Hero (main profile photo)</option>
+          <option value="about">About (beside bio)</option>
+          <option value="skills">Skills section</option>
+          <option value="gallery">Gallery (general)</option>
         </select>
       </div>
-      <div class="field"><label>Position (ordering)</label><input type="number" id="ad-position" value="0" min="0"></div>
       <div class="field">
-        <label>Active</label>
-        <select id="ad-active"><option value="true">Yes</option><option value="false">No</option></select>
+        <label>Photo</label>
+        <div class="drop" id="ph-drop" onclick="document.getElementById('ph-inp').click()">
+          <img id="ph-prev" style="display:none;width:100%;height:150px;object-fit:cover;border-radius:8px;margin-bottom:8px">
+          <div id="ph-lbl" style="font-size:32px">📷</div>
+          <p>Click or drag your photo here</p>
+        </div>
+        <input type="file" id="ph-inp" accept="image/*" style="display:none" onchange="handlePhotoFile(event)">
+        <div id="ph-prog-wrap" style="display:none;margin-top:8px"><div class="prog-wrap"><div class="prog-bar" id="ph-prog-bar"></div></div><div class="prog-txt" id="ph-prog-txt"></div></div>
+      </div>
+      <div class="field"><label>Caption (optional)</label><input type="text" id="ph-caption" placeholder="Caption shown under photo…"></div>
+      <div class="field"><label>Alt Text (accessibility)</label><input type="text" id="ph-alt" placeholder="Describe the photo…"></div>
+      <div class="field"><label>Sort Order (lower = first)</label><input type="number" id="ph-sort" value="0" min="0"></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <label style="display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);cursor:pointer">
+          <input type="checkbox" id="ph-primary" style="accent-color:var(--gold);width:16px;height:16px"> Set as primary photo for this section
+        </label>
+        <label style="display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);cursor:pointer">
+          <input type="checkbox" id="ph-slideshow" checked style="accent-color:var(--gold);width:16px;height:16px"> Include in slideshow
+        </label>
       </div>
     </div>
-    <div class="drawer-footer">
+    <div class="d-foot">
+      <button class="btn-sm" onclick="closeDrawer('photo-drawer')">Cancel</button>
+      <button class="btn-prim" onclick="uploadPhoto()">Upload Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- AD DRAWER -->
+<div class="overlay" id="ad-drawer">
+  <div class="drawer">
+    <div class="d-hdr"><div class="d-title" id="ad-d-title">New Ad</div><button class="d-close" onclick="closeDrawer('ad-drawer')">✕</button></div>
+    <div class="d-body">
+      <div class="field"><label>Title *</label><input type="text" id="ad-ttl" placeholder="Ad headline…"></div>
+      <div class="field"><label>Body / Description (HTML allowed)</label><textarea id="ad-body" rows="3" placeholder="Ad description or custom HTML…"></textarea></div>
+      <div class="field"><label>Image URL (optional)</label><input type="text" id="ad-img" placeholder="https://…"></div>
+      <div class="field"><label>Link URL</label><input type="text" id="ad-lnk" placeholder="https://…"></div>
+      <div class="field-row">
+        <div class="field"><label>Placement</label>
+          <select id="ad-place">
+            <option value="between_posts">Between Posts (blog)</option>
+            <option value="top_banner">Top Banner</option>
+            <option value="sidebar">Sidebar</option>
+          </select>
+        </div>
+        <div class="field"><label>Position (ordering)</label><input type="number" id="ad-pos" value="0" min="0"></div>
+      </div>
+      <div class="field"><label>Active</label><select id="ad-active"><option value="true">Yes — Show this ad</option><option value="false">No — Hide this ad</option></select></div>
+    </div>
+    <div class="d-foot">
       <button class="btn-sm" onclick="closeDrawer('ad-drawer')">Cancel</button>
-      <button class="btn-primary" style="padding:8px 24px;font-size:11px;width:auto" onclick="saveAd()">💾 Save Ad</button>
+      <button class="btn-prim" onclick="saveAd()">💾 Save Ad</button>
     </div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  EVANS ONYANGO — ADMIN PANEL
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+let sb, user;
+let editPostId=null, editAdId=null;
+let edTags=[], pendFiles=[], coverUrl=null, photoFileBlob=null;
+let siteSettings={}, contentCache={};
+let currentSection='hero', libFilter='';
 
-let sb, currentUser, editingPostId = null, editingAdId = null;
-let editorTags = [], editorPendingFiles = [], editorCoverUrl = null;
-let currentPage = 'dashboard';
-let siteSettings = {};
+try { sb = window.supabase.createClient(window.SB_URL, window.SB_ANON); }
+catch(e) { console.error('Supabase init failed', e); }
 
-try {
-  sb = window.supabase.createClient(window.SB_URL, window.SB_ANON);
-} catch(e) { console.error('Supabase init failed'); }
-
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  AUTH
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 async function doLogin() {
-  const email = document.getElementById('l-email').value.trim();
-  const pass  = document.getElementById('l-pass').value;
-  const errEl = document.getElementById('login-err');
-  const btn   = document.getElementById('login-btn');
+  const email = document.getElementById('le').value.trim();
+  const pass  = document.getElementById('lp').value;
+  const errEl = document.getElementById('lerr');
+  const btn   = document.getElementById('lbtn');
   errEl.textContent = '';
   btn.textContent = 'Logging in…'; btn.disabled = true;
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
   btn.textContent = 'Login →'; btn.disabled = false;
   if (error) { errEl.textContent = error.message; return; }
-  onAuthed(data.user);
+  onAuth(data.user);
 }
-
-async function doLogout() {
-  await sb.auth.signOut();
-  location.reload();
+async function doLogout() { await sb.auth.signOut(); location.reload(); }
+function onAuth(u) {
+  user = u;
+  document.getElementById('login').classList.add('gone');
+  document.getElementById('sb-email').textContent = u.email;
+  go('dashboard');
+  loadBadges();
 }
+sb?.auth.getSession().then(({ data }) => { if (data?.session) onAuth(data.session.user); });
 
-function onAuthed(user) {
-  currentUser = user;
-  document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('sb-email-display').textContent = user.email;
-  loadSettings().then(() => showPage('dashboard'));
-  loadPendingCommentsCount();
-}
-
-sb?.auth.getSession().then(({ data }) => {
-  if (data?.session) onAuthed(data.session.user);
-});
-
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  NAVIGATION
-// ════════════════════════════════════
-function showPage(page) {
-  currentPage = page;
-  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
-  document.getElementById('nav-' + page)?.classList.add('active');
-  const titleMap = { dashboard:'Dashboard', posts:'Blog Posts', media:'Media Library',
-    comments:'Comments', ads:'Ads Manager', settings:'Site Settings' };
-  document.getElementById('top-bar-title').textContent = titleMap[page] || page;
-  document.getElementById('top-bar-actions').innerHTML = '';
-  const content = document.getElementById('page-content');
-  content.innerHTML = '<div class="empty-state"><div class="loading-dots">Loading</div></div>';
-  const pages = { dashboard: renderDashboard, posts: renderPosts, media: renderMedia,
-    comments: renderComments, ads: renderAds, settings: renderSettings };
-  (pages[page] || renderDashboard)();
+// ════════════════════════════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard:'Dashboard', content:'Content Editor', photos:'Photos',
+  posts:'Blog Posts', media:'Media Library', comments:'Comments',
+  ads:'Ads Manager', settings:'Settings'
+};
+function go(page) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('on'));
+  document.getElementById('nav-'+page)?.classList.add('on');
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[page] || page;
+  document.getElementById('topbar-acts').innerHTML = '';
+  ({dashboard:renderDashboard, content:renderContent, photos:renderPhotos,
+    posts:renderPosts, media:renderMedia, comments:renderComments,
+    ads:renderAds, settings:renderSettings}[page] || renderDashboard)();
 }
 
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  DASHBOARD
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 async function renderDashboard() {
-  const [postsR, commentsR, adsR, filesR] = await Promise.all([
-    sb.from('blog_posts').select('id,title,views,likes,published,created_at', { count:'exact' }),
-    sb.from('blog_comments').select('id,status', { count:'exact' }),
-    sb.from('blog_ads').select('id,title,clicks,impressions,active', { count:'exact' }),
-    sb.from('blog_files').select('id', { count:'exact' })
+  const [pr, cr, ar] = await Promise.all([
+    sb.from('blog_posts').select('id,views,likes,published,created_at,title,category'),
+    sb.from('blog_comments').select('id,status'),
+    sb.from('blog_ads').select('id,clicks,impressions,active')
   ]);
-  const posts     = postsR.data || [];
-  const comments  = commentsR.data || [];
-  const ads       = adsR.data || [];
-  const totalViews   = posts.reduce((a,p) => a + (p.views||0), 0);
-  const totalLikes   = posts.reduce((a,p) => a + (p.likes||0), 0);
-  const pubCount     = posts.filter(p => p.published).length;
-  const pendingCount = comments.filter(c => c.status === 'pending').length;
-  const totalClicks  = ads.reduce((a,d) => a + (d.clicks||0), 0);
-  const totalImpressions = ads.reduce((a,d) => a + (d.impressions||0), 0);
-  const ctr = totalImpressions > 0 ? ((totalClicks/totalImpressions)*100).toFixed(1)+'%' : '—';
+  const posts=pr.data||[], comments=cr.data||[], ads=ar.data||[];
+  const views = posts.reduce((a,p)=>a+(p.views||0),0);
+  const likes = posts.reduce((a,p)=>a+(p.likes||0),0);
+  const pending = comments.filter(c=>c.status==='pending').length;
+  const clicks = ads.reduce((a,d)=>a+(d.clicks||0),0);
+  const imps   = ads.reduce((a,d)=>a+(d.impressions||0),0);
+  const ctr = imps>0 ? ((clicks/imps)*100).toFixed(1)+'%' : '—';
+  const recent = [...posts].sort((a,b)=>b.created_at.localeCompare(a.created_at)).slice(0,6);
 
-  const recentPosts = [...posts].sort((a,b) => b.created_at.localeCompare(a.created_at)).slice(0,5);
-
-  document.getElementById('page-content').innerHTML = `
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Total Posts</div>
-        <div class="stat-value">${posts.length}</div>
-        <div class="stat-sub">${pubCount} published · ${posts.length - pubCount} drafts</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Total Views</div>
-        <div class="stat-value">${totalViews.toLocaleString()}</div>
-        <div class="stat-sub">Across all posts</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Total Likes</div>
-        <div class="stat-value">${totalLikes}</div>
-        <div class="stat-sub">${pendingCount} comments pending</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Ad CTR</div>
-        <div class="stat-value">${ctr}</div>
-        <div class="stat-sub">${totalClicks} clicks · ${totalImpressions} impressions</div>
-      </div>
+  document.getElementById('page').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-lbl">Total Posts</div><div class="stat-val">${posts.length}</div><div class="stat-sub">${posts.filter(p=>p.published).length} published · ${posts.filter(p=>!p.published).length} drafts</div></div>
+      <div class="stat"><div class="stat-lbl">Total Views</div><div class="stat-val">${views.toLocaleString()}</div><div class="stat-sub">Across all posts</div></div>
+      <div class="stat"><div class="stat-lbl">Total Likes</div><div class="stat-val">${likes}</div><div class="stat-sub">${pending} comment${pending!==1?'s':''} pending</div></div>
+      <div class="stat"><div class="stat-lbl">Ad CTR</div><div class="stat-val">${ctr}</div><div class="stat-sub">${clicks} clicks · ${imps} impressions</div></div>
     </div>
-    <div class="table-wrap">
-      <div class="table-toolbar">
-        <div class="table-title">Recent Posts</div>
-        <button class="btn-sm gold" onclick="showPage('posts')">View All →</button>
-      </div>
-      <table>
-        <thead><tr><th>Title</th><th>Category</th><th>Views</th><th>Likes</th><th>Status</th><th>Date</th></tr></thead>
-        <tbody>
-          ${recentPosts.length === 0 ? `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;font-family:'IBM Plex Mono',monospace;font-size:11px">No posts yet</td></tr>` :
-          recentPosts.map(p => `<tr>
-            <td style="font-weight:500;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.title)}</td>
-            <td class="td-mono">${esc(p.category||'General')}</td>
-            <td class="td-mono">${p.views||0}</td>
-            <td class="td-mono">${p.likes||0}</td>
-            <td>${p.published ? '<span class="badge badge-pub">Published</span>' : '<span class="badge badge-draft">Draft</span>'}</td>
-            <td class="td-mono">${new Date(p.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric'})}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
+    <div class="tbl-wrap">
+      <div class="tbl-bar"><div class="tbl-lbl">Recent Posts</div><button class="btn-sm gold" onclick="go('posts')">All Posts →</button></div>
+      <table><thead><tr><th>Title</th><th>Category</th><th>Views</th><th>Likes</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${recent.length===0
+        ? `<tr><td colspan="6" style="text-align:center;padding:30px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)">No posts yet</td></tr>`
+        : recent.map(p=>`<tr>
+          <td style="font-weight:500;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.title)}</td>
+          <td class="mono">${esc(p.category||'—')}</td>
+          <td class="mono">${p.views||0}</td>
+          <td class="mono">${p.likes||0}</td>
+          <td>${p.published?'<span class="badge bp">Published</span>':'<span class="badge bd">Draft</span>'}</td>
+          <td class="mono">${new Date(p.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric'})}</td>
+        </tr>`).join('')}
+      </tbody></table>
     </div>`;
 }
 
-// ════════════════════════════════════
-//  POSTS
-// ════════════════════════════════════
-async function renderPosts() {
-  document.getElementById('top-bar-actions').innerHTML =
-    '<button class="btn-sm gold" onclick="openPostDrawer(null)">✏️ New Post</button>';
+// ════════════════════════════════════════════════════════════
+//  CONTENT EDITOR
+//  Each section has typed fields — no raw JSON for normal fields.
+//  Array fields (cards, rows, kpis etc.) use a simple JSON textarea
+//  with a clear example shown above it.
+// ════════════════════════════════════════════════════════════
+const SECTIONS = {
+  hero: {
+    label: 'Hero',
+    scalar: [
+      {k:'eyebrow',    l:'Eyebrow Text',        t:'text'},
+      {k:'name_first', l:'First Name',           t:'text'},
+      {k:'name_last',  l:'Last Name',            t:'text'},
+      {k:'subtitle',   l:'Subtitle / Tagline',   t:'text'},
+      {k:'description',l:'Description Paragraph',t:'textarea'},
+      {k:'btn1_text',  l:'Button 1 Label',       t:'text'},
+      {k:'btn1_href',  l:'Button 1 URL',         t:'text'},
+      {k:'btn2_text',  l:'Button 2 Label',       t:'text'},
+      {k:'btn2_href',  l:'Button 2 URL',         t:'text'},
+    ],
+    arrays: { kpis: { l:'KPI Strip', eg:'[{"value":"6+","label":"Platforms Designed"}]' } }
+  },
+  about: {
+    label: 'About',
+    scalar: [
+      {k:'eyebrow',l:'Eyebrow',   t:'text'},
+      {k:'title',  l:'Title',     t:'text'},
+      {k:'quote',  l:'Featured Quote',t:'textarea'},
+      {k:'body',   l:'Body Text', t:'textarea'},
+    ],
+    arrays: { rows: { l:'Info Table Rows', eg:'[{"key":"Location","val":"Kenya"}]' } }
+  },
+  expertise: {
+    label: 'Expertise',
+    scalar: [{k:'eyebrow',l:'Eyebrow',t:'text'},{k:'title',l:'Section Title',t:'text'}],
+    arrays: { cards: { l:'Expertise Cards', eg:'[{"icon":"📊","name":"Card Name","desc":"Description","tags":["Tag1"]}]' } }
+  },
+  skills: {
+    label: 'Skills',
+    scalar: [
+      {k:'eyebrow',    l:'Eyebrow',         t:'text'},
+      {k:'title',      l:'Section Title',   t:'text'},
+      {k:'left_title', l:'Left Col Title',  t:'text'},
+      {k:'right_title',l:'Right Col Title', t:'text'},
+    ],
+    arrays: {
+      left_bars:  { l:'Left Skill Bars',  eg:'[{"name":"Financial Accounting","pct":90}]' },
+      right_bars: { l:'Right Skill Bars', eg:'[{"name":"Supabase","pct":85}]' }
+    }
+  },
+  philosophy: {
+    label: 'Philosophy',
+    scalar: [
+      {k:'eyebrow',       l:'Eyebrow',        t:'text'},
+      {k:'big_statement', l:'Big Statement',  t:'text'},
+      {k:'sub',           l:'Sub-statement',  t:'text'},
+    ],
+    arrays: { pillars: { l:'Pillars', eg:'[{"num":"01","title":"Systems Thinking","desc":"Build the infrastructure first."}]' } }
+  },
+  projects: {
+    label: 'Projects',
+    scalar: [{k:'eyebrow',l:'Eyebrow',t:'text'},{k:'title',l:'Section Title',t:'text'}],
+    arrays: { cards: { l:'Project Cards', eg:'[{"num":"01","type":"App","name":"FinAI","desc":"Description","tags":["Next.js"],"link":"https://..."}]' } }
+  },
+  contact: {
+    label: 'Contact',
+    scalar: [
+      {k:'eyebrow',  l:'Eyebrow',          t:'text'},
+      {k:'title',    l:'Section Title',    t:'text'},
+      {k:'subtitle', l:'Subtitle',         t:'text'},
+      {k:'email',    l:'Email Address',    t:'text'},
+      {k:'phone',    l:'Phone Number',     t:'text'},
+      {k:'whatsapp', l:'WhatsApp (digits)',t:'text'},
+      {k:'location', l:'Location',         t:'text'},
+      {k:'form_desc',l:'Form Description', t:'text'},
+    ]
+  },
+  nav: {
+    label: 'Navigation',
+    scalar: [{k:'logo',l:'Logo Text (e.g. Evans.)',t:'text'}],
+    arrays: { links: { l:'Nav Links', eg:'[{"label":"About","href":"#about"}]' } }
+  },
+  footer: {
+    label: 'Footer',
+    scalar: [{k:'copy',l:'Copyright Text',t:'textarea'}]
+  }
+};
 
-  const { data: posts } = await sb.from('blog_posts')
-    .select('*, blog_files(id)')
-    .order('created_at', { ascending: false });
+async function renderContent() {
+  document.getElementById('topbar-acts').innerHTML = '<button class="btn-prim" onclick="saveCurrentSection()">💾 Save Section</button>';
+  const { data } = await sb.from('portfolio_content').select('section,content');
+  if (data) data.forEach(r => { contentCache[r.section] = r.content; });
+  buildContentUI();
+}
 
-  const draftCount = (posts||[]).filter(p => !p.published).length;
-  document.getElementById('nav-posts-count').textContent = draftCount;
-  document.getElementById('nav-posts-count').style.display = draftCount > 0 ? 'inline-flex' : 'none';
+function buildContentUI() {
+  const schema = SECTIONS[currentSection] || { scalar:[], arrays:{} };
+  const data   = contentCache[currentSection] || {};
+  const tabs   = Object.entries(SECTIONS).map(([k,v])=>
+    `<div class="stab${k===currentSection?' on':''}" onclick="switchSection('${k}')">${v.label}</div>`
+  ).join('');
 
-  document.getElementById('page-content').innerHTML = `
-    <div class="table-wrap">
-      <div class="table-toolbar">
-        <div class="table-title">${(posts||[]).length} Posts</div>
-        <div style="display:flex;gap:8px"><button class="btn-sm gold" onclick="openPostDrawer(null)">✏️ New Post</button></div>
+  let fieldsHtml = '';
+  // Scalar fields — normal inputs
+  schema.scalar?.forEach(f => {
+    const val = esc(data[f.k] || '');
+    if (f.t === 'textarea') {
+      fieldsHtml += `<div class="field"><label>${f.l}</label><textarea id="cf_${f.k}" rows="3">${val}</textarea></div>`;
+    } else {
+      fieldsHtml += `<div class="field"><label>${f.l}</label><input type="text" id="cf_${f.k}" value="${val}"></div>`;
+    }
+  });
+  // Array fields — JSON textarea with example
+  Object.entries(schema.arrays || {}).forEach(([key, cfg]) => {
+    const val = JSON.stringify(data[key] || [], null, 2);
+    fieldsHtml += `
+      <div class="field">
+        <label>${cfg.l}</label>
+        <div class="hint">Edit as a JSON array. Example format: <code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-size:9px">${esc(cfg.eg)}</code></div>
+        <textarea id="cf_arr_${key}" class="json-area" rows="10">${esc(val)}</textarea>
+      </div>`;
+  });
+
+  document.getElementById('page').innerHTML = `
+    <div class="section-tabs">${tabs}</div>
+    <div class="tbl-wrap" style="padding:22px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+        <div class="tbl-lbl">Editing: ${currentSection.toUpperCase()} section</div>
+        <button class="btn-prim" onclick="saveCurrentSection()">💾 Save Changes</button>
       </div>
-      <table>
-        <thead><tr><th>Title</th><th>Category</th><th>Files</th><th>Views</th><th>Likes</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody id="posts-tbody">
-          ${(!posts||posts.length===0) ? `<tr><td colspan="8" style="text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No posts yet. Click New Post to write your first.</td></tr>` :
-          posts.map(p => `<tr>
-            <td style="font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.title)}</td>
-            <td class="td-mono">${esc(p.category||'General')}</td>
-            <td class="td-mono">${(p.blog_files||[]).length}</td>
-            <td class="td-mono">${p.views||0}</td>
-            <td class="td-mono">${p.likes||0}</td>
-            <td>${p.published ? '<span class="badge badge-pub">Published</span>' : '<span class="badge badge-draft">Draft</span>'}</td>
-            <td class="td-mono">${new Date(p.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'numeric'})}</td>
-            <td><div class="td-actions">
-              <button class="btn-sm" onclick="openPostDrawer('${p.id}')">✏️ Edit</button>
-              <button class="btn-sm ${p.published?'':'success'}" onclick="togglePublish('${p.id}',${p.published})">${p.published?'Unpublish':'🚀 Publish'}</button>
-              <button class="btn-sm danger" onclick="deletePost('${p.id}')">Delete</button>
-            </div></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
+      <div style="display:flex;flex-direction:column;gap:16px">${fieldsHtml}</div>
+    </div>`;
+}
+
+function switchSection(s) { currentSection = s; buildContentUI(); }
+
+async function saveCurrentSection() {
+  const schema = SECTIONS[currentSection] || { scalar:[], arrays:{} };
+  const data   = { ...(contentCache[currentSection] || {}) };
+  // Scalar
+  schema.scalar?.forEach(f => {
+    const el = document.getElementById('cf_'+f.k);
+    if (el) data[f.k] = el.value;
+  });
+  // Arrays — parse JSON
+  let parseErr = false;
+  Object.keys(schema.arrays || {}).forEach(key => {
+    const el = document.getElementById('cf_arr_'+key);
+    if (!el) return;
+    try { data[key] = JSON.parse(el.value); }
+    catch(e) { toast('❌ JSON error in "'+key+'": '+e.message); parseErr = true; }
+  });
+  if (parseErr) return;
+
+  const { error } = await sb.from('portfolio_content')
+    .upsert({ section: currentSection, content: data, updated_at: new Date().toISOString() });
+  if (error) { toast('❌ '+error.message); return; }
+  contentCache[currentSection] = data;
+  toast('✅ '+currentSection+' saved — reload the public site to see changes');
+}
+
+// ════════════════════════════════════════════════════════════
+//  PHOTOS
+// ════════════════════════════════════════════════════════════
+async function renderPhotos() {
+  document.getElementById('topbar-acts').innerHTML =
+    '<button class="btn-sm gold" onclick="openDrawer(\'photo-drawer\')">+ Upload Photo</button>';
+  const { data } = await sb.from('portfolio_photos').select('*').order('section').order('sort_order');
+  const photos = data || [];
+  if (photos.length === 0) {
+    document.getElementById('page').innerHTML = `<div class="empty"><div class="empty-icon">📷</div><div class="empty-txt">No photos yet.<br>Click "Upload Photo" to add photos to your portfolio sections.</div></div>`;
+    return;
+  }
+  // Group by section
+  const bySec = {};
+  photos.forEach(p => { if (!bySec[p.section]) bySec[p.section]=[]; bySec[p.section].push(p); });
+  let html = '';
+  Object.entries(bySec).forEach(([sec, items]) => {
+    html += `<div style="margin-bottom:28px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="tbl-lbl">${sec.toUpperCase()} — ${items.length} photo${items.length!==1?'s':''}</div>
+      </div>
+      <div class="photo-grid">
+        ${items.map(p=>`
+          <div class="photo-item">
+            ${p.url?`<img class="thumb" src="${esc(p.url)}" alt="">`:'<div class="thumb-ph">🖼</div>'}
+            <div class="item-meta">
+              <div class="item-sec">${p.is_primary?'⭐ Primary · ':''} ${p.in_slideshow?'In slideshow':''}</div>
+              <div class="item-nm">${esc(p.caption||p.alt_text||p.url.split('/').pop().substring(0,20))}</div>
+              <div class="item-acts">
+                <button class="btn-sm" style="font-size:8px;padding:2px 8px" onclick="setPrimary('${p.id}','${p.section}')">⭐ Primary</button>
+                <button class="btn-sm danger" style="font-size:8px;padding:2px 8px" onclick="deletePhoto('${p.id}','${esc(p.url)}')">🗑</button>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('page').innerHTML = html;
+}
+
+function handlePhotoFile(e) {
+  const file = e.target.files[0]; if (!file) return;
+  photoFileBlob = file;
+  const url = URL.createObjectURL(file);
+  document.getElementById('ph-prev').src = url;
+  document.getElementById('ph-prev').style.display = 'block';
+  document.getElementById('ph-lbl').style.display = 'none';
+}
+
+async function uploadPhoto() {
+  if (!photoFileBlob) { toast('⚠️ Select a photo file first'); return; }
+  const section   = document.getElementById('ph-section').value;
+  const caption   = document.getElementById('ph-caption').value.trim();
+  const alt       = document.getElementById('ph-alt').value.trim();
+  const sort      = parseInt(document.getElementById('ph-sort').value)||0;
+  const isPrimary = document.getElementById('ph-primary').checked;
+  const inSS      = document.getElementById('ph-slideshow').checked;
+  const pw  = document.getElementById('ph-prog-wrap');
+  const bar = document.getElementById('ph-prog-bar');
+  const txt = document.getElementById('ph-prog-txt');
+  pw.style.display='block'; bar.style.width='15%'; txt.textContent='Compressing…';
+
+  let file = photoFileBlob;
+  if (file.type.startsWith('image/')) file = await compressImg(file, 1400, 0.83);
+  bar.style.width='50%'; txt.textContent='Uploading…';
+
+  const path = `portfolio/${section}/${Date.now()}-${file.name}`;
+  const { error: upErr } = await sb.storage.from('documents').upload(path, file, { upsert:true });
+  if (upErr) { toast('❌ Upload failed: '+upErr.message); pw.style.display='none'; return; }
+  bar.style.width='80%';
+  const { data:{publicUrl} } = sb.storage.from('documents').getPublicUrl(path);
+
+  if (isPrimary)
+    await sb.from('portfolio_photos').update({ is_primary:false }).eq('section', section);
+
+  const { error } = await sb.from('portfolio_photos').insert({
+    section, url:publicUrl,
+    caption: caption||null, alt_text: alt||null,
+    sort_order: sort, is_primary: isPrimary, in_slideshow: inSS
+  });
+  if (error) { toast('❌ DB error: '+error.message); pw.style.display='none'; return; }
+  bar.style.width='100%'; txt.textContent='Done!';
+  setTimeout(() => { pw.style.display='none'; }, 1200);
+  toast('✅ Photo uploaded to '+section+' section!');
+  closeDrawer('photo-drawer');
+  photoFileBlob=null;
+  document.getElementById('ph-prev').style.display='none';
+  document.getElementById('ph-lbl').style.display='block';
+  renderPhotos();
+}
+
+async function setPrimary(id, section) {
+  await sb.from('portfolio_photos').update({ is_primary:false }).eq('section', section);
+  await sb.from('portfolio_photos').update({ is_primary:true }).eq('id', id);
+  toast('⭐ Set as primary photo'); renderPhotos();
+}
+
+async function deletePhoto(id, url) {
+  if (!confirm('Delete this photo permanently?')) return;
+  try { const path = url.split('/documents/')[1]; if(path) await sb.storage.from('documents').remove([path]); }
+  catch(e){}
+  await sb.from('portfolio_photos').delete().eq('id', id);
+  toast('🗑 Photo deleted'); renderPhotos();
+}
+
+// ════════════════════════════════════════════════════════════
+//  BLOG POSTS
+// ════════════════════════════════════════════════════════════
+async function renderPosts() {
+  document.getElementById('topbar-acts').innerHTML =
+    '<button class="btn-sm gold" onclick="openPostDrawer(null)">✏️ New Post</button>';
+  const { data } = await sb.from('blog_posts')
+    .select('*,blog_files(id)')
+    .order('created_at', { ascending:false });
+  const posts = data||[];
+  const drafts = posts.filter(p=>!p.published).length;
+  const bd = document.getElementById('bd-drafts');
+  bd.textContent=drafts; bd.classList.toggle('show', drafts>0);
+
+  if (posts.length===0) {
+    document.getElementById('page').innerHTML = `<div class="empty"><div class="empty-icon">✍️</div><div class="empty-txt">No posts yet.<br>Click "New Post" to write your first article.</div></div>`;
+    return;
+  }
+  document.getElementById('page').innerHTML = `
+    <div class="tbl-wrap">
+      <div class="tbl-bar"><div class="tbl-lbl">${posts.length} Posts · ${drafts} draft${drafts!==1?'s':''}</div><button class="btn-sm gold" onclick="openPostDrawer(null)">✏️ New Post</button></div>
+      <table><thead><tr><th>Title</th><th>Cat.</th><th>Files</th><th>Views</th><th>Likes</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>${posts.map(p=>`<tr>
+        <td style="font-weight:500;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.title)}</td>
+        <td class="mono">${esc(p.category||'—')}</td>
+        <td class="mono">${(p.blog_files||[]).length}</td>
+        <td class="mono">${p.views||0}</td>
+        <td class="mono">${p.likes||0}</td>
+        <td>${p.published?'<span class="badge bp">Published</span>':'<span class="badge bd">Draft</span>'}</td>
+        <td class="mono">${new Date(p.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'2-digit'})}</td>
+        <td><div class="td-acts">
+          <button class="btn-sm" onclick="openPostDrawer('${p.id}')">✏️ Edit</button>
+          <button class="btn-sm ${p.published?'danger':'success'}" onclick="togglePub('${p.id}',${p.published})">${p.published?'Unpublish':'🚀 Publish'}</button>
+          <button class="btn-sm danger" onclick="delPost('${p.id}')">🗑</button>
+        </div></td>
+      </tr>`).join('')}</tbody></table>
     </div>`;
 }
 
 async function openPostDrawer(postId) {
-  editingPostId = postId;
-  editorTags = []; editorPendingFiles = []; editorCoverUrl = null;
-  document.getElementById('drawer-post-title').textContent = postId ? 'Edit Post' : 'New Post';
-  document.getElementById('p-title').value = '';
-  document.getElementById('p-excerpt').value = '';
-  document.getElementById('p-content').innerHTML = '';
-  document.getElementById('p-category').value = 'General';
-  document.getElementById('p-published').value = 'false';
-  document.getElementById('cover-url-inp').value = '';
-  document.getElementById('cover-prev').style.display = 'none';
-  document.getElementById('cover-drop-lbl').style.display = 'block';
-  document.getElementById('attach-list').innerHTML = '';
-  document.getElementById('attach-prog').style.display = 'none';
-  renderEditorTags();
+  editPostId=postId; edTags=[]; pendFiles=[]; coverUrl=null;
+  document.getElementById('pd-title').textContent = postId ? 'Edit Post' : 'New Post';
+  document.getElementById('pd-ttl').value = '';
+  document.getElementById('pd-exc').value = '';
+  document.getElementById('pd-body').innerHTML = '';
+  document.getElementById('pd-cat').value = 'General';
+  document.getElementById('pd-pub').value = 'false';
+  document.getElementById('cover-url').value = '';
+  document.getElementById('cover-prev').style.display='none';
+  document.getElementById('cover-lbl').style.display='block';
+  document.getElementById('att-list').innerHTML = '';
+  document.getElementById('att-prog-wrap').style.display='none';
+  renderTags();
 
   if (postId) {
-    const { data } = await sb.from('blog_posts').select('*, blog_files(*)').eq('id', postId).single();
+    const { data } = await sb.from('blog_posts').select('*,blog_files(*)').eq('id', postId).single();
     if (data) {
-      document.getElementById('p-title').value   = data.title || '';
-      document.getElementById('p-excerpt').value = data.excerpt || '';
-      document.getElementById('p-content').innerHTML = data.content || '';
-      document.getElementById('p-category').value = data.category || 'General';
-      document.getElementById('p-published').value = String(data.published);
-      if (data.cover_url) { setCoverPreview(data.cover_url); document.getElementById('cover-url-inp').value = data.cover_url; }
-      editorTags = data.tags || [];
-      renderEditorTags();
-      (data.blog_files||[]).forEach(f => addAttachItem({ id:f.id, name:f.file_name, type:f.file_type, size:f.file_size, url:f.file_url, saved:true }));
+      document.getElementById('pd-ttl').value   = data.title || '';
+      document.getElementById('pd-exc').value   = data.excerpt || '';
+      document.getElementById('pd-body').innerHTML = data.content || '';
+      document.getElementById('pd-cat').value   = data.category || 'General';
+      document.getElementById('pd-pub').value   = String(data.published);
+      if (data.cover_url) { previewCover(data.cover_url); document.getElementById('cover-url').value=data.cover_url; }
+      edTags = data.tags || []; renderTags();
+      (data.blog_files||[]).forEach(f => addAttItem({id:f.id,name:f.file_name,type:f.file_type,size:f.file_size,url:f.file_url,saved:true}));
     }
   }
   openDrawer('post-drawer');
-  setTimeout(() => document.getElementById('p-title').focus(), 300);
+  setTimeout(() => document.getElementById('pd-ttl').focus(), 300);
 }
 
 async function savePost(publish) {
-  const title    = document.getElementById('p-title').value.trim();
-  const excerpt  = document.getElementById('p-excerpt').value.trim();
-  const content  = document.getElementById('p-content').innerHTML;
-  const category = document.getElementById('p-category').value;
-  const published = publish || document.getElementById('p-published').value === 'true';
-  const coverUrl = editorCoverUrl || document.getElementById('cover-url-inp').value.trim() || null;
+  const title = document.getElementById('pd-ttl').value.trim();
   if (!title) { toast('⚠️ Title is required'); return; }
+  const published = publish || (document.getElementById('pd-pub').value === 'true');
+  const cu = coverUrl || document.getElementById('cover-url').value.trim() || null;
+  const payload = {
+    title, excerpt:document.getElementById('pd-exc').value.trim(),
+    content:document.getElementById('pd-body').innerHTML,
+    category:document.getElementById('pd-cat').value,
+    tags:edTags, published, cover_url:cu,
+    updated_at: new Date().toISOString()
+  };
 
-  const payload = { title, excerpt, content, category, tags: editorTags, published, cover_url: coverUrl, updated_at: new Date().toISOString() };
-
-  let postId = editingPostId, error;
+  let postId=editPostId, error;
   if (postId) {
     ({ error } = await sb.from('blog_posts').update(payload).eq('id', postId));
   } else {
-    const res = await sb.from('blog_posts').insert(payload).select().single();
-    error = res.error; postId = res.data?.id;
+    const r = await sb.from('blog_posts').insert(payload).select().single();
+    error=r.error; postId=r.data?.id;
   }
-  if (error) { toast('❌ ' + error.message); return; }
+  if (error) { toast('❌ '+error.message); return; }
 
-  // Upload pending files (compress images, upload others directly, yield between each)
-  for (const pf of editorPendingFiles) {
+  // Upload attachments
+  for (const pf of pendFiles) {
     if (pf.saved) continue;
-    try {
-      let file = pf.file;
-      if (file.type.startsWith('image/')) file = await compressImage(file, 1400, 0.82);
-      const path = `blog/${postId}/${Date.now()}-${file.name}`;
-      const { error: upErr } = await sb.storage.from('documents').upload(path, file, { upsert: true });
-      if (upErr) { toast('⚠️ File error: ' + pf.file.name); continue; }
-      const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
-      await sb.from('blog_files').insert({ post_id: postId, file_url: publicUrl, file_name: pf.file.name, file_type: getFileType(pf.file.type), file_size: pf.file.size });
-      file = null; // allow GC
-      await new Promise(r => setTimeout(r, 60)); // yield to browser
-    } catch(err) { toast('⚠️ Upload failed: ' + pf.file.name); }
+    let f = pf.file;
+    if (f.type.startsWith('image/')) f = await compressImg(f, 1400, 0.82);
+    const path = `blog/${postId}/${Date.now()}-${f.name}`;
+    const { error:ue } = await sb.storage.from('documents').upload(path, f, { upsert:true });
+    if (ue) { toast('⚠️ File error: '+pf.file.name); continue; }
+    const { data:{publicUrl} } = sb.storage.from('documents').getPublicUrl(path);
+    await sb.from('blog_files').insert({ post_id:postId, file_url:publicUrl, file_name:pf.file.name, file_type:ftype(pf.file.type), file_size:pf.file.size });
+    f=null; await new Promise(r=>setTimeout(r,60));
   }
 
   toast(published ? '🚀 Post published!' : '💾 Draft saved!');
@@ -625,526 +879,437 @@ async function savePost(publish) {
   renderPosts();
 }
 
-async function togglePublish(id, current) {
-  await sb.from('blog_posts').update({ published: !current }).eq('id', id);
-  toast(current ? '📥 Unpublished' : '🚀 Published!');
+async function togglePub(id, cur) {
+  await sb.from('blog_posts').update({ published:!cur }).eq('id', id);
+  toast(cur ? '📥 Unpublished' : '🚀 Published!');
   renderPosts();
 }
 
-async function deletePost(id) {
-  if (!confirm('Delete this post and all its attachments permanently?')) return;
-  const { data: files } = await sb.from('blog_files').select('file_url').eq('post_id', id);
-  for (const f of (files||[])) {
+async function delPost(id) {
+  if (!confirm('Delete this post and all its files permanently?')) return;
+  const { data:files } = await sb.from('blog_files').select('file_url').eq('post_id', id);
+  for (const f of files||[]) {
     const path = f.file_url.split('/documents/')[1];
     if (path) await sb.storage.from('documents').remove([path]);
   }
   await sb.from('blog_posts').delete().eq('id', id);
-  toast('🗑 Post deleted');
-  renderPosts();
+  toast('🗑 Post deleted'); renderPosts();
 }
 
-// ── Rich text ──
-function ef(cmd) { document.execCommand(cmd,false,null); document.getElementById('p-content').focus(); }
-function eb(tag) { document.execCommand('formatBlock',false,tag); document.getElementById('p-content').focus(); }
-function elink() { const u=prompt('URL:'); if(u){document.execCommand('createLink',false,u);} }
+// Rich text
+function ef(cmd) { document.execCommand(cmd,false,null); document.getElementById('pd-body').focus(); }
+function eb(tag) { document.execCommand('formatBlock',false,tag); document.getElementById('pd-body').focus(); }
+function elink()  { const u=prompt('URL:'); if(u) document.execCommand('createLink',false,u); }
 
-// ── Tags ──
+// Tags
 function handleTag(e) {
   if (e.key==='Enter'||e.key===',') {
     e.preventDefault();
-    const v=document.getElementById('p-tag-input').value.trim().replace(/,$/,'');
-    if(v&&!editorTags.includes(v)){editorTags.push(v);renderEditorTags();}
-    document.getElementById('p-tag-input').value='';
-  } else if(e.key==='Backspace'&&!document.getElementById('p-tag-input').value&&editorTags.length>0){
-    editorTags.pop();renderEditorTags();
+    const v = document.getElementById('pd-tag-inp').value.trim().replace(/,$/,'');
+    if (v && !edTags.includes(v)) { edTags.push(v); renderTags(); }
+    document.getElementById('pd-tag-inp').value = '';
+  } else if (e.key==='Backspace' && !document.getElementById('pd-tag-inp').value && edTags.length>0) {
+    edTags.pop(); renderTags();
   }
 }
-function renderEditorTags() {
-  const wrap=document.getElementById('p-tags-wrap');
-  wrap.querySelectorAll('.tag-chip').forEach(c=>c.remove());
-  const inp=document.getElementById('p-tag-input');
-  editorTags.forEach((t,i)=>{
-    const chip=document.createElement('span'); chip.className='tag-chip'; chip.textContent=t;
-    chip.onclick=()=>{editorTags.splice(i,1);renderEditorTags();};
-    wrap.insertBefore(chip,inp);
+function renderTags() {
+  const wrap=document.getElementById('pd-tags-wrap'), inp=document.getElementById('pd-tag-inp');
+  wrap.querySelectorAll('.tchip').forEach(c=>c.remove());
+  edTags.forEach((t,i) => {
+    const c=document.createElement('span'); c.className='tchip'; c.textContent=t;
+    c.onclick=()=>{ edTags.splice(i,1); renderTags(); };
+    wrap.insertBefore(c, inp);
   });
 }
 
-// ── Cover ──
-// Compress image via canvas before upload — dramatically reduces mobile memory use
-async function compressImage(file, maxPx=1600, quality=0.82) {
-  return new Promise((resolve) => {
-    const isMobile = window.matchMedia('(pointer:coarse)').matches;
-    // On mobile, use tighter limits to avoid OOM
-    if (isMobile) { maxPx = 1200; quality = 0.78; }
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url); // free immediately
-      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      canvas.toBlob(blob => {
-        canvas.width = 0; canvas.height = 0; // release canvas memory
-        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
-      }, 'image/jpeg', quality);
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
-    img.src = url;
-  });
+// Cover image
+async function handleCover(e) {
+  const file=e.target.files[0]; if(!file)return; e.target.value='';
+  toast('⏳ Uploading cover…');
+  let f=file; if(file.type.startsWith('image/')) f=await compressImg(file,1400,.83);
+  const path='covers/'+Date.now()+'-'+f.name;
+  const {error}=await sb.storage.from('documents').upload(path,f,{upsert:true});
+  if(error){toast('❌ '+error.message);return;}
+  const {data:{publicUrl}}=sb.storage.from('documents').getPublicUrl(path);
+  coverUrl=publicUrl; previewCover(publicUrl);
+  document.getElementById('cover-url').value=publicUrl;
+  toast('✅ Cover uploaded');
+}
+function previewCover(url) {
+  if(!url||(!url.startsWith('http')&&!url.startsWith('blob')))return;
+  document.getElementById('cover-prev').src=url;
+  document.getElementById('cover-prev').style.display='block';
+  document.getElementById('cover-lbl').style.display='none';
 }
 
-async function handleCoverFile(e) {
-  const rawFile = e.target.files[0]; if (!rawFile) return;
-  e.target.value = ''; // clear input immediately to free reference
-  toast('⏳ Processing cover image...');
-  let file = rawFile;
-  if (rawFile.type.startsWith('image/')) {
-    file = await compressImage(rawFile, 1400, 0.82);
-    toast(`⏳ Uploading (${fmtBytes(file.size)})...`);
-  }
-  const path = 'covers/' + Date.now() + '-' + file.name;
-  const { error } = await sb.storage.from('documents').upload(path, file, { upsert: true });
-  if (error) { toast('❌ Upload failed: ' + error.message); return; }
-  const { data: { publicUrl } } = sb.storage.from('documents').getPublicUrl(path);
-  editorCoverUrl = publicUrl;
-  setCoverPreview(publicUrl);
-  document.getElementById('cover-url-inp').value = publicUrl;
-  toast('✅ Cover uploaded successfully');
-}
-function previewCoverUrl(url){if(url.startsWith('http'))setCoverPreview(url);}
-function setCoverPreview(url){
-  const p=document.getElementById('cover-prev'),l=document.getElementById('cover-drop-lbl');
-  p.src=url;p.style.display='block';l.style.display='none';
-}
-
-// ── Attachments ──
-function handleAttachFiles(e){
+// Attachments
+function handleAtts(e){
   Array.from(e.target.files).forEach(file=>{
-    const pf={file,name:file.name,type:getFileType(file.type),size:file.size,saved:false,id:'p'+Date.now()+Math.random()};
-    editorPendingFiles.push(pf); addAttachItem(pf);
+    const pf={file,name:file.name,type:ftype(file.type),size:file.size,saved:false,id:'p'+Date.now()+Math.random()};
+    pendFiles.push(pf); addAttItem(pf);
   }); e.target.value='';
 }
-function addAttachItem(f){
-  const list=document.getElementById('attach-list');
-  const d=document.createElement('div'); d.className='attach-item'; d.id='ai-'+f.id;
-  d.innerHTML=`<span style="font-size:18px">${fileEmoji(f.type)}</span><span class="attach-name">${esc(f.name)}</span><span class="attach-size">${fmtBytes(f.size)}</span><button onclick="removeAttach('${f.id}','${f.saved}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px">✕</button>`;
+function addAttItem(f){
+  const list=document.getElementById('att-list');
+  const d=document.createElement('div'); d.className='att-item'; d.id='ai-'+f.id;
+  d.innerHTML=`<span style="font-size:16px">${femoji(f.type)}</span><span class="att-nm">${esc(f.name)}</span><span class="att-sz">${fbytes(f.size)}</span><button onclick="removeAtt('${f.id}','${f.saved}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;margin-left:auto;padding:0 2px">✕</button>`;
   list.appendChild(d);
 }
-async function removeAttach(id,saved){
+async function removeAtt(id, saved){
   document.getElementById('ai-'+id)?.remove();
   if(saved==='true'){
-    const {data:fd}=await sb.from('blog_files').select('file_url').eq('id',id).single();
+    const{data:fd}=await sb.from('blog_files').select('file_url').eq('id',id).single();
     if(fd){const p=fd.file_url.split('/documents/')[1];if(p)await sb.storage.from('documents').remove([p]);await sb.from('blog_files').delete().eq('id',id);}
   } else {
-    editorPendingFiles=editorPendingFiles.filter(f=>f.id!==id);
+    pendFiles=pendFiles.filter(f=>f.id!==id);
   }
 }
 
-// ── Drop ──
-['attach-drop','cover-drop'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over');});
-  el.addEventListener('dragleave',()=>el.classList.remove('over'));
-  el.addEventListener('drop',e=>{
-    e.preventDefault();el.classList.remove('over');
-    if(id==='attach-drop') Array.from(e.dataTransfer.files).forEach(file=>{
-      const pf={file,name:file.name,type:getFileType(file.type),size:file.size,saved:false,id:'p'+Date.now()+Math.random()};
-      editorPendingFiles.push(pf);addAttachItem(pf);
-    });
-  });
-});
-
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  MEDIA LIBRARY
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 async function renderMedia() {
-  document.getElementById('top-bar-actions').innerHTML =
-    '<button class="btn-sm gold" onclick="document.getElementById(\'lib-inp\').click()">+ Upload Files</button><input type="file" id="lib-inp" multiple style="display:none" onchange="handleLibUpload(event)">';
-
-  document.getElementById('page-content').innerHTML = `
-    <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap" id="lib-filter-bar">
-      <button class="btn-sm active-filter" onclick="filterMedia(this,'')">All</button>
-      <button class="btn-sm" onclick="filterMedia(this,'image')">🖼 Images</button>
-      <button class="btn-sm" onclick="filterMedia(this,'video')">🎥 Video</button>
-      <button class="btn-sm" onclick="filterMedia(this,'pdf')">📄 PDF</button>
-      <button class="btn-sm" onclick="filterMedia(this,'doc')">📝 Docs</button>
-      <button class="btn-sm" onclick="filterMedia(this,'other')">📦 Other</button>
+  document.getElementById('topbar-acts').innerHTML =
+    '<button class="btn-sm gold" onclick="document.getElementById(\'lib-inp\').click()">+ Upload Files</button>' +
+    '<input type="file" id="lib-inp" multiple style="display:none" onchange="handleLibUp(event)">';
+  document.getElementById('page').innerHTML = `
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px" id="lib-fbar">
+      <button class="btn-sm gold" onclick="filterLib(this,'')">All</button>
+      <button class="btn-sm" onclick="filterLib(this,'image')">🖼 Images</button>
+      <button class="btn-sm" onclick="filterLib(this,'video')">🎥 Video</button>
+      <button class="btn-sm" onclick="filterLib(this,'pdf')">📄 PDF</button>
+      <button class="btn-sm" onclick="filterLib(this,'doc')">📝 Docs</button>
+      <button class="btn-sm" onclick="filterLib(this,'other')">📦 Other</button>
     </div>
-    <div id="lib-prog" style="display:none;margin-bottom:16px">
-      <div class="prog-bar-wrap"><div class="prog-bar" id="lib-prog-bar"></div></div>
-      <div id="lib-prog-text" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px"></div>
+    <div id="lib-up-prog" style="display:none;margin-bottom:14px">
+      <div class="prog-wrap"><div class="prog-bar" id="lib-pg-bar"></div></div>
+      <div class="prog-txt" id="lib-pg-txt"></div>
     </div>
-    <div id="media-grid-wrap"><div class="empty-state"><div class="loading-dots">Loading</div></div></div>`;
-
-  await loadMediaGrid('');
+    <div id="lib-grid"><div class="empty"><div class="ldots">Loading</div></div></div>`;
+  loadLibGrid();
 }
 
-let _libFilter = '';
-async function loadMediaGrid(filter) {
-  _libFilter = filter;
-  const { data, error } = await sb.storage.from('documents').list('', { limit:200, sortBy:{column:'created_at',order:'desc'} });
-  const wrap = document.getElementById('media-grid-wrap');
-  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">📂</div><div class="empty-text">No files uploaded yet</div></div>'; return; }
-
-  let files = data.filter(f => f.name && !f.name.endsWith('/'));
-  if (filter) {
-    files = files.filter(f => {
-      const mime = f.metadata?.mimetype || '';
-      return getFileType(mime) === filter || (filter==='pdf'&&f.name.toLowerCase().endsWith('.pdf'));
-    });
-  }
-  if (files.length === 0) { wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No files match this filter</div></div>'; return; }
-
-  wrap.innerHTML = `<div class="media-grid">${files.map(f => {
-    const {data:{publicUrl}} = sb.storage.from('documents').getPublicUrl(f.name);
-    const mime = f.metadata?.mimetype||'';
-    const isImg = mime.startsWith('image/');
-    const thumb = isImg
-      ? `<img style="width:100%;height:96px;object-fit:cover;display:block" src="${esc(publicUrl)}" loading="lazy">`
-      : `<div class="media-thumb">${fileEmoji(getFileType(mime))}</div>`;
-    return `<div class="media-item">
-      ${thumb}
-      <div class="media-info">
-        <div class="media-name" title="${esc(f.name)}">${esc(f.name.split('/').pop())}</div>
-        <div class="media-size">${fmtBytes(f.metadata?.size||0)}</div>
-        <div class="media-actions">
-          <a class="btn-sm" href="${esc(publicUrl)}" target="_blank" style="font-size:9px;padding:3px 8px;text-decoration:none">↗</a>
-          <button class="btn-sm danger" style="font-size:9px;padding:3px 8px" onclick="deleteLibFile('${esc(f.name)}',this)">🗑</button>
+async function loadLibGrid(){
+  const {data}=await sb.storage.from('documents').list('',{limit:200,sortBy:{column:'created_at',order:'desc'}});
+  const wrap=document.getElementById('lib-grid');
+  if(!data||data.length===0){wrap.innerHTML='<div class="empty"><div class="empty-icon">📂</div><div class="empty-txt">No files uploaded yet</div></div>';return;}
+  let files=data.filter(f=>f.name&&!f.name.endsWith('/'));
+  if(libFilter) files=files.filter(f=>ftype(f.metadata?.mimetype||'')===libFilter||(libFilter==='pdf'&&f.name.toLowerCase().endsWith('.pdf')));
+  if(files.length===0){wrap.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-txt">No files match this filter</div></div>';return;}
+  wrap.innerHTML=`<div class="media-grid">${files.map(f=>{
+    const {data:{publicUrl}}=sb.storage.from('documents').getPublicUrl(f.name);
+    const mime=f.metadata?.mimetype||'';
+    const isImg=mime.startsWith('image/');
+    return`<div class="media-item">
+      ${isImg?`<img class="thumb" src="${esc(publicUrl)}" loading="lazy" alt="">`:`<div class="thumb-ph">${femoji(ftype(mime))}</div>`}
+      <div class="item-meta">
+        <div class="item-nm" title="${esc(f.name)}">${esc(f.name.split('/').pop())}</div>
+        <div class="item-sz">${fbytes(f.metadata?.size||0)}</div>
+        <div class="item-acts">
+          <a class="btn-sm" href="${esc(publicUrl)}" target="_blank" style="font-size:8px;padding:2px 8px;text-decoration:none">↗ View</a>
+          <button class="btn-sm danger" style="font-size:8px;padding:2px 8px" onclick="delLib('${esc(f.name)}',this)">🗑</button>
         </div>
       </div>
     </div>`;
   }).join('')}</div>`;
 }
 
-function filterMedia(btn, filter) {
-  document.querySelectorAll('#lib-filter-bar .btn-sm').forEach(b => b.classList.remove('active-filter'));
-  btn.classList.add('active-filter');
-  loadMediaGrid(filter);
+function filterLib(btn, f){
+  document.querySelectorAll('#lib-fbar .btn-sm').forEach(b=>b.classList.remove('gold'));
+  btn.classList.add('gold'); libFilter=f; loadLibGrid();
 }
 
-async function handleLibUpload(e) {
-  const rawFiles = Array.from(e.target.files); if (!rawFiles.length) return;
-  e.target.value = ''; // free file reference immediately
-  const prog = document.getElementById('lib-prog');
-  const bar  = document.getElementById('lib-prog-bar');
-  const text = document.getElementById('lib-prog-text');
-  prog.style.display = 'block';
-  let errors = 0;
-
-  for (let i = 0; i < rawFiles.length; i++) {
-    const raw = rawFiles[i];
-    bar.style.width = Math.round((i / rawFiles.length) * 100) + '%';
-    text.textContent = `Processing ${i + 1}/${rawFiles.length}: ${raw.name}`;
-
-    // Warn if file is very large on mobile
-    const isMobile = window.matchMedia('(pointer:coarse)').matches;
-    if (isMobile && raw.size > 50 * 1024 * 1024) {
-      toast(`⚠️ ${raw.name} is over 50 MB — may fail on mobile`);
-    }
-
-    try {
-      // Compress images; upload other files directly
-      let file = raw;
-      if (raw.type.startsWith('image/')) {
-        file = await compressImage(raw, 1600, 0.83);
-        text.textContent = `Uploading ${i + 1}/${rawFiles.length}: ${raw.name} (${fmtBytes(file.size)})`;
-      }
-      const path = 'library/' + Date.now() + '-' + file.name;
-      const { error } = await sb.storage.from('documents').upload(path, file, { upsert: true });
-      if (error) { errors++; console.error('Upload error:', error.message); }
-      // Explicitly null out reference to allow GC
-      file = null;
-    } catch (err) {
-      errors++;
-      console.error('Upload exception:', err);
-    }
-
-    // Yield to browser between files — lets GC run, prevents memory spike
-    await new Promise(r => setTimeout(r, 80));
+async function handleLibUp(e){
+  const raws=Array.from(e.target.files); if(!raws.length)return; e.target.value='';
+  const pw=document.getElementById('lib-up-prog'),bar=document.getElementById('lib-pg-bar'),txt=document.getElementById('lib-pg-txt');
+  pw.style.display='block';
+  for(let i=0;i<raws.length;i++){
+    bar.style.width=Math.round((i/raws.length)*100)+'%';
+    txt.textContent=`Uploading ${i+1}/${raws.length}: ${raws[i].name}`;
+    let f=raws[i];
+    if(f.type.startsWith('image/')) f=await compressImg(f,1600,.83);
+    await sb.storage.from('documents').upload('library/'+Date.now()+'-'+f.name,f,{upsert:true});
+    f=null; await new Promise(r=>setTimeout(r,80));
   }
-
-  bar.style.width = '100%';
-  text.textContent = errors > 0 ? `Done with ${errors} error(s)` : 'All files uploaded!';
-  setTimeout(() => { prog.style.display = 'none'; }, 1800);
-  toast(errors > 0 ? `⚠️ ${rawFiles.length - errors}/${rawFiles.length} uploaded` : `✅ ${rawFiles.length} file(s) uploaded`);
-  loadMediaGrid(_libFilter);
+  bar.style.width='100%'; txt.textContent='Done!';
+  setTimeout(()=>pw.style.display='none',1500);
+  toast(`✅ ${raws.length} file(s) uploaded`); loadLibGrid();
 }
 
-async function deleteLibFile(name, btn) {
-  if(!confirm('Delete this file permanently?')) return;
+async function delLib(name, btn){
+  if(!confirm('Delete this file permanently?'))return;
   btn.textContent='…';
-  const {error}=await sb.storage.from('documents').remove([name]);
-  if(!error){toast('🗑 File deleted');loadMediaGrid(_libFilter);}
-  else{toast('❌ Delete failed');btn.textContent='🗑';}
+  await sb.storage.from('documents').remove([name]);
+  toast('🗑 File deleted'); loadLibGrid();
 }
 
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  COMMENTS
-// ════════════════════════════════════
-async function renderComments() {
-  document.getElementById('top-bar-actions').innerHTML = '';
-  const {data}=await sb.from('blog_comments').select('*, blog_posts(title)').order('created_at',{ascending:false});
-  const pending=(data||[]).filter(c=>c.status==='pending').length;
-  document.getElementById('nav-comments-badge').textContent=pending;
-  document.getElementById('nav-comments-badge').style.display=pending>0?'inline-flex':'none';
+// ════════════════════════════════════════════════════════════
+async function renderComments(){
+  const{data}=await sb.from('blog_comments').select('*,blog_posts(title)').order('created_at',{ascending:false});
+  const all=data||[], pending=all.filter(c=>c.status==='pending').length;
+  const bd=document.getElementById('bd-comments');
+  bd.textContent=pending; bd.classList.toggle('show',pending>0);
 
-  document.getElementById('page-content').innerHTML=`
-    <div class="table-wrap">
-      <div class="table-toolbar"><div class="table-title">${(data||[]).length} Comments · ${pending} pending</div></div>
-      <table>
-        <thead><tr><th>Author</th><th>Comment</th><th>Post</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody>
-          ${(!data||data.length===0)?`<tr><td colspan="6" style="text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No comments yet</td></tr>`:
-          data.map(c=>`<tr>
-            <td style="font-weight:500">${esc(c.author_name)}</td>
-            <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">${esc(c.content)}</td>
-            <td class="td-mono" style="font-size:10px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.blog_posts?.title||'—')}</td>
-            <td><span class="badge badge-${c.status}">${c.status}</span></td>
-            <td class="td-mono">${new Date(c.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'numeric'})}</td>
-            <td><div class="td-actions">
-              ${c.status!=='approved'?`<button class="btn-sm success" onclick="moderateComment('${c.id}','approved')">✅ Approve</button>`:''}
-              ${c.status!=='rejected'?`<button class="btn-sm danger" onclick="moderateComment('${c.id}','rejected')">❌ Reject</button>`:''}
-              <button class="btn-sm danger" onclick="deleteComment('${c.id}')">🗑</button>
-            </div></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
+  if(all.length===0){document.getElementById('page').innerHTML='<div class="empty"><div class="empty-icon">💬</div><div class="empty-txt">No comments yet</div></div>';return;}
+  document.getElementById('page').innerHTML=`
+    <div class="tbl-wrap">
+      <div class="tbl-bar"><div class="tbl-lbl">${all.length} Comments · ${pending} pending review</div></div>
+      <table><thead><tr><th>Author</th><th>Comment</th><th>Post</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>${all.map(c=>`<tr>
+        <td style="font-weight:500;white-space:nowrap">${esc(c.author_name)}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${esc(c.content)}</td>
+        <td class="mono" style="font-size:9px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.blog_posts?.title||'—')}</td>
+        <td><span class="badge ${c.status==='approved'?'bp':c.status==='pending'?'bpnd':'brj'}">${c.status}</span></td>
+        <td class="mono">${new Date(c.created_at).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'2-digit'})}</td>
+        <td><div class="td-acts">
+          ${c.status!=='approved'?`<button class="btn-sm success" onclick="modComment('${c.id}','approved')">✅ Approve</button>`:''}
+          ${c.status!=='rejected'?`<button class="btn-sm danger"  onclick="modComment('${c.id}','rejected')">❌ Reject</button>`:''}
+          <button class="btn-sm danger" onclick="delComment('${c.id}')">🗑</button>
+        </div></td>
+      </tr>`).join('')}</tbody></table>
     </div>`;
 }
+async function modComment(id,status){await sb.from('blog_comments').update({status}).eq('id',id);toast(status==='approved'?'✅ Comment approved':'❌ Comment rejected');renderComments();}
+async function delComment(id){if(!confirm('Delete?'))return;await sb.from('blog_comments').delete().eq('id',id);toast('🗑 Deleted');renderComments();}
 
-async function moderateComment(id, status) {
-  await sb.from('blog_comments').update({ status }).eq('id', id);
-  toast(status === 'approved' ? '✅ Comment approved' : '❌ Comment rejected');
-  renderComments();
-}
-
-async function deleteComment(id) {
-  if(!confirm('Delete this comment permanently?')) return;
-  await sb.from('blog_comments').delete().eq('id', id);
-  toast('🗑 Comment deleted'); renderComments();
-}
-
-async function loadPendingCommentsCount() {
-  if(!sb) return;
-  const {count}=await sb.from('blog_comments').select('id',{count:'exact',head:true}).eq('status','pending');
-  if(count>0){
-    document.getElementById('nav-comments-badge').textContent=count;
-    document.getElementById('nav-comments-badge').style.display='inline-flex';
-  }
-}
-
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  ADS
-// ════════════════════════════════════
-async function renderAds() {
-  document.getElementById('top-bar-actions').innerHTML =
-    '<button class="btn-sm gold" onclick="openAdDrawer(null)">+ New Ad</button>';
-  const {data}=await sb.from('blog_ads').select('*').order('placement').order('position');
-
-  document.getElementById('page-content').innerHTML=`
-    <div class="table-wrap">
-      <div class="table-toolbar"><div class="table-title">${(data||[]).length} Ads</div><button class="btn-sm gold" onclick="openAdDrawer(null)">+ New Ad</button></div>
-      <table>
-        <thead><tr><th>Title</th><th>Placement</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Active</th><th>Actions</th></tr></thead>
-        <tbody>
-          ${(!data||data.length===0)?`<tr><td colspan="7" style="text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No ads yet. Create one to start monetising.</td></tr>`:
-          data.map(a=>{
-            const ctr=a.impressions>0?((a.clicks/a.impressions)*100).toFixed(1)+'%':'—';
-            return `<tr>
-              <td style="font-weight:500">${esc(a.title)}</td>
-              <td class="td-mono">${esc(a.placement)}</td>
-              <td class="td-mono">${(a.impressions||0).toLocaleString()}</td>
-              <td class="td-mono">${(a.clicks||0).toLocaleString()}</td>
-              <td class="td-mono">${ctr}</td>
-              <td><span class="badge ${a.active?'badge-pub':'badge-draft'}">${a.active?'Active':'Inactive'}</span></td>
-              <td><div class="td-actions">
-                <button class="btn-sm" onclick="openAdDrawer('${a.id}')">✏️ Edit</button>
-                <button class="btn-sm ${a.active?'danger':'success'}" onclick="toggleAd('${a.id}',${a.active})">${a.active?'Deactivate':'Activate'}</button>
-                <button class="btn-sm danger" onclick="deleteAd('${a.id}')">🗑</button>
-              </div></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
+// ════════════════════════════════════════════════════════════
+async function renderAds(){
+  document.getElementById('topbar-acts').innerHTML='<button class="btn-sm gold" onclick="openAdDrawer(null)">+ New Ad</button>';
+  const{data}=await sb.from('blog_ads').select('*').order('placement').order('position');
+  const ads=data||[];
+  if(ads.length===0){document.getElementById('page').innerHTML='<div class="empty"><div class="empty-icon">📢</div><div class="empty-txt">No ads yet.<br>Create an ad to start monetising your blog.</div></div>';return;}
+  document.getElementById('page').innerHTML=`
+    <div class="tbl-wrap">
+      <div class="tbl-bar"><div class="tbl-lbl">${ads.length} Ads</div><button class="btn-sm gold" onclick="openAdDrawer(null)">+ New Ad</button></div>
+      <table><thead><tr><th>Title</th><th>Placement</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${ads.map(a=>{
+        const ctr=a.impressions>0?((a.clicks/a.impressions)*100).toFixed(1)+'%':'—';
+        return`<tr>
+          <td style="font-weight:500">${esc(a.title)}</td>
+          <td class="mono">${esc(a.placement)}</td>
+          <td class="mono">${(a.impressions||0).toLocaleString()}</td>
+          <td class="mono">${(a.clicks||0).toLocaleString()}</td>
+          <td class="mono">${ctr}</td>
+          <td><span class="badge ${a.active?'bp':'bd'}">${a.active?'Active':'Off'}</span></td>
+          <td><div class="td-acts">
+            <button class="btn-sm" onclick="openAdDrawer('${a.id}')">✏️ Edit</button>
+            <button class="btn-sm ${a.active?'danger':'success'}" onclick="toggleAd('${a.id}',${a.active})">${a.active?'Deactivate':'Activate'}</button>
+            <button class="btn-sm danger" onclick="delAd('${a.id}')">🗑</button>
+          </div></td>
+        </tr>`;
+      }).join('')}</tbody></table>
     </div>`;
 }
-
-async function openAdDrawer(adId) {
-  editingAdId = adId;
-  document.getElementById('drawer-ad-title').textContent = adId ? 'Edit Ad' : 'New Ad';
-  document.getElementById('ad-title').value = '';
-  document.getElementById('ad-body').value = '';
-  document.getElementById('ad-image').value = '';
-  document.getElementById('ad-link').value = '';
-  document.getElementById('ad-placement').value = 'between_posts';
-  document.getElementById('ad-position').value = '0';
-  document.getElementById('ad-active').value = 'true';
-  if (adId) {
-    const {data}=await sb.from('blog_ads').select('*').eq('id',adId).single();
+async function openAdDrawer(id){
+  editAdId=id;
+  document.getElementById('ad-d-title').textContent=id?'Edit Ad':'New Ad';
+  document.getElementById('ad-ttl').value='';document.getElementById('ad-body').value='';
+  document.getElementById('ad-img').value='';document.getElementById('ad-lnk').value='';
+  document.getElementById('ad-place').value='between_posts';
+  document.getElementById('ad-pos').value='0';document.getElementById('ad-active').value='true';
+  if(id){
+    const{data}=await sb.from('blog_ads').select('*').eq('id',id).single();
     if(data){
-      document.getElementById('ad-title').value=data.title||'';
+      document.getElementById('ad-ttl').value=data.title||'';
       document.getElementById('ad-body').value=data.body_html||'';
-      document.getElementById('ad-image').value=data.image_url||'';
-      document.getElementById('ad-link').value=data.link_url||'';
-      document.getElementById('ad-placement').value=data.placement||'between_posts';
-      document.getElementById('ad-position').value=data.position||0;
+      document.getElementById('ad-img').value=data.image_url||'';
+      document.getElementById('ad-lnk').value=data.link_url||'';
+      document.getElementById('ad-place').value=data.placement||'between_posts';
+      document.getElementById('ad-pos').value=data.position||0;
       document.getElementById('ad-active').value=String(data.active);
     }
   }
   openDrawer('ad-drawer');
 }
-
-async function saveAd() {
+async function saveAd(){
   const payload={
-    title:document.getElementById('ad-title').value.trim(),
+    title:document.getElementById('ad-ttl').value.trim(),
     body_html:document.getElementById('ad-body').value.trim(),
-    image_url:document.getElementById('ad-image').value.trim()||null,
-    link_url:document.getElementById('ad-link').value.trim()||null,
-    placement:document.getElementById('ad-placement').value,
-    position:parseInt(document.getElementById('ad-position').value)||0,
+    image_url:document.getElementById('ad-img').value.trim()||null,
+    link_url:document.getElementById('ad-lnk').value.trim()||null,
+    placement:document.getElementById('ad-place').value,
+    position:parseInt(document.getElementById('ad-pos').value)||0,
     active:document.getElementById('ad-active').value==='true',
     updated_at:new Date().toISOString()
   };
-  if(!payload.title){toast('⚠️ Title required');return;}
-  if(editingAdId){await sb.from('blog_ads').update(payload).eq('id',editingAdId);}
-  else{await sb.from('blog_ads').insert(payload);}
+  if(!payload.title){toast('⚠️ Title is required');return;}
+  if(editAdId)await sb.from('blog_ads').update(payload).eq('id',editAdId);
+  else await sb.from('blog_ads').insert(payload);
   toast('✅ Ad saved!'); closeDrawer('ad-drawer'); renderAds();
 }
+async function toggleAd(id,cur){await sb.from('blog_ads').update({active:!cur}).eq('id',id);toast(cur?'Ad deactivated':'Ad activated');renderAds();}
+async function delAd(id){if(!confirm('Delete this ad?'))return;await sb.from('blog_ads').delete().eq('id',id);toast('🗑 Ad deleted');renderAds();}
 
-async function toggleAd(id,current){
-  await sb.from('blog_ads').update({active:!current}).eq('id',id);
-  toast(current?'Ad deactivated':'Ad activated'); renderAds();
-}
-async function deleteAd(id){
-  if(!confirm('Delete this ad?'))return;
-  await sb.from('blog_ads').delete().eq('id',id);
-  toast('🗑 Ad deleted'); renderAds();
-}
-
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  SETTINGS
-// ════════════════════════════════════
-async function loadSettings() {
-  if(!sb)return;
-  const {data}=await sb.from('site_settings').select('key,value');
+// ════════════════════════════════════════════════════════════
+async function renderSettings(){
+  const{data}=await sb.from('site_settings').select('key,value');
   if(data)data.forEach(r=>{siteSettings[r.key]=r.value;});
-}
-
-async function saveSetting(key, value) {
-  if(!sb)return;
-  await sb.from('site_settings').upsert({key, value, updated_at: new Date().toISOString()});
-  siteSettings[key] = value;
-}
-
-function renderSettings() {
-  const s = siteSettings;
-
-  document.getElementById('page-content').innerHTML = `
-    <div style="max-width:680px;display:flex;flex-direction:column;gap:24px">
-
-      <div class="table-wrap">
-        <div class="table-toolbar"><div class="table-title">Engagement Features</div></div>
-        <div style="padding:4px 20px">
-          ${toggleRow('show_views','Show View Counts','Display view count on blog cards and post reader',s.show_views!==false)}
-          ${toggleRow('show_likes','Show Like Button','Let visitors like posts',s.show_likes!==false)}
-          ${toggleRow('show_comments','Show Comments Section','Allow visitors to read and submit comments',s.show_comments!==false)}
-          ${toggleRow('show_comment_count','Show Comment Count','Show comment count badge on post reader',s.show_comment_count!==false)}
-          ${toggleRow('comments_require_moderation','Moderate Comments','New comments wait for approval before appearing',s.comments_require_moderation!==false)}
+  const s=siteSettings;
+  document.getElementById('page').innerHTML=`
+    <div style="max-width:660px;display:flex;flex-direction:column;gap:20px">
+      <div class="tbl-wrap">
+        <div class="tbl-bar"><div class="tbl-lbl">Engagement Features</div></div>
+        <div style="padding:4px 18px">
+          ${tR('show_views',             'Show View Counts',     'Display how many times a post has been viewed',            s.show_views!==false)}
+          ${tR('show_likes',             'Like Button',          'Let visitors like posts',                                  s.show_likes!==false)}
+          ${tR('show_comments',          'Comments Section',     'Allow visitors to leave comments on posts',                s.show_comments!==false)}
+          ${tR('show_comment_count',     'Comment Count Badge',  'Show the number of comments in the post reader',           s.show_comment_count!==false)}
+          ${tR('comments_require_moderation','Moderate Comments','New comments need your approval before appearing publicly', s.comments_require_moderation!==false)}
+          ${tR('ads_enabled',            'Ads',                  'Display ads on the blog section',                          s.ads_enabled!==false)}
         </div>
       </div>
 
-      <div class="table-wrap">
-        <div class="table-toolbar"><div class="table-title">Ads</div></div>
-        <div style="padding:4px 20px">
-          ${toggleRow('ads_enabled','Enable Ads','Show ads between posts and in banners',s.ads_enabled!==false)}
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        <div class="table-toolbar"><div class="table-title">Animation Controls</div></div>
-        <div style="padding:4px 20px">
-          ${toggleRow('hero_animation','Hero Entrance Animation','Staggered slide-in on page load',s.hero_animation!==false)}
-          ${toggleRow('scroll_progress','Scroll Progress Bar','Gold/blue bar at top showing scroll depth',s.scroll_progress!==false)}
-          ${toggleRow('cursor_effect','Custom Cursor','Gold cursor dot + ring effect (desktop only)',s.cursor_effect!==false)}
-        </div>
-        <div style="padding:16px 20px;border-top:1px solid var(--border)">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Animation Speed</div>
-          <div class="radio-group" id="speed-group">
-            ${['slow','normal','fast'].map(v=>`<div class="radio-btn${(s.animation_speed||'normal')===v?' active':''}" onclick="setRadio('animation_speed','${v}','speed-group',this)">${v.charAt(0).toUpperCase()+v.slice(1)}</div>`).join('')}
+      <div class="tbl-wrap">
+        <div class="tbl-bar"><div class="tbl-lbl">Animation Style</div></div>
+        <div style="padding:16px 18px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:10px">Choose how elements reveal when scrolled into view across the entire public site</div>
+          <div class="radio-grp" id="grp-anim">
+            ${['slide','flip','cube','rotate','zoom','fade','gallery'].map(v=>`
+              <div class="rb${(s.animation_style||'slide')===v?' on':''}" onclick="setRadio('animation_style','${v}','grp-anim',this)">${v}</div>`).join('')}
           </div>
         </div>
-        <div style="padding:16px 20px;border-top:1px solid var(--border)">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Reveal Animation Style</div>
-          <div class="radio-group" id="style-group">
-            ${['slide','fade','zoom','rotate'].map(v=>`<div class="radio-btn${(s.animation_style||'slide')===v?' active':''}" onclick="setRadio('animation_style','${v}','style-group',this)">${v.charAt(0).toUpperCase()+v.slice(1)}</div>`).join('')}
+        <div style="padding:16px 18px;border-top:1px solid var(--border)">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:10px">Animation Speed</div>
+          <div class="radio-grp" id="grp-speed">
+            ${['slow','normal','fast'].map(v=>`
+              <div class="rb${(s.animation_speed||'normal')===v?' on':''}" onclick="setRadio('animation_speed','${v}','grp-speed',this)">${v}</div>`).join('')}
           </div>
         </div>
       </div>
 
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-align:center">
-        Settings are saved instantly and applied on next public page load.
+      <div class="tbl-wrap">
+        <div class="tbl-bar"><div class="tbl-lbl">Animation Features</div></div>
+        <div style="padding:4px 18px">
+          ${tR('hero_animation',    'Hero Entrance Animation', 'Staggered slide-in on page load for hero text',                   s.hero_animation!==false)}
+          ${tR('scroll_progress',   'Scroll Progress Bar',     'Gold gradient bar at the top showing scroll depth',               s.scroll_progress!==false)}
+          ${tR('cursor_effect',     'Custom Cursor',           'Gold dot + ring cursor on desktop',                               s.cursor_effect!==false)}
+          ${tR('ambient_symbols',   'Ambient Background Symbols','Floating finance symbols ($ € ∑ ∆) in the background',          s.ambient_symbols!==false)}
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <div class="tbl-bar"><div class="tbl-lbl">Photo Slideshows</div></div>
+        <div style="padding:4px 18px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);padding-top:12px;padding-bottom:4px">
+          When multiple photos are uploaded for a section, enable slideshow to cycle through them automatically.
+        </div>
+        <div style="padding:4px 18px">
+          ${tR('hero_slideshow',    'Hero Slideshow',          'Auto-cycle through hero section photos',    s.hero_slideshow===true)}
+          ${tR('about_slideshow',   'About Slideshow',         'Auto-cycle through about section photos',   s.about_slideshow===true)}
+        </div>
+      </div>
+
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-align:center;padding:8px">
+        All settings save instantly. Reload the public site to see changes.
       </div>
     </div>`;
 }
 
-function toggleRow(key, label, desc, val) {
-  return `<div class="toggle-row">
-    <div class="toggle-info">
-      <div class="toggle-label">${label}</div>
-      <div class="toggle-desc">${desc}</div>
-    </div>
-    <div class="toggle ${val?'on':''}" id="toggle-${key}" onclick="clickToggle('${key}',this)"></div>
+function tR(key, lbl, desc, val){
+  return `<div class="tgl-row">
+    <div class="tgl-info"><div class="tgl-lbl">${lbl}</div><div class="tgl-desc">${desc}</div></div>
+    <div class="tgl${val?' on':''}" id="tgl-${key}" onclick="clickTgl('${key}',this)"></div>
   </div>`;
 }
-
-async function clickToggle(key, el) {
-  const newVal = !el.classList.contains('on');
-  el.classList.toggle('on', newVal);
-  await saveSetting(key, newVal);
-  toast(newVal ? `✅ ${key} enabled` : `⛔ ${key} disabled`);
+async function clickTgl(key, el){
+  const v=!el.classList.contains('on');
+  el.classList.toggle('on',v);
+  await sb.from('site_settings').upsert({key,value:v,updated_at:new Date().toISOString()});
+  siteSettings[key]=v;
+  toast(v ? `✅ ${key} enabled` : `⛔ ${key} disabled`);
 }
-
-async function setRadio(key, val, groupId, el) {
-  document.querySelectorAll('#'+groupId+' .radio-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  await saveSetting(key, val);
+async function setRadio(key, val, gid, el){
+  document.querySelectorAll('#'+gid+' .rb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  await sb.from('site_settings').upsert({key,value:val,updated_at:new Date().toISOString()});
+  siteSettings[key]=val;
   toast(`✅ ${key} set to "${val}"`);
 }
 
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  DRAWER / OVERLAY HELPERS
-// ════════════════════════════════════
-function openDrawer(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
-function closeDrawer(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
-document.querySelectorAll('.overlay').forEach(o=>{
-  o.addEventListener('click',e=>{if(e.target===o)closeDrawer(o.id);});
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(d=>closeDrawer(d.id));
+// ════════════════════════════════════════════════════════════
+function openDrawer(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeDrawer(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) closeDrawer(o.id); }));
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(d=>closeDrawer(d.id)); });
+
+// Drag-and-drop for drop zones
+['att-drop','cover-drop','ph-drop'].forEach(id => {
+  const el=document.getElementById(id); if(!el)return;
+  el.addEventListener('dragover', e=>{e.preventDefault();el.classList.add('over');});
+  el.addEventListener('dragleave', ()=>el.classList.remove('over'));
+  el.addEventListener('drop', e=>{
+    e.preventDefault(); el.classList.remove('over');
+    if (id==='att-drop') {
+      Array.from(e.dataTransfer.files).forEach(file=>{
+        const pf={file,name:file.name,type:ftype(file.type),size:file.size,saved:false,id:'p'+Date.now()+Math.random()};
+        pendFiles.push(pf); addAttItem(pf);
+      });
+    } else if (id==='ph-drop') {
+      const file=e.dataTransfer.files[0];
+      if(file&&file.type.startsWith('image/')){
+        photoFileBlob=file;
+        const u=URL.createObjectURL(file);
+        document.getElementById('ph-prev').src=u;
+        document.getElementById('ph-prev').style.display='block';
+        document.getElementById('ph-lbl').style.display='none';
+      }
+    }
+  });
 });
 
-// ════════════════════════════════════
-//  TOAST
-// ════════════════════════════════════
-function toast(msg,dur=3200){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
+async function loadBadges(){
+  if(!sb||!user)return;
+  const [cr,pr]=await Promise.all([
+    sb.from('blog_comments').select('id',{count:'exact',head:true}).eq('status','pending'),
+    sb.from('blog_posts').select('id',{count:'exact',head:true}).eq('published',false)
+  ]);
+  const cb=document.getElementById('bd-comments'), pb=document.getElementById('bd-drafts');
+  if(cb&&(cr.count||0)>0){cb.textContent=cr.count;cb.classList.add('show');}
+  if(pb&&(pr.count||0)>0){pb.textContent=pr.count;pb.classList.add('show');}
 }
 
-// ════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  UTILITIES
-// ════════════════════════════════════
-function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmtBytes(b){if(!b||b===0)return'—';if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
-function getFileType(m){if(!m)return'other';const s=m.toLowerCase();if(s.startsWith('image/'))return'image';if(s.startsWith('video/'))return'video';if(s.includes('pdf'))return'pdf';if(s.includes('word')||s.includes('document')||s.includes('sheet')||s.includes('excel')||s.includes('presentation'))return'doc';if(s.startsWith('text/'))return'doc';return'other';}
-function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',other:'📦'}[t]||'📎';}
+// ════════════════════════════════════════════════════════════
+function toast(msg, dur=3200){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'), dur);
+}
+function esc(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fbytes(b){ if(!b||b===0)return'—'; if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB'; }
+function ftype(m){ if(!m)return'other'; const s=m.toLowerCase(); if(s.startsWith('image/'))return'image'; if(s.startsWith('video/'))return'video'; if(s.includes('pdf'))return'pdf'; if(s.includes('word')||s.includes('sheet')||s.includes('excel')||s.includes('presentation')||s.startsWith('text/'))return'doc'; return'other'; }
+function femoji(t){ return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',other:'📦'}[t]||'📎'; }
+
+// Mobile-safe image compression — dramatically reduces upload memory usage
+async function compressImg(file, maxPx=1400, q=0.83) {
+  return new Promise(res => {
+    const isMob = !window.matchMedia('(pointer:fine)').matches;
+    if (isMob) { maxPx=1100; q=0.78; }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url); // free immediately
+      const sc = Math.min(1, maxPx / Math.max(img.width, img.height));
+      const w=Math.round(img.width*sc), h=Math.round(img.height*sc);
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      cv.toBlob(blob=>{
+        cv.width=0; cv.height=0; // release canvas memory
+        res(new File([blob], file.name.replace(/\.[^.]+$/,'.jpg'), {type:'image/jpeg'}));
+      }, 'image/jpeg', q);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); res(file); };
+    img.src = url;
+  });
+}
 </script>
 </body>
 </html>
