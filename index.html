@@ -517,6 +517,7 @@ footer{background:var(--ink);border-top:1px solid var(--border);padding:28px 48p
 </nav>
 <div class="mob-nav" id="mob-nav"></div>
 
+  
 <!-- ══ HERO ══ -->
 <section id="hero">
   <div class="hero-l">
@@ -629,14 +630,12 @@ footer{background:var(--ink);border-top:1px solid var(--border);padding:28px 48p
     </div>
   </div>
 </section>
-  
-<div id="custom-ad-slot" style="display:none; max-content: 1200px; margin: 40px auto; padding: 0 48px;">
-    <div style="background: var(--card2); border: 1px solid var(--border2); border-radius: var(--r3); padding: 24px; text-align: center;">
-        <span class="eyebrow" style="justify-content: center; margin-bottom: 12px;">Sponsored</span>
-        <div id="ad-content">
-            </div>
-    </div>
-</div>
+ 
+<div id="top_banner-container" class="container"></div>
+<div id="between_posts-container" class="container ad-between"></div>
+<div id="sidebar-container" class="container"></div>
+ 
+
 <!-- ══ FOOTER ══ -->
 <footer>
   <div class="footer-logo" id="f-logo">Evans<span>.</span></div>
@@ -1367,30 +1366,27 @@ function fmtBytes(b){if(!b||b===0)return'—';if(b<1024)return b+' B';if(b<10485
 function catEmoji(c){return{Accounting:'📊',Finance:'💰',Technology:'💻',Business:'🏢','Data Analytics':'📈',Agribusiness:'🌾',Personal:'✍️',General:'📝'}[c]||'📝';}
 function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',other:'📦'}[t]||'📎';}
 
-async function initAds() {
-  // This matches the 'Show Ads' toggle in your Admin Screenshot
-  const { data } = await supabase.from('site_settings').select('show_ads').single();
+// ... other functions like toast() ...
 
-  if (data && data.show_ads) {
-    const adSlot = document.getElementById('custom-ad-slot');
-    if (adSlot) {
-      adSlot.style.display = 'block'; // Make it visible if Admin says ON
-      
-      // Now fetch your actual custom ad content from your ads table
-      const { data: ad } = await supabase.from('custom_ads').select('*').limit(1).single();
-      if (ad) {
-        document.getElementById('ad-content').innerHTML = `
-          <a href="${ad.link}" target="_blank">
-            <img src="${ad.image_url}" style="max-width:100%; border-radius:var(--r2);">
-          </a>`;
-      }
+  async function loadMyAds() {
+    const { data: ads } = await supabase.from('ads').select('*').eq('active', 'true');
+    if (ads) {
+      ads.forEach(ad => {
+        const target = document.getElementById(`${ad.placement}-container`);
+        if (target) {
+          target.innerHTML = `
+            <div class="ad-block" onclick="window.open('${ad.link_url}', '_blank')">
+              ${ad.image_url ? `<img src="${ad.image_url}">` : ''}
+              <div class="ad-title">${ad.title}</div>
+              <div class="ad-body">${ad.body}</div>
+            </div>`;
+        }
+      });
     }
   }
-}
 
-// Start the check as soon as the window loads
-window.addEventListener('DOMContentLoaded', initAds);
-
+  // CALL THEM HERE
+  loadMyAds(); 
 init();
 </script>
 <script>
