@@ -81,6 +81,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:66px;display:flex;al
 .mob-nav a{display:block;padding:15px 48px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid var(--border);text-decoration:none;transition:color .2s}
 .mob-nav a:hover{color:var(--gold)}
 
+<!-- ── AD SLOTS ── -->
+<div id="ad-top-banner" class="ad-block"></div>
+<div id="ad-between-posts" class="ad-block ad-between"></div>
+<div id="ad-sidebar" class="ad-block"></div>
+
 /* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--rfull);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:var(--tr);border:none;white-space:nowrap;position:relative;overflow:hidden}
 .btn-p{background:linear-gradient(135deg,var(--blue),var(--blue-b));color:#fff;box-shadow:0 4px 18px rgba(5,80,213,.35);border:1px solid rgba(34,114,245,.3)}
@@ -1368,6 +1373,20 @@ document.addEventListener("DOMContentLoaded", () => {
     loader.classList.add("out");
   }
 });
+</script>
+<script>
+function renderAd(placement, html) {
+  if (placement === "top-banner") {
+    document.getElementById("ad-top-banner").innerHTML = html;
+  } else if (placement === "between-posts") {
+    document.getElementById("ad-between-posts").innerHTML = html;
+  } else if (placement === "sidebar") {
+    document.getElementById("ad-sidebar").innerHTML = html;
+  }
+}
+
+// Example: admin system should call renderAd() with placement + advert HTML
+// renderAd("top-banner", "<a href='https://example.com'><img src='/uploads/banner.jpg'></a>");
 </script>
 </body>
 </html>
