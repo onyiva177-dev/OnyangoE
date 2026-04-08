@@ -1446,5 +1446,13 @@ function fileEmoji(t){return{image:'🖼',video:'🎥',pdf:'📄',doc:'📝',oth
 
 init();
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const loader = document.getElementById("page-loader");
+  if (loader) {
+    loader.style.display = "none";   // always hide once DOM is ready
+  }
+});
+</script>
 </body>
 </html>
