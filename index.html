@@ -1448,9 +1448,10 @@ init();
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const loader = document.getElementById("page-loader");
+  const loader = document.getElementById("loader");
   if (loader) {
-    loader.style.display = "none";   // always hide once DOM is ready
+    // Add the "out" class to trigger CSS transition
+    loader.classList.add("out");
   }
 });
 </script>
