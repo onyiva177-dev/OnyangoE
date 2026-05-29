@@ -1,0 +1,15 @@
+# =====================================================
+# EVANS ONYANGO PORTFOLIO — robots.txt
+# Replace https://yourdomain.com with your actual URL
+# =====================================================
+
+User-agent: *
+
+# Allow all public portfolio content
+Allow: /
+
+# Block the admin panel from all crawlers
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml

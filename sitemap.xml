@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- =====================================================
+       EVANS ONYANGO — PUBLIC PORTFOLIO SITEMAP
+       Replace https://yourdomain.com with your actual URL
+       ===================================================== -->
+
+  <!-- Homepage (full page entry point) -->
+  <url>
+    <loc>https://yourdomain.com/</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Hero / Introduction -->
+  <url>
+    <loc>https://yourdomain.com/#hero</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://yourdomain.com/#about</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Expertise -->
+  <url>
+    <loc>https://yourdomain.com/#expertise</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Skills -->
+  <url>
+    <loc>https://yourdomain.com/#skills</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Philosophy -->
+  <url>
+    <loc>https://yourdomain.com/#philosophy</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Projects -->
+  <url>
+    <loc>https://yourdomain.com/#projects</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog -->
+  <url>
+    <loc>https://yourdomain.com/#blog</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://yourdomain.com/#contact</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- NOTE: /admin/ is intentionally excluded from this sitemap.
+       It is also blocked in robots.txt via Disallow: /admin/      -->
+
+</urlset>
