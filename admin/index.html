@@ -171,9 +171,17 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .section-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
 .stab{padding:6px 14px;border:1px solid var(--border2);border-radius:var(--rfull);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);cursor:pointer;transition:var(--tr)}
 .stab.on,.stab:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.06)}
-.json-area{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;padding:12px;outline:none;resize:vertical;min-height:100px;transition:border-color .2s;line-height:1.6}
-.json-area:focus{border-color:var(--gold)}
 .hint{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px}
+/* ── Array editor ── */
+.arr-editor{display:flex;flex-direction:column;gap:8px}
+.arr-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r2);padding:14px;display:flex;flex-direction:column;gap:10px;position:relative}
+.arr-item-fields{display:grid;gap:10px}
+.arr-item-fields.cols-2{grid-template-columns:1fr 1fr}
+.arr-del{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;line-height:1;padding:0;transition:color .2s}
+.arr-del:hover{color:var(--red)}
+.arr-num{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.arr-add{display:flex;align-items:center;gap:7px;padding:10px 16px;border:1px dashed var(--border2);border-radius:var(--r2);background:none;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:var(--tr);width:100%;justify-content:center}
+.arr-add:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.04)}
 
 /* ── PHOTO / MEDIA GRIDS ── */
 .photo-grid,.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
@@ -508,48 +516,96 @@ async function renderDashboard() {
 //  Array fields (cards, rows, kpis etc.) use a simple JSON textarea
 //  with a clear example shown above it.
 // ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+//  CONTENT EDITOR — SECTIONS SCHEMA
+//  scalar: plain input/textarea fields
+//  arrays: repeated items with add / remove buttons
+//    fields: [{k, l, t, span}]  span: 'full'|'half'|'third' — grid width
+//    tags fields are stored as arrays, edited as comma-separated text
+// ════════════════════════════════════════════════════════════
 const SECTIONS = {
   hero: {
     label: 'Hero',
     scalar: [
-      {k:'eyebrow',    l:'Eyebrow Text',        t:'text'},
-      {k:'name_first', l:'First Name',           t:'text'},
-      {k:'name_last',  l:'Last Name',            t:'text'},
-      {k:'subtitle',   l:'Subtitle / Tagline',   t:'text'},
-      {k:'description',l:'Description Paragraph',t:'textarea'},
-      {k:'btn1_text',  l:'Button 1 Label',       t:'text'},
-      {k:'btn1_href',  l:'Button 1 URL',         t:'text'},
-      {k:'btn2_text',  l:'Button 2 Label',       t:'text'},
-      {k:'btn2_href',  l:'Button 2 URL',         t:'text'},
+      {k:'eyebrow',    l:'Eyebrow Text',          t:'text'},
+      {k:'name_first', l:'First Name',             t:'text'},
+      {k:'name_last',  l:'Last Name',              t:'text'},
+      {k:'subtitle',   l:'Subtitle / Tagline',     t:'text'},
+      {k:'description',l:'Description Paragraph',  t:'textarea'},
+      {k:'btn1_text',  l:'Button 1 Label',         t:'text'},
+      {k:'btn1_href',  l:'Button 1 URL',           t:'text'},
+      {k:'btn2_text',  l:'Button 2 Label',         t:'text'},
+      {k:'btn2_href',  l:'Button 2 URL',           t:'text'},
     ],
-    arrays: { kpis: { l:'KPI Strip', eg:'[{"value":"6+","label":"Platforms Designed"}]' } }
+    arrays: {
+      kpis: {
+        l: 'KPI Numbers',
+        fields: [
+          {k:'value', l:'Value (e.g. 6+)', t:'text', span:'half'},
+          {k:'label', l:'Label',           t:'text', span:'half'},
+        ]
+      }
+    }
   },
   about: {
     label: 'About',
     scalar: [
-      {k:'eyebrow',l:'Eyebrow',   t:'text'},
-      {k:'title',  l:'Title',     t:'text'},
+      {k:'eyebrow',l:'Eyebrow',       t:'text'},
+      {k:'title',  l:'Section Title', t:'text'},
       {k:'quote',  l:'Featured Quote',t:'textarea'},
-      {k:'body',   l:'Body Text', t:'textarea'},
+      {k:'body',   l:'Body Text',     t:'textarea'},
     ],
-    arrays: { rows: { l:'Info Table Rows', eg:'[{"key":"Location","val":"Kenya"}]' } }
+    arrays: {
+      rows: {
+        l: 'Info Table Rows',
+        fields: [
+          {k:'key', l:'Label (e.g. Location)',  t:'text', span:'third'},
+          {k:'val', l:'Value (e.g. Kenya)',      t:'text', span:'full'},
+        ]
+      }
+    }
   },
   expertise: {
     label: 'Expertise',
-    scalar: [{k:'eyebrow',l:'Eyebrow',t:'text'},{k:'title',l:'Section Title',t:'text'}],
-    arrays: { cards: { l:'Expertise Cards', eg:'[{"icon":"📊","name":"Card Name","desc":"Description","tags":["Tag1"]}]' } }
+    scalar: [
+      {k:'eyebrow',l:'Eyebrow',       t:'text'},
+      {k:'title',  l:'Section Title', t:'text'},
+    ],
+    arrays: {
+      cards: {
+        l: 'Expertise Cards',
+        fields: [
+          {k:'icon', l:'Icon (emoji)',              t:'text',     span:'third'},
+          {k:'name', l:'Card Name',                 t:'text',     span:'full'},
+          {k:'desc', l:'Description',               t:'textarea', span:'full'},
+          {k:'tags', l:'Tags (comma-separated)',     t:'text',     span:'full', isTagArray:true},
+        ]
+      }
+    }
   },
   skills: {
     label: 'Skills',
     scalar: [
-      {k:'eyebrow',    l:'Eyebrow',         t:'text'},
-      {k:'title',      l:'Section Title',   t:'text'},
-      {k:'left_title', l:'Left Col Title',  t:'text'},
-      {k:'right_title',l:'Right Col Title', t:'text'},
+      {k:'eyebrow',     l:'Eyebrow',          t:'text'},
+      {k:'title',       l:'Section Title',    t:'text'},
+      {k:'left_title',  l:'Left Column Title',t:'text'},
+      {k:'right_title', l:'Right Col Title',  t:'text'},
     ],
     arrays: {
-      left_bars:  { l:'Left Skill Bars',  eg:'[{"name":"Financial Accounting","pct":90}]' },
-      right_bars: { l:'Right Skill Bars', eg:'[{"name":"Supabase","pct":85}]' }
+      left_bars: {
+        l: 'Left Skill Bars',
+        fields: [
+          {k:'name', l:'Skill Name',        t:'text',   span:'full'},
+          {k:'pct',  l:'Percentage (0–100)',t:'number', span:'third'},
+        ]
+      },
+      right_bars: {
+        l: 'Right Skill Bars',
+        fields: [
+          {k:'name', l:'Skill Name',        t:'text',   span:'full'},
+          {k:'pct',  l:'Percentage (0–100)',t:'number', span:'third'},
+        ]
+      }
     }
   },
   philosophy: {
@@ -559,12 +615,36 @@ const SECTIONS = {
       {k:'big_statement', l:'Big Statement',  t:'text'},
       {k:'sub',           l:'Sub-statement',  t:'text'},
     ],
-    arrays: { pillars: { l:'Pillars', eg:'[{"num":"01","title":"Systems Thinking","desc":"Build the infrastructure first."}]' } }
+    arrays: {
+      pillars: {
+        l: 'Pillars',
+        fields: [
+          {k:'num',   l:'Number (e.g. 01)', t:'text',     span:'third'},
+          {k:'title', l:'Title',            t:'text',     span:'full'},
+          {k:'desc',  l:'Description',      t:'textarea', span:'full'},
+        ]
+      }
+    }
   },
   projects: {
     label: 'Projects',
-    scalar: [{k:'eyebrow',l:'Eyebrow',t:'text'},{k:'title',l:'Section Title',t:'text'}],
-    arrays: { cards: { l:'Project Cards', eg:'[{"num":"01","type":"App","name":"FinAI","desc":"Description","tags":["Next.js"],"link":"https://..."}]' } }
+    scalar: [
+      {k:'eyebrow',l:'Eyebrow',       t:'text'},
+      {k:'title',  l:'Section Title', t:'text'},
+    ],
+    arrays: {
+      cards: {
+        l: 'Project Cards',
+        fields: [
+          {k:'num',  l:'Number (e.g. 01)', t:'text',     span:'third'},
+          {k:'type', l:'Type label',        t:'text',     span:'half'},
+          {k:'name', l:'Project Name',      t:'text',     span:'full'},
+          {k:'desc', l:'Description',       t:'textarea', span:'full'},
+          {k:'tags', l:'Tags (comma-sep)',  t:'text',     span:'full', isTagArray:true},
+          {k:'link', l:'Link URL',          t:'text',     span:'full'},
+        ]
+      }
+    }
   },
   contact: {
     label: 'Contact',
@@ -574,7 +654,7 @@ const SECTIONS = {
       {k:'subtitle', l:'Subtitle',         t:'text'},
       {k:'email',    l:'Email Address',    t:'text'},
       {k:'phone',    l:'Phone Number',     t:'text'},
-      {k:'whatsapp', l:'WhatsApp (digits)',t:'text'},
+      {k:'whatsapp', l:'WhatsApp (digits only)', t:'text'},
       {k:'location', l:'Location',         t:'text'},
       {k:'form_desc',l:'Form Description', t:'text'},
     ]
@@ -582,7 +662,15 @@ const SECTIONS = {
   nav: {
     label: 'Navigation',
     scalar: [{k:'logo',l:'Logo Text (e.g. Evans.)',t:'text'}],
-    arrays: { links: { l:'Nav Links', eg:'[{"label":"About","href":"#about"}]' } }
+    arrays: {
+      links: {
+        l: 'Navigation Links',
+        fields: [
+          {k:'label', l:'Link Label (e.g. About)', t:'text', span:'half'},
+          {k:'href',  l:'URL (e.g. #about)',        t:'text', span:'half'},
+        ]
+      }
+    }
   },
   footer: {
     label: 'Footer',
@@ -590,13 +678,16 @@ const SECTIONS = {
   }
 };
 
+// ── Load content from DB ──
 async function renderContent() {
-  document.getElementById('topbar-acts').innerHTML = '<button class="btn-prim" onclick="saveCurrentSection()">💾 Save Section</button>';
+  document.getElementById('topbar-acts').innerHTML =
+    '<button class="btn-prim" onclick="saveCurrentSection()">💾 Save Section</button>';
   const { data } = await sb.from('portfolio_content').select('section,content');
   if (data) data.forEach(r => { contentCache[r.section] = r.content; });
   buildContentUI();
 }
 
+// ── Build the editor UI ──
 function buildContentUI() {
   const schema = SECTIONS[currentSection] || { scalar:[], arrays:{} };
   const data   = contentCache[currentSection] || {};
@@ -605,23 +696,25 @@ function buildContentUI() {
   ).join('');
 
   let fieldsHtml = '';
-  // Scalar fields — normal inputs
-  schema.scalar?.forEach(f => {
+
+  // Scalar fields
+  (schema.scalar||[]).forEach(f => {
     const val = esc(data[f.k] || '');
-    if (f.t === 'textarea') {
-      fieldsHtml += `<div class="field"><label>${f.l}</label><textarea id="cf_${f.k}" rows="3">${val}</textarea></div>`;
-    } else {
-      fieldsHtml += `<div class="field"><label>${f.l}</label><input type="text" id="cf_${f.k}" value="${val}"></div>`;
-    }
+    fieldsHtml += f.t === 'textarea'
+      ? `<div class="field"><label>${f.l}</label><textarea id="cf_${f.k}" rows="3">${val}</textarea></div>`
+      : `<div class="field"><label>${f.l}</label><input type="text" id="cf_${f.k}" value="${val}"></div>`;
   });
-  // Array fields — JSON textarea with example
-  Object.entries(schema.arrays || {}).forEach(([key, cfg]) => {
-    const val = JSON.stringify(data[key] || [], null, 2);
+
+  // Array fields — add/remove UI
+  Object.entries(schema.arrays||{}).forEach(([key, cfg]) => {
+    const items = data[key] || [];
     fieldsHtml += `
       <div class="field">
         <label>${cfg.l}</label>
-        <div class="hint">Edit as a JSON array. Example format: <code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-size:9px">${esc(cfg.eg)}</code></div>
-        <textarea id="cf_arr_${key}" class="json-area" rows="10">${esc(val)}</textarea>
+        <div class="arr-editor" id="arr-${key}">
+          ${items.map((item, i) => renderArrayItem(key, cfg.fields, item, i)).join('')}
+        </div>
+        <button class="arr-add" onclick="addArrayItem('${key}')">+ Add ${cfg.l.replace(/s$/,'')}</button>
       </div>`;
   });
 
@@ -629,11 +722,103 @@ function buildContentUI() {
     <div class="section-tabs">${tabs}</div>
     <div class="tbl-wrap" style="padding:22px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)">
-        <div class="tbl-lbl">Editing: ${currentSection.toUpperCase()} section</div>
+        <div class="tbl-lbl">Editing: ${currentSection.toUpperCase()}</div>
         <button class="btn-prim" onclick="saveCurrentSection()">💾 Save Changes</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:16px">${fieldsHtml}</div>
     </div>`;
+}
+
+function renderArrayItem(key, fields, item, idx) {
+  // Determine grid column layout
+  const hasHalf  = fields.some(f => f.span === 'half');
+  const hasThird = fields.some(f => f.span === 'third');
+  const gridClass = hasHalf || hasThird ? 'arr-item-fields cols-2' : 'arr-item-fields';
+
+  const inputs = fields.map(f => {
+    // Tags arrays are stored as JS arrays, display as comma-separated string
+    const rawVal = f.isTagArray
+      ? (Array.isArray(item[f.k]) ? item[f.k].join(', ') : (item[f.k] || ''))
+      : (item[f.k] ?? '');
+    const val = esc(String(rawVal));
+    const spanStyle = f.span === 'full' ? 'grid-column:1/-1' : '';
+
+    if (f.t === 'textarea') {
+      return `<div style="${spanStyle}">
+        <div class="arr-num">${f.l}</div>
+        <textarea data-field="${f.k}" rows="2" style="width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'Sora',sans-serif;font-size:12px;padding:8px 12px;outline:none;resize:vertical;transition:border-color .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">${val}</textarea>
+      </div>`;
+    }
+    return `<div style="${spanStyle}">
+      <div class="arr-num">${f.l}</div>
+      <input type="${f.t === 'number' ? 'number' : 'text'}" data-field="${f.k}" value="${val}"
+        style="width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'Sora',sans-serif;font-size:12px;padding:8px 12px;outline:none;transition:border-color .2s"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'">
+    </div>`;
+  }).join('');
+
+  return `<div class="arr-item" data-idx="${idx}">
+    <div class="arr-num" style="margin-bottom:6px">Item ${idx + 1}</div>
+    <div class="${gridClass}">${inputs}</div>
+    <button class="arr-del" onclick="removeArrayItem('${key}',${idx})" title="Remove item">✕</button>
+  </div>`;
+}
+
+// ── Collect current DOM state of an array editor into an array of objects ──
+function getArrayItems(key) {
+  const schema = SECTIONS[currentSection];
+  const cfg    = schema?.arrays?.[key];
+  if (!cfg) return [];
+  const container = document.getElementById('arr-' + key);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('.arr-item')).map(item => {
+    const obj = {};
+    item.querySelectorAll('[data-field]').forEach(inp => {
+      const k = inp.dataset.field;
+      const f = cfg.fields.find(x => x.k === k);
+      const v = inp.value.trim();
+      if (f?.isTagArray) {
+        obj[k] = v ? v.split(',').map(t => t.trim()).filter(Boolean) : [];
+      } else if (f?.t === 'number') {
+        obj[k] = parseInt(v) || 0;
+      } else {
+        obj[k] = v;
+      }
+    });
+    return obj;
+  });
+}
+
+// ── Add a blank item to an array editor without losing other field values ──
+function addArrayItem(key) {
+  const schema = SECTIONS[currentSection];
+  const cfg    = schema?.arrays?.[key];
+  if (!cfg) return;
+  // Snapshot existing items from DOM first
+  const current = getArrayItems(key);
+  const empty   = {};
+  cfg.fields.forEach(f => { empty[f.k] = f.isTagArray ? [] : (f.t === 'number' ? 0 : ''); });
+  current.push(empty);
+  // Re-render just the array container
+  const container = document.getElementById('arr-' + key);
+  if (container) {
+    container.innerHTML = current.map((item, i) => renderArrayItem(key, cfg.fields, item, i)).join('');
+  }
+  // Scroll last item into view
+  container?.lastElementChild?.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// ── Remove an item by index ──
+function removeArrayItem(key, idx) {
+  const schema = SECTIONS[currentSection];
+  const cfg    = schema?.arrays?.[key];
+  if (!cfg) return;
+  const current = getArrayItems(key);
+  current.splice(idx, 1);
+  const container = document.getElementById('arr-' + key);
+  if (container) {
+    container.innerHTML = current.map((item, i) => renderArrayItem(key, cfg.fields, item, i)).join('');
+  }
 }
 
 function switchSection(s) { currentSection = s; buildContentUI(); }
@@ -641,26 +826,26 @@ function switchSection(s) { currentSection = s; buildContentUI(); }
 async function saveCurrentSection() {
   const schema = SECTIONS[currentSection] || { scalar:[], arrays:{} };
   const data   = { ...(contentCache[currentSection] || {}) };
-  // Scalar
-  schema.scalar?.forEach(f => {
+
+  // Scalar fields
+  (schema.scalar||[]).forEach(f => {
     const el = document.getElementById('cf_'+f.k);
     if (el) data[f.k] = el.value;
   });
-  // Arrays — parse JSON
-  let parseErr = false;
-  Object.keys(schema.arrays || {}).forEach(key => {
-    const el = document.getElementById('cf_arr_'+key);
-    if (!el) return;
-    try { data[key] = JSON.parse(el.value); }
-    catch(e) { toast('❌ JSON error in "'+key+'": '+e.message); parseErr = true; }
+
+  // Array fields — collect from DOM (no JSON parsing, no user error possible)
+  Object.keys(schema.arrays||{}).forEach(key => {
+    data[key] = getArrayItems(key);
   });
-  if (parseErr) return;
 
   const { error } = await sb.from('portfolio_content')
-    .upsert({ section: currentSection, content: data, updated_at: new Date().toISOString() });
-  if (error) { toast('❌ '+error.message); return; }
+    .upsert(
+      { section: currentSection, content: data, updated_at: new Date().toISOString() },
+      { onConflict: 'section' }
+    );
+  if (error) { toast('❌ ' + error.message); return; }
   contentCache[currentSection] = data;
-  toast('✅ '+currentSection+' saved — reload the public site to see changes');
+  toast('✅ ' + currentSection + ' saved — reload the public site to see changes');
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1219,14 +1404,14 @@ function tR(key, lbl, desc, val){
 async function clickTgl(key, el){
   const v=!el.classList.contains('on');
   el.classList.toggle('on',v);
-  await sb.from('site_settings').upsert({key,value:v,updated_at:new Date().toISOString()});
+  await sb.from('site_settings').upsert({key,value:v,updated_at:new Date().toISOString()},{onConflict:'key'});
   siteSettings[key]=v;
   toast(v ? `✅ ${key} enabled` : `⛔ ${key} disabled`);
 }
 async function setRadio(key, val, gid, el){
   document.querySelectorAll('#'+gid+' .rb').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');
-  await sb.from('site_settings').upsert({key,value:val,updated_at:new Date().toISOString()});
+  await sb.from('site_settings').upsert({key,value:val,updated_at:new Date().toISOString()},{onConflict:'key'});
   siteSettings[key]=val;
   toast(`✅ ${key} set to "${val}"`);
 }
